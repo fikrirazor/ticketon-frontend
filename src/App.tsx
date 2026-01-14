@@ -1,13 +1,8 @@
-import { Routes, Route } from "react-router";
-import Home from "@/pages/home";
-import Articles from "@/pages/articles";
+import { AppRoutes } from '@/routes';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/articles" element={<Articles />} />
-    </Routes>
+    <AppRoutes />
   );
 }
 
