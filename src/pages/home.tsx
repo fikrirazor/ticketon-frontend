@@ -1,40 +1,61 @@
+import { useEffect } from 'react';
 import { Layout } from '../components/Layout';
-import { Sidebar } from '../components/Sidebar';
 import { EventCard } from '../components/EventCard';
-import { useEventStore } from '../store/useEventStore';
-import { ChevronDown } from 'lucide-react';
+import { useEventStore } from '../store/event.store';
+import { SearchBar } from '../components/SearchBar';
+import { FilterPanel } from '../components/FilterPanel';
+import { Telescope } from 'lucide-react';
 
 export const Home = () => {
-    const { events, buyTicket } = useEventStore();
+    const { filteredEvents, applyFilters } = useEventStore();
+
+    // Ensure we start with correct filtered state on mount or when returning
+    useEffect(() => {
+        applyFilters();
+    }, [applyFilters]);
 
     return (
         <Layout>
-            <div className="flex flex-col lg:flex-row gap-8">
-                <Sidebar />
+            <div className="space-y-8">
+                {/* Hero Section */}
+                <div className="text-center space-y-4 py-8 md:py-12">
+                     <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+                        Discover <span className="text-primary">Amazing Events</span> <br className="hidden md:block"/> Around You
+                    </h1>
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Find and book the best concerts, workshops, and exhibitions happening in your city.
+                    </p>
+                </div>
 
-                <div className="flex-1">
-                    {/* Top Bar */}
-                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                        <div className="flex gap-8 text-sm font-medium">
-                            <button className="text-primary border-b-2 border-primary pb-4 -mb-4 px-2">Upcoming Events</button>
-                            <button className="text-gray-500 hover:text-gray-800 pb-4 -mb-4 px-2">Past Events</button>
-                        </div>
-
-                        <div className="flex items-center gap-2 text-sm text-gray-600 mt-4 sm:mt-0">
-                            <span>Sort by</span>
-                            <button className="font-bold flex items-center gap-1">
-                                Recommended <ChevronDown className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {events.map((event) => (
-                            <EventCard key={event.id} event={event} onBuy={buyTicket} />
-                        ))}
+                {/* Filters and Search */}
+                <div className="sticky top-16 z-40 bg-gray-50/95 backdrop-blur-sm p-4 -mx-4 md:mx-0 rounded-b-xl md:rounded-xl border-b md:border border-gray-200/50 shadow-sm transition-all">
+                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                         <div className="w-full md:w-96">
+                            <SearchBar />
+                         </div>
+                         <FilterPanel />
                     </div>
                 </div>
+
+                {/* Event Grid */}
+                {filteredEvents.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {filteredEvents.map((event) => (
+                            <EventCard key={event.id} event={event} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                        <div className="bg-gray-100 p-6 rounded-full mb-4">
+                            <Telescope className="w-12 h-12 text-gray-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">No events found</h3>
+                        <p className="text-gray-500">
+                            We couldn't find any events matching your search criteria. <br/>
+                            Try adjusting your filters or search terms.
+                        </p>
+                    </div>
+                )}
             </div>
         </Layout>
     );
