@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Layout } from '../components/Layout';
-import { useEventStore } from '../store/useEventStore';
+import { useEventStore } from '../store/event.store';
 import { Button } from '../components/ui/Button';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -48,7 +48,7 @@ export const Admin = () => {
                                 <tr key={event.id} className="hover:bg-gray-50/50">
                                     <td className="px-6 py-4 font-medium text-gray-900">{event.title}</td>
                                     <td className="px-6 py-4 text-gray-500">{event.organizer}</td>
-                                    <td className="px-6 py-4 text-gray-500">{event.dateStart}</td>
+                                    <td className="px-6 py-4 text-gray-500">{new Date(event.date).toLocaleDateString()}</td>
                                     <td className="px-6 py-4">
                                         {editingId === event.id ? (
                                             <input
