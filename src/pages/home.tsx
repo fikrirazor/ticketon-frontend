@@ -1,64 +1,41 @@
-import { useEffect } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import useUserStore from "@/store/user.store";
+import { Layout } from '../components/Layout';
+import { Sidebar } from '../components/Sidebar';
+import { EventCard } from '../components/EventCard';
+import { useEventStore } from '../store/useEventStore';
+import { ChevronDown } from 'lucide-react';
 
-function Home() {
-  const { users, fetchUsers } = useUserStore();
-  useEffect(() => {
-    fetchUsers({ page: 1, limit: 10 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return (
-    <main className="p-8 flex flex-col gap-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Users</h1>
-      </div>
-      <Table className="w-full p-6 border">
-        <TableHeader className="bg-gray-400">
-          <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Updated At</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.status}</TableCell>
-              <TableCell>{new Date(user.createdAt).toDateString()}</TableCell>
-              <TableCell>{new Date(user.updatedAt).toDateString()}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <div className="flex items-center justify-end gap-4">
-        <Button variant="outline" size="sm">
-          <ChevronLeftIcon className="size-4" />
-          Prev
-        </Button>
-        <h1 className="font-semibold">1</h1>
-        <Button variant="outline" size="sm">
-          Next
-          <ChevronRightIcon className="size-4" />
-        </Button>
-      </div>
-    </main>
-  );
-}
+export const Home = () => {
+    const { events, buyTicket } = useEventStore();
 
-export default Home;
+    return (
+        <Layout>
+            <div className="flex flex-col lg:flex-row gap-8">
+                <Sidebar />
+
+                <div className="flex-1">
+                    {/* Top Bar */}
+                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <div className="flex gap-8 text-sm font-medium">
+                            <button className="text-primary border-b-2 border-primary pb-4 -mb-4 px-2">Upcoming Events</button>
+                            <button className="text-gray-500 hover:text-gray-800 pb-4 -mb-4 px-2">Past Events</button>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mt-4 sm:mt-0">
+                            <span>Sort by</span>
+                            <button className="font-bold flex items-center gap-1">
+                                Recommended <ChevronDown className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {events.map((event) => (
+                            <EventCard key={event.id} event={event} onBuy={buyTicket} />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    );
+};
