@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { useAuthStore } from '../store/auth.store';
 
 export const Login = () => {
     const navigate = useNavigate();
+    const login = useAuthStore((state) => state.login);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -17,11 +19,14 @@ export const Login = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Login Data:', formData);
-        // Simulate login
+        
+        // Simulate login based on credentials provided in screenshot/history
         if (formData.email === 'admin@pwk.com' && formData.password === 'admin') {
+            login({ id: '1', name: 'Admin', email: formData.email, role: 'organizer' });
             navigate('/admin');
         } else {
-            alert('Login Successful! (Redirecting to Home)');
+            login({ id: '2', name: 'User', email: formData.email, role: 'participant' });
+            alert('Login Successful as Participant! (Redirecting to Home)');
             navigate('/');
         }
     };
