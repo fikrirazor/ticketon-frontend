@@ -9,6 +9,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import CheckoutPage from './pages/Checkout';
 import PaymentProofPage from './pages/PaymentProof';
 import TransactionDetailPage from './pages/TransactionDetailPage';
+import { OrganizerProfile } from './pages/OrganizerProfile';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/event/:id" element={<EventDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/organizer/:name" element={<OrganizerProfile />} />
         
         {/* Transaction Flow */}
         <Route

@@ -1,13 +1,20 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEventStore } from '../store/event.store';
 import { Layout } from '../components/Layout';
-import { Button } from '../components/ui/Button'; // Assuming Button exists from previous setup
-import { Calendar, MapPin, Users, Share2, Heart, ArrowLeft } from 'lucide-react';
+import { Button } from '../components/ui/Button';
+import { Calendar, MapPin, Users, Share2, Heart, ArrowLeft, Star } from 'lucide-react';
+import { useReviewStore } from '../store/review.store';
+import { ReviewList } from '../components/reviews/ReviewList';
+import { RatingDistribution } from '../components/reviews/RatingDistribution';
 
 export const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { getEventById } = useEventStore();
+  const { getReviewsByEventId, getAverageRatingForEvent } = useReviewStore();
+  
   const event = getEventById(id || '');
+  const reviews = getReviewsByEventId(id || '');
+  const averageRating = getAverageRatingForEvent(id || '');
 
   if (!event) {
     return (
@@ -71,7 +78,19 @@ export const EventDetail = () => {
                 </span>
               </div>
 
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{event.title}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{event.title}</h1>
+              
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 rounded-xl border border-yellow-100">
+                  <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                  <span className="text-sm font-black text-yellow-700">{averageRating || 'No rating'}</span>
+                  <span className="text-xs text-yellow-600 font-bold ml-1">({reviews.length} reviews)</span>
+                </div>
+                <div className="h-4 w-px bg-slate-200" />
+                <Link to={`/organizer/${encodeURIComponent(event.organizer)}`} className="text-sm font-bold text-slate-500 hover:text-primary transition-colors uppercase tracking-widest">
+                  View Organizer Profle
+                </Link>
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                  <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
@@ -110,11 +129,23 @@ export const EventDetail = () => {
                     <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-500">
                         {event.organizer.charAt(0)}
                     </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Organized by</p>
-                        <p className="font-semibold text-gray-900">{event.organizer}</p>
-                    </div>
                 </div>
+               </div>
+            </div>
+
+            {/* Reviews Section */}
+            <div className="p-6 md:p-8 space-y-10 border-t border-gray-100 bg-slate-50/30">
+               <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Event Reviews</h2>
+               </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                  <div className="md:col-span-4">
+                     <RatingDistribution reviews={reviews} />
+                  </div>
+                  <div className="md:col-span-8">
+                     <ReviewList reviews={reviews} />
+                  </div>
                </div>
             </div>
           </div>

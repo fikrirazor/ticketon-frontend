@@ -4,6 +4,8 @@ import { Layout } from '../components/Layout';
 import TransactionStatus from '../components/transactions/TransactionStatus';
 import PriceSummary from '../components/transactions/PriceSummary';
 import type { TransactionStatus as TStatus } from '../types';
+import { ReviewForm } from '../components/reviews/ReviewForm';
+import { CheckCircle2 } from 'lucide-react';
 
 const TransactionDetailPage: React.FC = () => {
   const { transactionId } = useParams<{ transactionId: string }>();
@@ -17,10 +19,11 @@ const TransactionDetailPage: React.FC = () => {
     pointsUsed: 0,
     voucherCode: 'PROMO100',
     event: {
-      title: 'Coldplay: Music of the Spheres World Tour',
+      id: '1', // Linked to Neon Nights for testing
+      title: 'Neon Nights Music Festival',
       price: 1500000,
       imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      date: 'Oct 25, 2026',
+      date: 'Oct 25, 2023', // Past date for testing
       location: 'Gelora Bung Karno Stadium, Jakarta'
     }
   };
