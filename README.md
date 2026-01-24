@@ -1,73 +1,54 @@
-# React + TypeScript + Vite
+# TicketOn - Event Management Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TicketOn is a premium event management platform built with React, TypeScript, and Tailwind CSS. It allows users to discover events, book tickets, and manage transactions seamlessly.
 
-Currently, two official plugins are available:
+## 🚀 Recent Features: Transaction Flow UI
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+We have implemented a complete transaction flow that includes:
 
-## React Compiler
+- **Checkout Page**: Dynamic price calculation, point usage settings, and voucher application.
+- **Payment Proof Page**: 2-hour transaction timer, file upload with preview, and progress indicator.
+- **Transaction Status**: Visual timeline tracking 6 statuses (Waiting for Payment, Verification, Done, Rejected, Expired, Canceled).
+- **Core Components**: `CountdownTimer`, `PriceSummary`, `CheckoutForm`, `PaymentProofUpload`, and `TransactionStatus`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS v4, Lucide React (Icons)
+- **State Management**: Zustand
+- **Routing**: React Router Dom v6
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🔑 Mock Credentials (For Testing)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Since the backend is currently in development, you can use these mock credentials to explore the app:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Role                   | Email             | Password     |
+| ---------------------- | ----------------- | ------------ |
+| **Organizer (Admin)**  | `admin@pwk.com`   | `admin`      |
+| **Participant (User)** | _Any valid email_ | _Any string_ |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📦 Getting Started
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. **Install Dependencies**:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+   ```bash
+   npm install
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+2. **Run Development Server**:
+
+   ```bash
+   npm run dev
+   ```
+
+3. **Build for Production**:
+   ```bash
+   npm run build
+   ```
+
+## 📂 Project Structure
+
+- `src/components/transactions`: Transaction-specific UI components.
+- `src/pages`: Main application pages (Home, Checkout, PaymentProof, etc.).
+- `src/store`: Zustand state management (Auth, etc.).
+- `src/types`: TypeScript interface definitions.
