@@ -15,7 +15,6 @@ const PaymentProofUpload: React.FC<PaymentProofUploadProps> = ({
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,16 +31,7 @@ const PaymentProofUpload: React.FC<PaymentProofUploadProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedFile) {
-      // Simulate upload progress
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        setUploadProgress(progress);
-        if (progress >= 100) {
-          clearInterval(interval);
-          onUpload(selectedFile);
-        }
-      }, 200);
+      onUpload(selectedFile);
     }
   };
 
@@ -86,20 +76,7 @@ const PaymentProofUpload: React.FC<PaymentProofUploadProps> = ({
           )}
         </div>
 
-        {uploadProgress > 0 && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm font-bold text-slate-600">
-              <span>Uploading...</span>
-              <span>{uploadProgress}%</span>
-            </div>
-            <div className="w-full bg-slate-100 rounded-full h-2.5">
-              <div 
-                className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" 
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
-            </div>
-          </div>
-        )}
+
 
         <Button
           type="submit"

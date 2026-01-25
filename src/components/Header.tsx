@@ -7,7 +7,7 @@ export const Header = () => {
     return (
         <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+                <Link to="/" className="text-2xl font-bold bg-linear-to-r from-primary to-orange-600 bg-clip-text text-transparent">
                     Ticketon
                 </Link>
                 
@@ -27,7 +27,7 @@ export const Header = () => {
                     <Link to="/login">
                         <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Sign In</Button>
                     </Link>
-                    <Link to="/admin">
+                    <Link to="/create-event">
                         <Button size="sm">Create Event</Button>
                     </Link>
                 </div>

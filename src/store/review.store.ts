@@ -1,42 +1,66 @@
 import { create } from 'zustand';
 import type { Review, Organizer } from '../types';
-import { MOCK_REVIEWS, MOCK_ORGANIZERS } from '../utils/mockData';
+import axiosInstance from '../lib/axiosInstance';
 
 interface ReviewState {
   reviews: Review[];
   organizers: Organizer[];
-  addReview: (review: Omit<Review, 'id' | 'createdAt'>) => void;
-  getReviewsByEventId: (eventId: string) => Review[];
-  getReviewsByOrganizerName: (organizerName: string, events: any[]) => Review[];
-  getOrganizerByName: (name: string) => Organizer | undefined;
+  isLoading: boolean;
+  addReview: (reviewData: { eventId: string; rating: number; comment?: string }) => Promise<void>;
+  fetchReviewsByEventId: (eventId: string) => Promise<void>;
+  fetchReviewsByOrganizerId: (organizerId: string) => Promise<void>;
+  fetchOrganizerByName: (name: string) => Promise<Organizer | undefined>;
   getAverageRatingForEvent: (eventId: string) => number;
 }
 
 export const useReviewStore = create<ReviewState>((set, get) => ({
-  reviews: MOCK_REVIEWS,
-  organizers: MOCK_ORGANIZERS,
+  reviews: [],
+  organizers: [],
+  isLoading: false,
   
-  addReview: (reviewData) => {
-    const newReview: Review = {
-      ...reviewData,
-      id: `r${get().reviews.length + 1}`,
-      createdAt: new Date().toISOString(),
-    };
-    set((state) => ({ reviews: [newReview, ...state.reviews] }));
+  addReview: async (reviewData) => {
+    set({ isLoading: true });
+    try {
+      await axiosInstance.post('/reviews', reviewData);
+      await get().fetchReviewsByEventId(reviewData.eventId);
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
-  getReviewsByEventId: (eventId) => {
-    return get().reviews.filter((review) => review.eventId === eventId);
+  fetchReviewsByEventId: async (eventId) => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.get(`/reviews/events/${eventId}`);
+      set({ reviews: response.data });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
-  getReviewsByOrganizerName: (organizerName, events) => {
-    const organizerEvents = events.filter(e => e.organizer === organizerName);
-    const eventIds = organizerEvents.map(e => e.id);
-    return get().reviews.filter(review => eventIds.includes(review.eventId));
+  fetchReviewsByOrganizerId: async (organizerId) => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.get(`/reviews/organizers/${organizerId}`);
+      set({ reviews: response.data });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
-  getOrganizerByName: (name) => {
-    return get().organizers.find(org => org.name === name);
+  fetchOrganizerByName: async (name) => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.get(`/organizers/name/${encodeURIComponent(name)}`);
+      set((state) => ({ 
+        organizers: [...state.organizers.filter(org => org.name !== name), response.data] 
+      }));
+      return response.data;
+    } catch {
+      return undefined;
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
   getAverageRatingForEvent: (eventId) => {

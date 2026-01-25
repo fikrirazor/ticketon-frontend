@@ -2,24 +2,39 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import PaymentProofUpload from '../components/transactions/PaymentProofUpload';
+import { useTransactionStore } from '../store/transaction.store';
+import { getErrorMessage } from '../lib/axiosInstance';
+import { toast } from 'react-hot-toast';
+import type { Transaction } from '../types';
 
 const PaymentProofPage: React.FC = () => {
   const { transactionId } = useParams<{ transactionId: string }>();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { getTransactionById, uploadPaymentProof, isLoading } = useTransactionStore();
+  const [transaction, setTransaction] = useState<Transaction | null>(null);
 
-  // 2 hours from now for mock data
-  const expiryDate = new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString();
+  React.useEffect(() => {
+    const loadTransaction = async () => {
+      if (!transactionId) return;
+      try {
+        const data = await getTransactionById(transactionId);
+        setTransaction(data);
+      } catch (err) {
+        toast.error(getErrorMessage(err));
+      }
+    };
+    loadTransaction();
+  }, [transactionId, getTransactionById]);
 
-  const handleUpload = (file: File) => {
-    setIsLoading(true);
-    console.log('Uploading file:', file.name);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+  const handleUpload = async (file: File) => {
+    if (!transactionId) return;
+    try {
+      await uploadPaymentProof(transactionId, file);
+      toast.success('Payment proof uploaded successfully!');
       navigate(`/transaction/${transactionId}`);
-    }, 2000);
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    }
   };
 
   return (
@@ -37,7 +52,7 @@ const PaymentProofPage: React.FC = () => {
         </header>
 
         <PaymentProofUpload 
-          expiryDate={expiryDate} 
+          expiryDate={transaction?.expiresAt || new Date().toISOString()} 
           onUpload={handleUpload}
           isLoading={isLoading}
         />

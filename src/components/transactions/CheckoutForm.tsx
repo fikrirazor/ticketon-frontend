@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/Button';
+import { useTransactionStore } from '../../store/transaction.store';
+import { toast } from 'react-hot-toast';
 
 interface CheckoutFormProps {
+  eventId: string;
   eventPrice: number;
   availablePoints: number;
   onSubmit: (data: CheckoutData) => void;
@@ -13,19 +16,44 @@ export interface CheckoutData {
   usePoints: boolean;
   pointsToUse: number;
   voucherCode: string;
+  voucherId?: string;
+  discountPercent?: number;
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({
+  eventId,
   availablePoints,
   onSubmit,
   isLoading = false
 }) => {
+  const { validateVoucher } = useTransactionStore();
   const [quantity, setQuantity] = useState(1);
   const [usePoints, setUsePoints] = useState(false);
   const [voucherCode, setVoucherCode] = useState('');
+  const [validatedVoucher, setValidatedVoucher] = useState<{
+    id: string;
+    code: string;
+    discountPercent?: number;
+  } | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
-  const handleIncrement = () => setQuantity(prev => prev + 1);
-  const handleDecrement = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  const handleIncrement = () => setQuantity((prev: number) => prev + 1);
+  const handleDecrement = () => setQuantity((prev: number) => (prev > 1 ? prev - 1 : 1));
+
+  const handleApplyVoucher = async () => {
+    if (!voucherCode) return;
+    setIsValidating(true);
+    try {
+      const data = await validateVoucher(voucherCode, eventId);
+      setValidatedVoucher(data.voucher);
+      toast.success('Voucher applied!');
+    } catch (err: any) {
+      setValidatedVoucher(null);
+      toast.error(err.response?.data?.message || 'Invalid voucher');
+    } finally {
+      setIsValidating(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +61,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
       quantity,
       usePoints,
       pointsToUse: usePoints ? availablePoints : 0,
-      voucherCode
+      voucherCode: validatedVoucher ? validatedVoucher.code : '',
+      voucherId: validatedVoucher ? validatedVoucher.id : undefined,
+      discountPercent: validatedVoucher ? validatedVoucher.discountPercent : 0
     });
   };
 
@@ -100,11 +130,18 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
           />
           <button
             type="button"
-            className="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors"
+            onClick={handleApplyVoucher}
+            disabled={isValidating || !voucherCode}
+            className="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors disabled:opacity-50"
           >
-            Apply
+            {isValidating ? '...' : 'Apply'}
           </button>
         </div>
+        {validatedVoucher && (
+           <p className="text-xs text-green-600 font-bold">
+             ✓ Applied: {validatedVoucher.discountPercent}% OFF
+           </p>
+        )}
       </div>
 
       {/* Payment Method Selector (Simplified for UI) */}

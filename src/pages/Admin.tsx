@@ -9,15 +9,21 @@ export const Admin = () => {
     const { events, updateEventPrice } = useEventStore();
     const [editingId, setEditingId] = useState<string | null>(null);
     const [tempPrice, setTempPrice] = useState<number>(0);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const startEditing = (id: string, currentPrice: number) => {
         setEditingId(id);
         setTempPrice(currentPrice);
     };
 
-    const savePrice = (id: string) => {
-        updateEventPrice(id, tempPrice);
-        setEditingId(null);
+    const savePrice = async (id: string) => {
+        setIsUpdating(true);
+        try {
+            await updateEventPrice(id, tempPrice);
+            setEditingId(null);
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     return (
@@ -27,8 +33,17 @@ export const Admin = () => {
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back to Events
                 </Link>
-                <h1 className="text-2xl font-bold text-gray-900">Event Management</h1>
-                <p className="text-gray-500">Manage event prices and details.</p>
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Event Management</h1>
+                        <p className="text-gray-500">Manage event prices and details.</p>
+                    </div>
+                    <Link to="/create-event">
+                        <Button className="bg-primary hover:bg-orange-600">
+                            + Create New Event
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -48,7 +63,7 @@ export const Admin = () => {
                                 <tr key={event.id} className="hover:bg-gray-50/50">
                                     <td className="px-6 py-4 font-medium text-gray-900">{event.title}</td>
                                     <td className="px-6 py-4 text-gray-500">{event.organizer}</td>
-                                    <td className="px-6 py-4 text-gray-500">{new Date(event.date).toLocaleDateString()}</td>
+                                    <td className="px-6 py-4 text-gray-500">{new Date(event.startDate).toLocaleDateString()}</td>
                                     <td className="px-6 py-4">
                                         {editingId === event.id ? (
                                             <input
@@ -66,8 +81,8 @@ export const Admin = () => {
                                     <td className="px-6 py-4">
                                         {editingId === event.id ? (
                                             <div className="flex gap-2">
-                                                <Button size="sm" onClick={() => savePrice(event.id)} className="bg-green-600 hover:bg-green-700">
-                                                    <Save className="w-3 h-3 mr-1" /> Save
+                                                <Button size="sm" onClick={() => savePrice(event.id)} disabled={isUpdating} className="bg-green-600 hover:bg-green-700">
+                                                    {isUpdating ? '...' : <Save className="w-3 h-3 mr-1" />} Save
                                                 </Button>
                                                 <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>
                                                     Cancel

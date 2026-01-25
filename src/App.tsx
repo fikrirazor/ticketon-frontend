@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/home';
 import { EventDetail } from './pages/EventDetail';
@@ -10,10 +11,20 @@ import CheckoutPage from './pages/Checkout';
 import PaymentProofPage from './pages/PaymentProof';
 import TransactionDetailPage from './pages/TransactionDetailPage';
 import { OrganizerProfile } from './pages/OrganizerProfile';
+import { useAuthStore } from './store/auth.store';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
+  const getMe = useAuthStore((state) => state.getMe);
+
+  React.useEffect(() => {
+    getMe();
+  }, [getMe]);
+
   return (
-    <Router>
+    <>
+      <Toaster position="top-right" />
+      <Router>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/event/:id" element={<EventDetail />} />
@@ -25,7 +36,7 @@ function App() {
         <Route
           path="/checkout"
           element={
-            <ProtectedRoute allowedRoles={['participant', 'organizer']}>
+            <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
               <CheckoutPage />
             </ProtectedRoute>
           }
@@ -33,7 +44,7 @@ function App() {
         <Route
           path="/payment-proof/:transactionId"
           element={
-            <ProtectedRoute allowedRoles={['participant', 'organizer']}>
+            <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
               <PaymentProofPage />
             </ProtectedRoute>
           }
@@ -41,7 +52,7 @@ function App() {
         <Route
           path="/transaction/:transactionId"
           element={
-            <ProtectedRoute allowedRoles={['participant', 'organizer']}>
+            <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
               <TransactionDetailPage />
             </ProtectedRoute>
           }
@@ -50,7 +61,7 @@ function App() {
         <Route
           path="/create-event"
           element={
-            <ProtectedRoute allowedRoles={['organizer']}>
+            <ProtectedRoute allowedRoles={['ORGANIZER']}>
               <CreateEvent />
             </ProtectedRoute>
           }
@@ -58,13 +69,14 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute allowedRoles={['organizer']}>
+            <ProtectedRoute allowedRoles={['ORGANIZER']}>
               <Admin />
             </ProtectedRoute>
           }
         />
       </Routes>
     </Router>
+    </>
   );
 }
 

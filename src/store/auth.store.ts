@@ -1,7 +1,8 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import axiosInstance from "../lib/axiosInstance";
 
-export type UserRole = 'organizer' | 'participant';
+export type UserRole = "ORGANIZER" | "CUSTOMER";
 
 interface User {
   id: string;
@@ -14,8 +15,11 @@ interface User {
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (user: User) => void;
+  isLoading: boolean;
+  login: (credentials: Record<string, string>) => Promise<void>;
+  register: (userData: Record<string, any>) => Promise<void>;
   logout: () => void;
+  getMe: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -23,11 +27,65 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       isAuthenticated: false,
-      login: (user) => set({ user, isAuthenticated: true }),
-      logout: () => set({ user: null, isAuthenticated: false }),
+      isLoading: false,
+
+      login: async (credentials) => {
+        set({ isLoading: true });
+        try {
+          const response = await axiosInstance.post(
+            "/auth/signin",
+            credentials,
+          );
+          const { user, token } = response.data.data;
+
+          localStorage.setItem("token", token);
+          set({ user, isAuthenticated: true });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      register: async (userData) => {
+        set({ isLoading: true });
+        try {
+          const response = await axiosInstance.post("/auth/signup", userData);
+          const { user, token } = response.data.data;
+
+          localStorage.setItem("token", token);
+          set({ user, isAuthenticated: true });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      logout: () => {
+        localStorage.removeItem("token");
+        set({ user: null, isAuthenticated: false });
+      },
+
+      getMe: async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        set({ isLoading: true });
+        try {
+          const response = await axiosInstance.get("/users/profile");
+          // Backend returns { success: true, message: "...", data: { user } }
+          set({ user: response.data.data.user, isAuthenticated: true });
+        } catch {
+          localStorage.removeItem("token");
+          set({ user: null, isAuthenticated: false });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
     }),
     {
-      name: 'auth-storage',
-    }
-  )
+      name: "auth-storage",
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    },
+  ),
 );

@@ -6,6 +6,8 @@ import type { EventFormValues, VoucherValue } from '../components/events/EventFo
 import { Header } from '../components/Header';
 import { ArrowLeft, MapPin, Calendar, Users, Tag, X } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { useEventStore } from '../store/event.store';
+import { getErrorMessage } from '../lib/axiosInstance';
 
 export const CreateEvent: React.FC = () => {
   const navigate = useNavigate();
@@ -13,17 +15,43 @@ export const CreateEvent: React.FC = () => {
   const [previewData, setPreviewData] = useState<EventFormValues | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
+  const { createEvent, createVoucher } = useEventStore();
+
   const handleSubmit = async (values: EventFormValues) => {
     setIsLoading(true);
     try {
-      console.log('Submitting Event:', values);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const formData = new FormData();
+      Object.keys(values).forEach(key => {
+        if (key === 'vouchers') {
+            // Vouchers are created separately
+        } else if (key === 'image' && values.image) {
+            formData.append(key, values.image);
+        } else if (key === 'isPromotion') {
+             formData.append(key, String(values.isPromotion));
+        } else {
+            formData.append(key, String(values[key as keyof EventFormValues]));
+        }
+      });
+
+      const newEvent = await createEvent(formData);
+      
+      // Create vouchers if enabled and present
+      if (values.isPromotion && values.vouchers && values.vouchers.length > 0) {
+        for (const voucher of values.vouchers) {
+          await createVoucher(newEvent.id, {
+            code: voucher.code,
+            discountPercent: voucher.amount,
+            maxUsage: 100, // Default for now
+            startDate: values.startDate,
+            endDate: voucher.expiryDate
+          });
+        }
+      }
       
       toast.success('Event created successfully!');
       setTimeout(() => navigate('/admin'), 1500);
-    } catch {
-      toast.error('Failed to create event. Please try again.');
+    } catch (err) {
+      toast.error(getErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -133,7 +161,7 @@ export const CreateEvent: React.FC = () => {
                           <Users className="w-5 h-5" />
                           <span>Total Capacity</span>
                         </div>
-                        <span className="font-bold text-gray-900">{previewData.totalSeats || '0'} Seats</span>
+                        <span className="font-bold text-gray-900">{previewData.seatTotal || '0'} Seats</span>
                       </div>
                       {previewData.isPromotion && (
                         <div className="space-y-2">

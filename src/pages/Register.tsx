@@ -1,23 +1,42 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { User, Mail, Lock, ArrowRight } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, UserCircle } from 'lucide-react';
+import { useAuthStore } from '../store/auth.store';
+import { getErrorMessage } from '../lib/axiosInstance';
 
-export const Register = () => {
+export const Register: React.FC = () => {
+    const navigate = useNavigate();
+    const register = useAuthStore((state) => state.register);
+    const isLoading = useAuthStore((state) => state.isLoading);
+    const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
+        confirmPassword: '',
+        role: 'CUSTOMER' as 'CUSTOMER' | 'ORGANIZER',
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Register Data:', formData);
-        alert('Registration Successful! (Simulation)');
+        setError(null);
+        
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
+        try {
+            await register(formData);
+            navigate('/');
+        } catch (err) {
+            setError(getErrorMessage(err));
+        }
     };
 
     return (
@@ -33,6 +52,12 @@ export const Register = () => {
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
                     <p className="text-gray-500 text-sm">Join PwdkEvent and start your journey</p>
                 </div>
+
+                {error && (
+                    <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl text-center font-medium animate-in fade-in slide-in-from-top-2">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Name Input */}
@@ -92,16 +117,55 @@ export const Register = () => {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/20 rounded-xl group">
-                        Sign Up
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    {/* Confirm Password Input */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 ml-1">Confirm Password</label>
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                                <Lock className="w-5 h-5" />
+                            </div>
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                placeholder="••••••••"
+                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* Role Selection */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700 ml-1">I want to be an</label>
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                                <UserCircle className="w-5 h-5" />
+                            </div>
+                            <select
+                                name="role"
+                                value={formData.role}
+                                onChange={handleChange}
+                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none"
+                                required
+                            >
+                                <option value="CUSTOMER">Participant (Buying Tickets)</option>
+                                <option value="ORGANIZER">Organizer (Creating Events)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <Button type="submit" disabled={isLoading} className="w-full h-12 text-base bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/20 rounded-xl group">
+                        {isLoading ? 'Creating Account...' : 'Sign Up'}
+                        {!isLoading && <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />}
                     </Button>
                 </form>
 
                 <div className="mt-8 text-center">
                     <p className="text-sm text-gray-500">
                         Already have an account?{' '}
-                        <Link to="/admin" className="font-semibold text-primary hover:text-orange-700 transition-colors">
+                        <Link to="/login" className="font-semibold text-primary hover:text-orange-700 transition-colors">
                             Log in
                         </Link>
                     </p>

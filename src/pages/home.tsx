@@ -7,12 +7,11 @@ import { FilterPanel } from '../components/FilterPanel';
 import { Telescope } from 'lucide-react';
 
 export const Home = () => {
-    const { filteredEvents, applyFilters } = useEventStore();
+    const { events, fetchEvents, isLoading } = useEventStore();
 
-    // Ensure we start with correct filtered state on mount or when returning
     useEffect(() => {
-        applyFilters();
-    }, [applyFilters]);
+        fetchEvents();
+    }, [fetchEvents]);
 
     return (
         <Layout>
@@ -38,9 +37,15 @@ export const Home = () => {
                 </div>
 
                 {/* Event Grid */}
-                {filteredEvents.length > 0 ? (
+                {isLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="bg-white rounded-2xl h-80 animate-pulse border border-gray-100 shadow-sm" />
+                        ))}
+                    </div>
+                ) : events.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {filteredEvents.map((event) => (
+                        {events.map((event) => (
                             <EventCard key={event.id} event={event} />
                         ))}
                     </div>

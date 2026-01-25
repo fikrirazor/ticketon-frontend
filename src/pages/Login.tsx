@@ -3,10 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../store/auth.store';
+import { getErrorMessage } from '../lib/axiosInstance';
 
-export const Login = () => {
+export const Login: React.FC = () => {
     const navigate = useNavigate();
     const login = useAuthStore((state) => state.login);
+    const isLoading = useAuthStore((state) => state.isLoading);
+    const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -16,18 +19,14 @@ export const Login = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Login Data:', formData);
-        
-        // Simulate login based on credentials provided in screenshot/history
-        if (formData.email === 'admin@pwk.com' && formData.password === 'admin') {
-            login({ id: '1', name: 'Admin', email: formData.email, role: 'organizer' });
-            navigate('/admin');
-        } else {
-            login({ id: '2', name: 'User', email: formData.email, role: 'participant' });
-            alert('Login Successful as Participant! (Redirecting to Home)');
+        setError(null);
+        try {
+            await login(formData);
             navigate('/');
+        } catch (err) {
+            setError(getErrorMessage(err));
         }
     };
 
@@ -44,6 +43,12 @@ export const Login = () => {
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
                     <p className="text-gray-500 text-sm">Sign in to continue to PwdkEvent</p>
                 </div>
+
+                {error && (
+                    <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl text-center font-medium animate-in fade-in slide-in-from-top-2">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Email Input */}
@@ -87,9 +92,9 @@ export const Login = () => {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full h-12 text-base bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/20 rounded-xl group">
-                        Sign In
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <Button type="submit" disabled={isLoading} className="w-full h-12 text-base bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/20 rounded-xl group">
+                        {isLoading ? 'Signing In...' : 'Sign In'}
+                        {!isLoading && <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />}
                     </Button>
                 </form>
 

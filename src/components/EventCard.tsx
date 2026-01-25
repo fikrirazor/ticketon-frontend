@@ -3,13 +3,14 @@ import { MapPin, Calendar, Users } from 'lucide-react';
 import type { Event } from '../types';
 import { Button } from './ui/Button';
 import { Link } from 'react-router-dom';
+import { getFullImageUrl } from '../lib/axiosInstance';
 
 interface EventCardProps {
   event: Event;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const date = new Date(event.date).toLocaleDateString('en-ID', {
+  const date = new Date(event.startDate).toLocaleDateString('en-ID', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -20,7 +21,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
       <div className="relative h-48 w-full shrink-0 overflow-hidden">
         <img
-          src={event.imageUrl}
+          src={getFullImageUrl(event.imageUrl)}
           alt={event.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -35,7 +36,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="p-5 flex flex-col flex-grow">
         <div className="mb-2">
           <span className="text-xs font-semibold text-primary uppercase tracking-wide">
-            {event.organizer}
+            {event.organizer.name}
           </span>
         </div>
 
@@ -59,7 +60,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Users className="w-4 h-4 text-gray-400" />
             <span>
-              <span className="font-semibold text-gray-900">{event.seatsLeft}</span> / {event.seatsTotal} seats left
+              <span className="font-semibold text-gray-900">{event.seatLeft}</span> / {event.seatTotal} seats left
             </span>
           </div>
         </div>

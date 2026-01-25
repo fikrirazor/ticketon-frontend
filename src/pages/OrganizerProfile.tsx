@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { useReviewStore } from '../store/review.store';
-import { useEventStore } from '../store/event.store';
+import type { Organizer } from '../types';
 import { ReviewList } from '../components/reviews/ReviewList';
 import { RatingDistribution } from '../components/reviews/RatingDistribution';
 import { Star, Calendar, ArrowLeft, Award, Globe } from 'lucide-react';
@@ -12,11 +12,38 @@ export const OrganizerProfile: React.FC = () => {
   const { name } = useParams<{ name: string }>();
   const decodedName = decodeURIComponent(name || '');
   
-  const { getOrganizerByName, getReviewsByOrganizerName } = useReviewStore();
-  const { events } = useEventStore();
+  const { fetchOrganizerByName, fetchReviewsByOrganizerId } = useReviewStore();
+  const [organizer, setOrganizer] = React.useState<Organizer | null>(null);
+  const [loading, setLoading] = React.useState(true);
   
-  const organizer = getOrganizerByName(decodedName);
-  const reviews = getReviewsByOrganizerName(decodedName, events);
+  React.useEffect(() => {
+    const loadData = async () => {
+        if (!decodedName) {
+            setLoading(false);
+            return;
+        }
+        const org = await fetchOrganizerByName(decodedName);
+        if (org) {
+            setOrganizer(org);
+            await fetchReviewsByOrganizerId(org.id);
+        }
+        setLoading(false);
+    };
+    loadData();
+  }, [decodedName, fetchOrganizerByName, fetchReviewsByOrganizerId]);
+
+  const reviews = useReviewStore((state) => state.reviews);
+
+  if (loading) {
+    return (
+        <Layout>
+          <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-gray-500 font-medium">Loading organizer profile...</p>
+          </div>
+        </Layout>
+      );
+  }
 
   if (!organizer) {
     return (
@@ -44,8 +71,8 @@ export const OrganizerProfile: React.FC = () => {
         </div>
 
         {/* Header Section */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden mb-12">
-            <div className="h-48 bg-gradient-to-r from-primary/80 to-secondary/80 relative">
+        <div className="bg-white rounded-4xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden mb-12">
+            <div className="h-48 bg-linear-to-r from-primary/80 to-secondary/80 relative">
                 <div className="absolute -bottom-12 left-8 p-1 bg-white rounded-3xl shadow-lg">
                     <img 
                         src={organizer.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(organizer.name)}&background=random`} 
@@ -113,7 +140,7 @@ export const OrganizerProfile: React.FC = () => {
           <div className="space-y-8">
             <RatingDistribution reviews={reviews} />
             
-            <div className="bg-slate-900 text-white p-8 rounded-[2rem] shadow-xl shadow-slate-900/20 space-y-6">
+            <div className="bg-slate-900 text-white p-8 rounded-4xl shadow-xl shadow-slate-900/20 space-y-6">
                 <div className="space-y-1">
                     <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Contact Inquiry</h3>
                     <p className="text-xl font-black italic">Interested in collaborating?</p>

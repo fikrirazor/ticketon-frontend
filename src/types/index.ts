@@ -2,21 +2,27 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  date: string; // ISO string for easier serialization
+  startDate: string;
+  endDate: string;
   location: string;
   price: number;
-  seatsTotal: number;
-  seatsLeft: number;
+  seatTotal: number;
+  seatLeft: number;
   category: string;
-  organizer: string;
+  organizer: {
+    id: string;
+    name: string;
+    email: string;
+  };
   imageUrl: string;
+  isPromoted?: boolean;
 }
 
 export type EventCategory = 'Music' | 'Technology' | 'Art' | 'Business' | 'Sports' | 'All';
 
 export type TransactionStatus =
-  | 'WAITING_FOR_PAYMENT'
-  | 'WAITING_FOR_ADMIN_CONFIRMATION'
+  | 'WAITING_PAYMENT'
+  | 'WAITING_ADMIN'
   | 'DONE'
   | 'REJECTED'
   | 'EXPIRED'
@@ -28,12 +34,14 @@ export interface Transaction {
   userId: string;
   quantity: number;
   totalPrice: number;
+  finalPrice: number;
   pointsUsed: number;
-  voucherCode?: string;
+  voucherId?: string;
   status: TransactionStatus;
   createdAt: string;
   expiresAt: string;
   paymentProofUrl?: string;
+  event?: Event;
 }
 
 export interface Voucher {
