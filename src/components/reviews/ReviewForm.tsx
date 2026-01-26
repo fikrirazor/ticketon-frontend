@@ -3,7 +3,6 @@ import { Star } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
 import { useReviewStore } from '../../store/review.store';
-import { useAuthStore } from '../../store/auth.store';
 
 interface ReviewFormProps {
   eventId: string;
@@ -16,7 +15,6 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ eventId, onSuccess }) =>
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { user } = useAuthStore();
   const { addReview } = useReviewStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,9 +27,6 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ eventId, onSuccess }) =>
     
     addReview({
       eventId,
-      userId: user?.id || 'anonymous',
-      userName: user?.name || 'Anonymous User',
-      userAvatar: user?.avatarUrl,
       rating,
       comment,
     });

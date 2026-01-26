@@ -31,9 +31,14 @@ const TransactionDetailPage: React.FC = () => {
         
         if (tx && tx.eventId) {
             const ev = await getEventById(tx.eventId);
-            setEvent(ev || null);
+            if (ev) {
+              setEvent(ev);
+            } else {
+              console.warn('Event not found for eventId:', tx.eventId);
+            }
         }
       } catch (err) {
+        console.error('Error loading transaction:', err);
         setError(getErrorMessage(err));
       }
     };
@@ -136,13 +141,29 @@ const TransactionDetailPage: React.FC = () => {
 
           {/* Details Column */}
           <div className="space-y-6">
-            {event && (
+            {event ? (
               <PriceSummary 
-                unitPrice={event.price}
-                quantity={transaction.quantity}
-                pointsDiscount={transaction.pointsUsed}
-                voucherDiscount={transaction.totalPrice - transaction.finalPrice - transaction.pointsUsed} 
+                unitPrice={event.price || 0}
+                quantity={transaction.quantity || 1}
+                pointsDiscount={transaction.pointsUsed || 0}
+                voucherDiscount={Math.max(0, (transaction.totalPrice || 0) - (transaction.finalPrice || 0) - (transaction.pointsUsed || 0))} 
               />
+            ) : (
+              <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h3 className="text-lg font-semibold mb-4 border-b pb-2">Order Summary</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-slate-600">
+                    <span>Total Price</span>
+                    <span className="font-bold">
+                      {new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0
+                      }).format(transaction.finalPrice || 0)}
+                    </span>
+                  </div>
+                </div>
+              </div>
             )}
 
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">

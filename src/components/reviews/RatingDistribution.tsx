@@ -6,9 +6,10 @@ interface RatingDistributionProps {
 }
 
 export const RatingDistribution: React.FC<RatingDistributionProps> = ({ reviews }) => {
-  const totalReviews = reviews.length;
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  const totalReviews = safeReviews.length;
   const distribution = [5, 4, 3, 2, 1].map((rating) => {
-    const count = reviews.filter((r) => r.rating === rating).length;
+    const count = safeReviews.filter((r) => r.rating === rating).length;
     const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
     return { rating, count, percentage };
   });

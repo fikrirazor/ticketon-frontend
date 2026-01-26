@@ -41,15 +41,26 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const handleDecrement = () => setQuantity((prev: number) => (prev > 1 ? prev - 1 : 1));
 
   const handleApplyVoucher = async () => {
-    if (!voucherCode) return;
+    if (!voucherCode) {
+      toast.error('Please enter a voucher code');
+      return;
+    }
     setIsValidating(true);
     try {
+      console.log('Validating voucher:', { voucherCode, eventId });
       const data = await validateVoucher(voucherCode, eventId);
+      console.log('Voucher validation response:', data);
       setValidatedVoucher(data.voucher);
       toast.success('Voucher applied!');
     } catch (err: any) {
+      console.error('Voucher validation error:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      });
       setValidatedVoucher(null);
-      toast.error(err.response?.data?.message || 'Invalid voucher');
+      const errorMsg = err.response?.data?.message || err.message || 'Invalid voucher';
+      toast.error(errorMsg);
     } finally {
       setIsValidating(false);
     }
@@ -57,6 +68,24 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!eventId) {
+      toast.error('Event ID is missing');
+      return;
+    }
+
+    if (quantity < 1) {
+      toast.error('Please select at least 1 ticket');
+      return;
+    }
+
+    console.log('Form submitted:', {
+      quantity,
+      usePoints,
+      voucherCode,
+      validatedVoucher
+    });
+
     onSubmit({
       quantity,
       usePoints,

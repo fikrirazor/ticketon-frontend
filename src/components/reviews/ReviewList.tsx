@@ -13,9 +13,10 @@ export const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
   const filteredReviews = filterRating === 'all' 
-    ? reviews 
-    : reviews.filter(r => r.rating === filterRating);
+    ? safeReviews
+    : safeReviews.filter(r => r.rating === filterRating);
 
   const totalPages = Math.ceil(filteredReviews.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;

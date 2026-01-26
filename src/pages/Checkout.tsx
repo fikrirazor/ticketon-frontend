@@ -8,7 +8,6 @@ import PriceSummary from '../components/transactions/PriceSummary';
 import { useEventStore } from '../store/event.store';
 import { useTransactionStore } from '../store/transaction.store';
 import { useAuthStore } from '../store/auth.store';
-import { getErrorMessage } from '../lib/axiosInstance';
 import { toast } from 'react-hot-toast';
 import type { Event } from '../types';
 
@@ -24,9 +23,21 @@ const CheckoutPage: React.FC = () => {
 
   React.useEffect(() => {
     const loadEvent = async () => {
-        if (!id) return;
-        const data = await getEventById(id);
-        if (data) setEvent(data);
+        if (!id) {
+          console.warn('No event ID provided in URL');
+          return;
+        }
+        try {
+          const data = await getEventById(id);
+          if (data) {
+            setEvent(data);
+            console.log('Event loaded:', data);
+          } else {
+            console.warn('No event data returned');
+          }
+        } catch (error) {
+          console.error('Error loading event:', error);
+        }
         setAvailablePoints(50000); 
     };
     loadEvent();
@@ -41,28 +52,79 @@ const CheckoutPage: React.FC = () => {
 
   const handleCheckoutSubmit = async (data: CheckoutData) => {
     setCheckoutValues(data);
-    if (!event) return;
+    if (!event) {
+      toast.error('Event not found');
+      return;
+    }
 
     try {
-      const transaction = await createTransaction({
+      const transactionPayload = {
         eventId: event.id,
         pointsUsed: data.usePoints ? availablePoints : 0,
         voucherId: data.voucherId,
-        items: [{ quantity: data.quantity }]
-      });
+        items: [{
+          eventId: event.id,
+          quantity: data.quantity,
+          price: event.price
+        }]
+      };
+
+      console.log('Creating transaction with:', transactionPayload);
       
+      const transaction = await createTransaction(transactionPayload);
+      
+      console.log('Transaction created:', transaction);
       toast.success('Transaction created! Please complete payment.');
       navigate(`/payment-proof/${transaction.id}`);
-    } catch (err) {
-      toast.error(getErrorMessage(err));
+    } catch (err: any) {
+      console.error('Checkout error details:', {
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        message: err.response?.data?.message,
+        errors: err.response?.data?.errors,
+        fullData: err.response?.data,
+        requestData: {
+          eventId: event.id,
+          pointsUsed: data.usePoints ? availablePoints : 0,
+          voucherId: data.voucherId,
+          items: [{
+            eventId: event.id,
+            quantity: data.quantity,
+            price: event.price
+          }]
+        }
+      });
+      
+      // Build error message from validation errors
+      let errorMsg = err.response?.data?.message || 'Failed to create transaction';
+      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+        const validationErrors = err.response.data.errors.map((e: any) => e.message || e).join(', ');
+        errorMsg = `Validation Error: ${validationErrors}`;
+      }
+      
+      toast.error(errorMsg);
     }
   };
+
+  if (!event && isEventsLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading event details...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!event && !isEventsLoading) {
     return (
         <Layout>
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
             <h2 className="text-2xl font-black text-slate-900 uppercase">Event Not Found</h2>
+            <p className="text-gray-500 mt-2">Event ID: {id}</p>
             <Button onClick={() => navigate('/')} className="mt-8">Back to Discovery</Button>
           </div>
         </Layout>

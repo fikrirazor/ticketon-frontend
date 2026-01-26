@@ -21,8 +21,13 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   addReview: async (reviewData) => {
     set({ isLoading: true });
     try {
-      await axiosInstance.post('/reviews', reviewData);
+      await axiosInstance.post(`/reviews/events/${reviewData.eventId}`, {
+        rating: reviewData.rating,
+        comment: reviewData.comment
+      });
       await get().fetchReviewsByEventId(reviewData.eventId);
+    } catch (error) {
+      console.error('Failed to add review:', error);
     } finally {
       set({ isLoading: false });
     }
@@ -32,7 +37,11 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await axiosInstance.get(`/reviews/events/${eventId}`);
-      set({ reviews: response.data });
+      const reviewsData = Array.isArray(response.data) ? response.data : response.data?.data || [];
+      set({ reviews: Array.isArray(reviewsData) ? reviewsData : [] });
+    } catch (error) {
+      console.error('Failed to fetch event reviews:', error);
+      set({ reviews: [] });
     } finally {
       set({ isLoading: false });
     }
@@ -42,29 +51,28 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await axiosInstance.get(`/reviews/organizers/${organizerId}`);
-      set({ reviews: response.data });
+      const reviewsData = Array.isArray(response.data) ? response.data : response.data?.data || [];
+      set({ reviews: Array.isArray(reviewsData) ? reviewsData : [] });
+    } catch (error) {
+      console.error('Failed to fetch organizer reviews:', error);
+      set({ reviews: [] });
     } finally {
       set({ isLoading: false });
     }
   },
 
-  fetchOrganizerByName: async (name) => {
-    set({ isLoading: true });
-    try {
-      const response = await axiosInstance.get(`/organizers/name/${encodeURIComponent(name)}`);
-      set((state) => ({ 
-        organizers: [...state.organizers.filter(org => org.name !== name), response.data] 
-      }));
-      return response.data;
-    } catch {
-      return undefined;
-    } finally {
-      set({ isLoading: false });
-    }
+  fetchOrganizerByName: async () => {
+    // TODO: Endpoint /organizers/name/:name tidak ada di routing table
+    // Perlu implementasi di backend atau gunakan alternative API
+    console.warn('fetchOrganizerByName: Endpoint /organizers/name/:name belum tersedia');
+    return undefined;
   },
 
   getAverageRatingForEvent: (eventId) => {
-    const eventReviews = get().reviews.filter(r => r.eventId === eventId);
+    const reviews = get().reviews;
+    if (!Array.isArray(reviews)) return 0;
+    
+    const eventReviews = reviews.filter(r => r.eventId === eventId);
     if (eventReviews.length === 0) return 0;
     const sum = eventReviews.reduce((acc, curr) => acc + curr.rating, 0);
     return Number((sum / eventReviews.length).toFixed(1));

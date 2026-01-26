@@ -1,8 +1,9 @@
 import React from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { useReviewStore } from '../store/review.store';
 import { useEventStore } from '../store/event.store';
+import { useAuthStore } from '../store/auth.store';
 import { getFullImageUrl } from '../lib/axiosInstance';
 import { ReviewList } from '../components/reviews/ReviewList';
 import { RatingDistribution } from '../components/reviews/RatingDistribution';
@@ -25,11 +26,29 @@ import type { Event } from '../types';
 export const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { getEventById, isLoading: isEventsLoading } = useEventStore();
   const { reviews, fetchReviewsByEventId, getAverageRatingForEvent } = useReviewStore();
+  const { isAuthenticated, user } = useAuthStore();
   
   const [event, setEvent] = React.useState<Event | null>(null);
   const [loading, setLoading] = React.useState(true);
+
+  const handleReserveClick = () => {
+    if (!isAuthenticated) {
+      console.warn('User not authenticated, redirecting to login');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+
+    if (!user) {
+      console.warn('User data not loaded, waiting...');
+      return;
+    }
+
+    console.log('User authenticated, navigating to checkout:', { eventId: event?.id, user });
+    navigate(`/checkout/${event?.id}`);
+  };
 
   React.useEffect(() => {
     const loadData = async () => {
@@ -174,12 +193,12 @@ export const EventDetail = () => {
               <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                 <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-tr from-primary to-orange-400 p-1">
                   <div className="w-full h-full rounded-[1.8rem] bg-white flex items-center justify-center text-3xl font-black text-primary">
-                    {event.organizer.name.charAt(0)}
+                    {event.organizer?.name ? event.organizer.name.charAt(0) : '?'}
                   </div>
                 </div>
                 <div className="text-center md:text-left flex-1">
                   <p className="text-primary font-black uppercase tracking-[0.2em] text-xs mb-2">Organized By</p>
-                  <h3 className="text-3xl font-black mb-3">{event.organizer.name}</h3>
+                  <h3 className="text-3xl font-black mb-3">{event.organizer?.name || 'Unknown Organizer'}</h3>
                   <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm font-bold text-slate-300">
                     <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-green-400" /> Verified Organizer</span>
                     <span className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400" /> Top Rated</span>
@@ -237,7 +256,7 @@ export const EventDetail = () => {
                 </div>
 
                 <Button 
-                  onClick={() => navigate('/checkout')} 
+                  onClick={handleReserveClick}
                   disabled={event.seatLeft <= 0}
                   className="w-full py-8 rounded-[2rem] bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-2xl shadow-orange-500/40 text-lg font-black uppercase tracking-widest transition-all hover:-translate-y-1 active:scale-95"
                 >

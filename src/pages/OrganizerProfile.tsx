@@ -49,10 +49,11 @@ export const OrganizerProfile: React.FC = () => {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-          <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase">Organizer Not Found</h2>
-          <p className="text-slate-500 font-medium mb-6">The organizer profile you are looking for does not exist.</p>
+          <ArrowLeft className="w-12 h-12 text-gray-400 mb-4" />
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Profil Organizer Tidak Ditemukan</h2>
+          <p className="text-gray-500 mb-6">Endpoint untuk mengakses profil organizer belum tersedia.</p>
           <Link to="/">
-            <Button>Back to Home</Button>
+            <Button variant="primary">Kembali ke Beranda</Button>
           </Link>
         </div>
       </Layout>

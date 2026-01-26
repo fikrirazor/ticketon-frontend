@@ -65,14 +65,25 @@ export const useAuthStore = create<AuthState>()(
 
       getMe: async () => {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token) {
+          set({ user: null, isAuthenticated: false, isLoading: false });
+          return;
+        }
 
         set({ isLoading: true });
         try {
           const response = await axiosInstance.get("/users/profile");
           // Backend returns { success: true, message: "...", data: { user } }
-          set({ user: response.data.data.user, isAuthenticated: true });
-        } catch {
+          const userData = response.data.data?.user;
+          if (userData) {
+            set({ user: userData, isAuthenticated: true });
+          } else {
+            console.error("No user data in response");
+            localStorage.removeItem("token");
+            set({ user: null, isAuthenticated: false });
+          }
+        } catch (error: any) {
+          console.error("getMe error:", error.response?.status, error.response?.data);
           localStorage.removeItem("token");
           set({ user: null, isAuthenticated: false });
         } finally {
