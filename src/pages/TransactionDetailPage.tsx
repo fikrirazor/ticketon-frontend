@@ -144,7 +144,7 @@ const TransactionDetailPage: React.FC = () => {
             {event ? (
               <PriceSummary 
                 unitPrice={event.price || 0}
-                quantity={transaction.quantity || 1}
+                quantity={transaction.items?.[0]?.quantity || 1}
                 pointsDiscount={transaction.pointsUsed || 0}
                 voucherDiscount={Math.max(0, (transaction.totalPrice || 0) - (transaction.finalPrice || 0) - (transaction.pointsUsed || 0))} 
               />

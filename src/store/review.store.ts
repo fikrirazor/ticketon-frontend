@@ -1,80 +1,115 @@
 import { create } from 'zustand';
-import type { Review, Organizer } from '../types';
-import axiosInstance from '../lib/axiosInstance';
+import type { Review } from '../types';
+import { reviewAPI } from '../lib/api.service';
 
 interface ReviewState {
   reviews: Review[];
-  organizers: Organizer[];
   isLoading: boolean;
-  addReview: (reviewData: { eventId: string; rating: number; comment?: string }) => Promise<void>;
-  fetchReviewsByEventId: (eventId: string) => Promise<void>;
-  fetchReviewsByOrganizerId: (organizerId: string) => Promise<void>;
-  fetchOrganizerByName: (name: string) => Promise<Organizer | undefined>;
+  error: string | null;
+  addReview: (reviewData: { eventId: string; rating: number; comment: string }) => Promise<Review>;
+  fetchReviewsByEventId: (eventId: string, page?: number, limit?: number) => Promise<void>;
+  updateReview: (reviewId: string, data: { rating?: number; comment?: string }) => Promise<Review>;
+  deleteReview: (reviewId: string) => Promise<void>;
+  getEligibleEventsForReview: () => Promise<any>;
   getAverageRatingForEvent: (eventId: string) => number;
+  clearError: () => void;
 }
 
 export const useReviewStore = create<ReviewState>((set, get) => ({
   reviews: [],
-  organizers: [],
   isLoading: false,
+  error: null,
   
   addReview: async (reviewData) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
-      await axiosInstance.post(`/reviews/events/${reviewData.eventId}`, {
+      const review = await reviewAPI.createReview(reviewData.eventId, {
         rating: reviewData.rating,
         comment: reviewData.comment
       });
-      await get().fetchReviewsByEventId(reviewData.eventId);
-    } catch (error) {
-      console.error('Failed to add review:', error);
+      set((state) => ({
+        reviews: [review, ...state.reviews],
+        error: null
+      }));
+      return review;
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to add review';
+      set({ error: errorMsg });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
   },
 
-  fetchReviewsByEventId: async (eventId) => {
-    set({ isLoading: true });
+  fetchReviewsByEventId: async (eventId, page = 1, limit = 10) => {
+    set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.get(`/reviews/events/${eventId}`);
-      const reviewsData = Array.isArray(response.data) ? response.data : response.data?.data || [];
-      set({ reviews: Array.isArray(reviewsData) ? reviewsData : [] });
-    } catch (error) {
-      console.error('Failed to fetch event reviews:', error);
-      set({ reviews: [] });
+      const result = await reviewAPI.getEventReviews(eventId, page, limit);
+      const reviews = result.reviews || [];
+      set({ reviews, error: null });
+    } catch (err: any) {
+      console.error('Failed to fetch event reviews:', err);
+      const errorMsg = err.response?.data?.message || 'Failed to fetch reviews';
+      set({ error: errorMsg, reviews: [] });
     } finally {
       set({ isLoading: false });
     }
   },
 
-  fetchReviewsByOrganizerId: async (organizerId) => {
-    set({ isLoading: true });
+  updateReview: async (reviewId, data) => {
+    set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.get(`/reviews/organizers/${organizerId}`);
-      const reviewsData = Array.isArray(response.data) ? response.data : response.data?.data || [];
-      set({ reviews: Array.isArray(reviewsData) ? reviewsData : [] });
-    } catch (error) {
-      console.error('Failed to fetch organizer reviews:', error);
-      set({ reviews: [] });
+      const updated = await reviewAPI.updateReview(reviewId, data);
+      set((state) => ({
+        reviews: state.reviews.map((r) => r.id === reviewId ? updated : r),
+        error: null
+      }));
+      return updated;
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to update review';
+      set({ error: errorMsg });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
   },
 
-  fetchOrganizerByName: async () => {
-    // TODO: Endpoint /organizers/name/:name tidak ada di routing table
-    // Perlu implementasi di backend atau gunakan alternative API
-    console.warn('fetchOrganizerByName: Endpoint /organizers/name/:name belum tersedia');
-    return undefined;
+  deleteReview: async (reviewId) => {
+    set({ isLoading: true, error: null });
+    try {
+      await reviewAPI.deleteReview(reviewId);
+      set((state) => ({
+        reviews: state.reviews.filter((r) => r.id !== reviewId),
+        error: null
+      }));
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to delete review';
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  getEligibleEventsForReview: async () => {
+    try {
+      return await reviewAPI.getEligibleEventsForReview();
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to fetch eligible events';
+      set({ error: errorMsg });
+      throw err;
+    }
   },
 
   getAverageRatingForEvent: (eventId) => {
     const reviews = get().reviews;
-    if (!Array.isArray(reviews)) return 0;
-    
     const eventReviews = reviews.filter(r => r.eventId === eventId);
     if (eventReviews.length === 0) return 0;
     const sum = eventReviews.reduce((acc, curr) => acc + curr.rating, 0);
     return Number((sum / eventReviews.length).toFixed(1));
-  }
+  },
+
+  clearError: () => set({ error: null }),
 }));
+
+export default useReviewStore;

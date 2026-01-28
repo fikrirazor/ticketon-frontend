@@ -53,10 +53,15 @@ export const getErrorMessage = (error: unknown): string => {
 };
 
 export const getFullImageUrl = (path: string | undefined) => {
-  if (!path) return '';
+  if (!path) {
+    // Return placeholder image if no path
+    return 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500&h=300&fit=crop';
+  }
   if (path.startsWith('http')) return path;
+  // Convert Windows backslashes to forward slashes
+  const normalizedPath = path.replace(/\\/g, '/');
   // Clean up path and base URL to avoid double slashes
   const baseUrl = API_URL.replace('/api', '').replace(/\/$/, '');
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  const cleanPath = normalizedPath.startsWith('/') ? normalizedPath.substring(1) : normalizedPath;
   return `${baseUrl}/${cleanPath}`;
 };

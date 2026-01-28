@@ -32,23 +32,42 @@ export interface Transaction {
   id: string;
   eventId: string;
   userId: string;
-  quantity: number;
+  voucherId?: string;
+  pointsUsed: number;
   totalPrice: number;
   finalPrice: number;
-  pointsUsed: number;
-  voucherId?: string;
   status: TransactionStatus;
-  createdAt: string;
   expiresAt: string;
   paymentProofUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+  items?: Array<{
+    id: string;
+    transactionId: string;
+    quantity: number;
+    price: number;
+  }>;
   event?: Event;
+  voucher?: Voucher;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }
 
 export interface Voucher {
+  id?: string;
   code: string;
-  discountAmount: number;
-  discountType: 'percentage' | 'fixed';
-  expiryDate: string;
+  discountAmount?: number;
+  discountPercent?: number;
+  maxUsage?: number;
+  usedCount?: number;
+  startDate?: string;
+  endDate?: string;
+  eventId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UserPoints {

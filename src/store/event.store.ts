@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 import type { Event } from '../types';
-import axiosInstance from '../lib/axiosInstance';
+import { eventAPI, voucherAPI } from '../lib/api.service';
 
 interface EventState {
   events: Event[];
+  currentEvent: Event | null;
   isLoading: boolean;
+  error: string | null;
   filter: {
     category: string;
     location: string;
@@ -23,16 +25,20 @@ interface EventState {
   fetchEvents: () => Promise<void>;
   getEventById: (id: string) => Promise<Event | undefined>;
   createEvent: (eventData: FormData) => Promise<Event>;
+  updateEvent: (id: string, eventData: Partial<Event>) => Promise<Event>;
+  deleteEvent: (id: string) => Promise<void>;
   createVoucher: (eventId: string, voucherData: any) => Promise<void>;
-  updateEventPrice: (id: string, newPrice: number) => Promise<void>;
+  clearError: () => void;
 }
 
 export const useEventStore = create<EventState>((set, get) => ({
   events: [],
+  currentEvent: null,
   isLoading: false,
+  error: null,
   filter: {
-    category: 'All',
-    location: 'All',
+    category: '',
+    location: '',
     search: '',
     page: 1,
     limit: 10,
@@ -63,40 +69,42 @@ export const useEventStore = create<EventState>((set, get) => ({
   },
 
   fetchEvents: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const { filter } = get();
-      const params = new URLSearchParams();
-      if (filter.search) params.append('search', filter.search);
-      if (filter.category !== 'All') params.append('category', filter.category);
-      if (filter.location !== 'All') params.append('location', filter.location);
-      params.append('page', filter.page.toString());
-      params.append('limit', filter.limit.toString());
-
-      const response = await axiosInstance.get(`/events?${params.toString()}`);
-      const { data, pagination } = response.data;
+      const result = await eventAPI.getAllEvents({
+        search: filter.search || undefined,
+        category: filter.category || undefined,
+        location: filter.location || undefined,
+        page: filter.page,
+        limit: filter.limit,
+      });
       
       set({ 
-        events: data || [], 
-        pagination: {
-          total: pagination?.total || 0,
-          totalPages: pagination?.totalPages || 0,
-        }
+        events: result.events || [], 
+        pagination: result.pagination || { total: 0, totalPages: 0 },
+        error: null
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch events:', err);
-      set({ events: [], pagination: { total: 0, totalPages: 0 } });
+      set({ 
+        events: [], 
+        pagination: { total: 0, totalPages: 0 },
+        error: err.response?.data?.message || 'Failed to fetch events'
+      });
     } finally {
       set({ isLoading: false });
     }
   },
 
   getEventById: async (id) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.get(`/events/${id}`);
-      return response.data.data;
-    } catch {
+      const event = await eventAPI.getEventById(id);
+      set({ currentEvent: event, error: null });
+      return event;
+    } catch (err: any) {
+      set({ error: err.response?.data?.message || 'Failed to fetch event' });
       return undefined;
     } finally {
       set({ isLoading: false });
@@ -104,34 +112,76 @@ export const useEventStore = create<EventState>((set, get) => ({
   },
 
   createEvent: async (eventData) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.post('/events', eventData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      await get().fetchEvents();
-      return response.data.data;
+      const newEvent = await eventAPI.createEvent(eventData);
+      set((state) => ({ 
+        events: [newEvent, ...state.events],
+        error: null
+      }));
+      return newEvent;
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to create event';
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateEvent: async (id, eventData) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updatedEvent = await eventAPI.updateEvent(id, eventData);
+      set((state) => ({
+        events: state.events.map((event) =>
+          event.id === id ? updatedEvent : event
+        ),
+        currentEvent: state.currentEvent?.id === id ? updatedEvent : state.currentEvent,
+        error: null
+      }));
+      return updatedEvent;
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to update event';
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  deleteEvent: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      await eventAPI.deleteEvent(id);
+      set((state) => ({
+        events: state.events.filter((event) => event.id !== id),
+        error: null
+      }));
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to delete event';
+      set({ error: errorMsg });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
   },
 
   createVoucher: async (eventId, voucherData) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
-      await axiosInstance.post(`/events/${eventId}/vouchers`, voucherData);
+      await voucherAPI.createVoucher(eventId, voucherData);
+      set({ error: null });
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to create voucher';
+      set({ error: errorMsg });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
   },
 
-  updateEventPrice: async (id, newPrice) => {
-    set({ isLoading: true });
-    try {
-      await axiosInstance.put(`/events/${id}`, { price: newPrice });
-      await get().fetchEvents();
-    } finally {
-      set({ isLoading: false });
-    }
-  },
+  clearError: () => set({ error: null }),
 }));
+
+export default useEventStore;

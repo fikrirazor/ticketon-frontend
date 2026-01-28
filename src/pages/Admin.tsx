@@ -6,7 +6,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Admin = () => {
-    const { events, updateEventPrice, fetchEvents, isLoading } = useEventStore();
+    const { events, updateEvent, fetchEvents, isLoading } = useEventStore();
     const [editingId, setEditingId] = useState<string | null>(null);
     const [tempPrice, setTempPrice] = useState<number>(0);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -33,7 +33,7 @@ export const Admin = () => {
     const savePrice = async (id: string) => {
         setIsUpdating(true);
         try {
-            await updateEventPrice(id, tempPrice);
+            await updateEvent(id, { price: tempPrice });
             setEditingId(null);
         } catch (err) {
             console.error('Failed to update price:', err);

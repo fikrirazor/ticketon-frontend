@@ -1,11 +1,13 @@
 // src/pages/ProfilePage.tsx
 import React from 'react';
+import { Layout } from '../components/Layout';
 import { useAuthStore } from '../store/auth.store';
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
   return (
+    <Layout>
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <h1 className="text-3xl font-bold mb-6">My Profile</h1>
       
@@ -34,6 +36,7 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 

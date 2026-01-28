@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
+import { Layout } from '../components/Layout';
 import { EventForm } from '../components/events/EventForm';
 import type { EventFormValues, VoucherValue } from '../components/events/EventForm';
-import { Header } from '../components/Header';
 import { ArrowLeft, MapPin, Calendar, Users, Tag, X } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useEventStore } from '../store/event.store';
@@ -63,9 +63,8 @@ export const CreateEvent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <Layout>
       <Toaster position="top-right" />
-      <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto mb-8 flex items-center justify-between">
@@ -191,6 +190,6 @@ export const CreateEvent: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </Layout>
   );
 };

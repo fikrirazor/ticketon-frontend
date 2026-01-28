@@ -19,7 +19,8 @@ import { Toaster } from 'react-hot-toast';
 // Impor komponen-komponen halaman baru
 import ProfilePage from './pages/ProfilePage'; // Buat file ini nanti
 import OrganizerEventsPage from './pages/OrganizerEventsPage'; // Buat file ini nanti
-import TransactionsPage from './pages/TransactionsPage'; // Buat file ini nanti
+import UserTransactionsPage from './pages/UserTransactionsPage'; // Halaman transaksi pengguna
+import { Debug } from './pages/Debug';
 
 function App() {
   const getMe = useAuthStore((state) => state.getMe);
@@ -49,6 +50,7 @@ function App() {
       <ErrorBoundary>
         <Router>
         <Routes>
+          <Route path="/debug" element={<Debug />} />
           <Route path="/" element={<Home />} />
           <Route path="/event/:id" element={<EventDetail />} />
           <Route path="/login" element={<Login />} />
@@ -76,7 +78,7 @@ function App() {
             path="/transactions"
             element={
               <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
-                <TransactionsPage />
+                <UserTransactionsPage />
               </ProtectedRoute>
             }
           />
