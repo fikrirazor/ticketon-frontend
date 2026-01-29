@@ -23,9 +23,11 @@ export const Header = () => {
     if (isAuthenticated) {
       return (
         <div className="flex items-center gap-3">
-          <Link to="/create-event">
-            <Button size="sm">Create Event</Button>
-          </Link>
+          {user?.role === "ORGANIZER" && (
+            <Link to="/create-event">
+              <Button size="sm">Create Event</Button>
+            </Link>
+          )}
           <div className="relative group">
             <button
               type="button"
@@ -88,8 +90,8 @@ export const Header = () => {
             Sign In
           </Button>
         </Link>
-        <Link to="/create-event">
-          <Button size="sm">Create Event</Button>
+        <Link to="/register">
+          <Button size="sm">Sign Up</Button>
         </Link>
       </>
     );
