@@ -16,8 +16,8 @@ export const FilterPanel = () => {
 
       <div className="flex flex-wrap gap-2 w-full md:w-auto">
         <select
-          value={filter.category}
-          onChange={(e) => setCategory(e.target.value)}
+          value={filter.category || 'All'}
+          onChange={(e) => setCategory(e.target.value === 'All' ? '' : e.target.value)}
           className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer"
         >
           {categories.map((cat) => (
@@ -32,8 +32,8 @@ export const FilterPanel = () => {
             <MapPin className="w-4 h-4" />
           </div>
           <select
-            value={filter.location}
-            onChange={(e) => setLocation(e.target.value)}
+            value={filter.location || 'All'}
+            onChange={(e) => setLocation(e.target.value === 'All' ? '' : e.target.value)}
             className="pl-8 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer"
           >
             {locations.map((loc) => (
