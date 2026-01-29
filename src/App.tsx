@@ -20,7 +20,6 @@ import { Toaster } from 'react-hot-toast';
 import ProfilePage from './pages/ProfilePage'; // Buat file ini nanti
 import OrganizerEventsPage from './pages/OrganizerEventsPage'; // Buat file ini nanti
 import UserTransactionsPage from './pages/UserTransactionsPage'; // Halaman transaksi pengguna
-import { Debug } from './pages/Debug';
 
 function App() {
   const getMe = useAuthStore((state) => state.getMe);
@@ -50,7 +49,6 @@ function App() {
       <ErrorBoundary>
         <Router>
         <Routes>
-          <Route path="/debug" element={<Debug />} />
           <Route path="/" element={<Home />} />
           <Route path="/event/:id" element={<EventDetail />} />
           <Route path="/login" element={<Login />} />
