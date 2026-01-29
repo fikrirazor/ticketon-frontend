@@ -15,6 +15,15 @@ export const Header = () => {
     logout();
   };
 
+  // Debug: Log user data to check role
+  useEffect(() => {
+    if (user) {
+      console.log('Current user:', user);
+      console.log('User role:', user.role);
+      console.log('Is ORGANIZER?:', user.role === 'ORGANIZER');
+    }
+  }, [user]);
+
   const renderAuthContent = () => {
     if (isLoading) {
       return <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>;
@@ -23,7 +32,7 @@ export const Header = () => {
     if (isAuthenticated) {
       return (
         <div className="flex items-center gap-3">
-          {user?.role === "ORGANIZER" && (
+          {user?.role?.toUpperCase() === "ORGANIZER" && (
             <Link to="/create-event">
               <Button size="sm">Create Event</Button>
             </Link>
@@ -51,7 +60,7 @@ export const Header = () => {
                 My Profile
               </Link>
 
-              {user?.role === "ORGANIZER" && (
+              {user?.role?.toUpperCase() === "ORGANIZER" && (
                 <Link
                   to="/organizer/events"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

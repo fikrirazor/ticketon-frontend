@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../store/auth.store';
 import { getErrorMessage } from '../lib/axiosInstance';
 
 export const Login: React.FC = () => {
-    const navigate = useNavigate();
     const login = useAuthStore((state) => state.login);
     const isLoading = useAuthStore((state) => state.isLoading);
     const [error, setError] = useState<string | null>(null);
@@ -23,9 +22,14 @@ export const Login: React.FC = () => {
         e.preventDefault();
         setError(null);
         try {
+            console.log('Attempting login...');
             await login(formData);
-            navigate('/');
+            console.log('Login successful, redirecting to home...');
+            
+            // Use window.location.href for more reliable redirect
+            window.location.href = '/';
         } catch (err) {
+            console.error('Login failed:', err);
             setError(getErrorMessage(err));
         }
     };
@@ -92,7 +96,7 @@ export const Login: React.FC = () => {
                         </div>
                     </div>
 
-                    <Button type="submit" disabled={isLoading} className="w-full h-12 text-base bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/20 rounded-xl group">
+                    <Button type="submit" disabled={isLoading} className="w-full h-12 text-base bg-linear-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/20 rounded-xl group">
                         {isLoading ? 'Signing In...' : 'Sign In'}
                         {!isLoading && <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />}
                     </Button>
