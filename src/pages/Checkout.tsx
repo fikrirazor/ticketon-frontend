@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import CheckoutForm from '../components/transactions/CheckoutForm';
 import type { CheckoutData } from '../components/transactions/CheckoutForm';
 import PriceSummary from '../components/transactions/PriceSummary';

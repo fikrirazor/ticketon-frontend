@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { useTransactionStore } from '../../store/transaction.store';
 import { toast } from 'react-hot-toast';
 

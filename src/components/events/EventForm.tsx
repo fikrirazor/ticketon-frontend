@@ -3,7 +3,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { ImageUpload } from '../ui/ImageUpload';
 import { VoucherForm } from './VoucherForm';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { Calendar, Users, Layout } from 'lucide-react';
 
 const CATEGORIES = ['Music', 'Workshop', 'Conference', 'Sport', 'Arts', 'Food'];

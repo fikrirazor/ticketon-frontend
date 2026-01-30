@@ -1,6 +1,6 @@
 import React from 'react';
 import type { TransactionStatus as TStatus } from '../../types';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 interface TransactionStatusProps {
   status: TStatus;

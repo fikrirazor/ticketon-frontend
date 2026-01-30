@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import TransactionStatus from '../components/transactions/TransactionStatus';
 import PriceSummary from '../components/transactions/PriceSummary';
 import { ReviewForm } from '../components/reviews/ReviewForm';
