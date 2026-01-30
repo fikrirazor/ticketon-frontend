@@ -1,78 +1,187 @@
 import { create } from 'zustand';
 import type { Event } from '../types';
-import { MOCK_EVENTS } from '../utils/mockData';
+import { eventAPI, voucherAPI } from '../lib/api.service';
 
 interface EventState {
   events: Event[];
-  filteredEvents: Event[];
+  currentEvent: Event | null;
   isLoading: boolean;
+  error: string | null;
   filter: {
     category: string;
     location: string;
     search: string;
+    page: number;
+    limit: number;
+  };
+  pagination: {
+    total: number;
+    totalPages: number;
   };
   setSearch: (search: string) => void;
   setCategory: (category: string) => void;
   setLocation: (location: string) => void;
-  getEventById: (id: string) => Event | undefined;
-  updateEventPrice: (id: string, newPrice: number) => void;
-  applyFilters: () => void;
+  setPage: (page: number) => void;
+  fetchEvents: () => Promise<void>;
+  getEventById: (id: string) => Promise<Event | undefined>;
+  createEvent: (eventData: FormData) => Promise<Event>;
+  updateEvent: (id: string, eventData: Partial<Event>) => Promise<Event>;
+  deleteEvent: (id: string) => Promise<void>;
+  createVoucher: (eventId: string, voucherData: any) => Promise<void>;
+  clearError: () => void;
 }
 
 export const useEventStore = create<EventState>((set, get) => ({
-  events: MOCK_EVENTS,
-  filteredEvents: MOCK_EVENTS,
+  events: [],
+  currentEvent: null,
   isLoading: false,
+  error: null,
   filter: {
-    category: 'All',
-    location: 'All',
+    category: '',
+    location: '',
     search: '',
+    page: 1,
+    limit: 10,
   },
+  pagination: {
+    total: 0,
+    totalPages: 0,
+  },
+
   setSearch: (search) => {
-    set((state) => ({ filter: { ...state.filter, search } }));
-    get().applyFilters();
+    set((state) => ({ filter: { ...state.filter, search, page: 1 } }));
+    get().fetchEvents();
   },
+
   setCategory: (category) => {
-    set((state) => ({ filter: { ...state.filter, category } }));
-    get().applyFilters();
+    set((state) => ({ filter: { ...state.filter, category, page: 1 } }));
+    get().fetchEvents();
   },
+
   setLocation: (location) => {
-    set((state) => ({ filter: { ...state.filter, location } }));
-    get().applyFilters();
+    set((state) => ({ filter: { ...state.filter, location, page: 1 } }));
+    get().fetchEvents();
   },
-  getEventById: (id) => {
-    return get().events.find((event) => event.id === id);
-  },
-  updateEventPrice: (id, newPrice) => {
-    set((state) => ({
-      events: state.events.map((event) =>
-        event.id === id ? { ...event, price: newPrice } : event
-      ),
-    }));
-    get().applyFilters(); // Re-apply filters to update filteredEvents list if needed
-  },
-  applyFilters: () => {
-    const { events, filter } = get();
-    let result = events;
 
-    if (filter.search) {
-      const searchLower = filter.search.toLowerCase();
-      result = result.filter(
-        (event) =>
-          event.title.toLowerCase().includes(searchLower) ||
-          event.description.toLowerCase().includes(searchLower) ||
-          event.organizer.toLowerCase().includes(searchLower)
-      );
+  setPage: (page) => {
+    set((state) => ({ filter: { ...state.filter, page } }));
+    get().fetchEvents();
+  },
+
+  fetchEvents: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const { filter } = get();
+      const result = await eventAPI.getAllEvents({
+        search: filter.search || undefined,
+        category: filter.category && filter.category !== 'All' ? filter.category : undefined,
+        location: filter.location && filter.location !== 'All' ? filter.location : undefined,
+        page: filter.page,
+        limit: filter.limit,
+      });
+      
+      set({ 
+        events: result.events || [], 
+        pagination: result.pagination || { total: 0, totalPages: 0 },
+        error: null
+      });
+    } catch (err: any) {
+      console.error('Failed to fetch events:', err);
+      set({ 
+        events: [], 
+        pagination: { total: 0, totalPages: 0 },
+        error: err.response?.data?.message || 'Failed to fetch events'
+      });
+    } finally {
+      set({ isLoading: false });
     }
-
-    if (filter.category !== 'All') {
-      result = result.filter((event) => event.category === filter.category);
-    }
-
-    if (filter.location !== 'All') {
-      result = result.filter((event) => event.location === filter.location);
-    }
-
-    set({ filteredEvents: result });
   },
+
+  getEventById: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      const event = await eventAPI.getEventById(id);
+      set({ currentEvent: event, error: null });
+      return event;
+    } catch (err: any) {
+      set({ error: err.response?.data?.message || 'Failed to fetch event' });
+      return undefined;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  createEvent: async (eventData) => {
+    set({ isLoading: true, error: null });
+    try {
+      const newEvent = await eventAPI.createEvent(eventData);
+      set((state) => ({ 
+        events: [newEvent, ...state.events],
+        error: null
+      }));
+      return newEvent;
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to create event';
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateEvent: async (id, eventData) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updatedEvent = await eventAPI.updateEvent(id, eventData);
+      set((state) => ({
+        events: state.events.map((event) =>
+          event.id === id ? updatedEvent : event
+        ),
+        currentEvent: state.currentEvent?.id === id ? updatedEvent : state.currentEvent,
+        error: null
+      }));
+      return updatedEvent;
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to update event';
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  deleteEvent: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      await eventAPI.deleteEvent(id);
+      set((state) => ({
+        events: state.events.filter((event) => event.id !== id),
+        error: null
+      }));
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to delete event';
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  createVoucher: async (eventId, voucherData) => {
+    set({ isLoading: true, error: null });
+    try {
+      await voucherAPI.createVoucher(eventId, voucherData);
+      set({ error: null });
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || 'Failed to create voucher';
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  clearError: () => set({ error: null }),
 }));
+
+export default useEventStore;

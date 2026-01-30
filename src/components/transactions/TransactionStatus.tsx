@@ -1,6 +1,6 @@
 import React from 'react';
 import type { TransactionStatus as TStatus } from '../../types';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 interface TransactionStatusProps {
   status: TStatus;
@@ -16,8 +16,8 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({
   className = ''
 }) => {
   const steps = [
-    { key: 'WAITING_FOR_PAYMENT', label: 'Payment', description: 'Waiting for transfer' },
-    { key: 'WAITING_FOR_ADMIN_CONFIRMATION', label: 'Verification', description: 'Admin checking proof' },
+    { key: 'WAITING_PAYMENT', label: 'Payment', description: 'Waiting for transfer' },
+    { key: 'WAITING_ADMIN', label: 'Verification', description: 'Admin checking proof' },
     { key: 'DONE', label: 'Success', description: 'Tickets issued' }
   ];
 
@@ -34,8 +34,8 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({
       case 'REJECTED': return 'text-red-600 bg-red-50 border-red-200';
       case 'EXPIRED': return 'text-amber-600 bg-amber-50 border-amber-200';
       case 'CANCELED': return 'text-slate-600 bg-slate-50 border-slate-200';
-      case 'WAITING_FOR_PAYMENT': return 'text-indigo-600 bg-indigo-50 border-indigo-200';
-      case 'WAITING_FOR_ADMIN_CONFIRMATION': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'WAITING_PAYMENT': return 'text-indigo-600 bg-indigo-50 border-indigo-200';
+      case 'WAITING_ADMIN': return 'text-blue-600 bg-blue-50 border-blue-200';
       default: return 'text-slate-600 bg-slate-50 border-slate-200';
     }
   };
@@ -56,7 +56,7 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
             </svg>
           )}
-          {status === 'WAITING_FOR_PAYMENT' && (
+          {status === 'WAITING_PAYMENT' && (
             <svg className="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -115,7 +115,7 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({
 
       {/* Action Buttons */}
       <div className="flex flex-col md:flex-row gap-4 pt-4">
-        {status === 'WAITING_FOR_PAYMENT' && (
+        {status === 'WAITING_PAYMENT' && (
           <>
             <Button className="flex-1" onClick={() => onAction?.('UPLOAD_PROOF')}>Upload Proof Now</Button>
             <Button variant="secondary" onClick={() => onAction?.('CANCEL')}>Cancel Order</Button>

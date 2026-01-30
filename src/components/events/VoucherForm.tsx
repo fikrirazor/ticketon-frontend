@@ -1,7 +1,7 @@
 import React from 'react';
 import { FieldArray, useFormikContext } from 'formik';
 import { Plus, Trash2 } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import type { EventFormValues, VoucherValue } from './EventForm';
 
 export const VoucherForm: React.FC = () => {

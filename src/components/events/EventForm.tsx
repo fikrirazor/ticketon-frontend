@@ -1,11 +1,10 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { DatePicker } from '../ui/DatePicker';
 import { ImageUpload } from '../ui/ImageUpload';
 import { VoucherForm } from './VoucherForm';
-import { Button } from '../ui/Button';
-import { Layout } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Calendar, Users, Layout } from 'lucide-react';
 
 const CATEGORIES = ['Music', 'Workshop', 'Conference', 'Sport', 'Arts', 'Food'];
 
@@ -22,7 +21,7 @@ export interface EventFormValues {
   startDate: string;
   endDate: string;
   price: number;
-  totalSeats: number;
+  seatTotal: number;
   category: string;
   image: File | null;
   isPromotion: boolean;
@@ -36,7 +35,7 @@ const EventSchema = Yup.object().shape({
   startDate: Yup.string().required('Start date is required'),
   endDate: Yup.string().required('End date is required'),
   price: Yup.number().min(0, 'Price cannot be negative').required('Price is required'),
-  totalSeats: Yup.number().min(1, 'At least 1 seat is required').required('Total seats is required'),
+  seatTotal: Yup.number().min(1, 'At least 1 seat is required').required('Total seats is required'),
   category: Yup.string().oneOf(CATEGORIES).required('Category is required'),
   isPromotion: Yup.boolean(),
   vouchers: Yup.array().of(
@@ -57,14 +56,14 @@ interface EventFormProps {
 
 export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, onPreview, isLoading }) => {
   const defaultValues: EventFormValues = {
-    title: '',
-    description: '',
-    location: '',
-    startDate: '',
-    endDate: '',
-    price: 0,
-    totalSeats: 0,
-    category: '',
+    title: initialValues?.title || '',
+    description: initialValues?.description || '',
+    startDate: initialValues?.startDate || '',
+    endDate: initialValues?.endDate || '',
+    location: initialValues?.location || '',
+    price: initialValues?.price || 0,
+    seatTotal: initialValues?.seatTotal || 0,
+    category: initialValues?.category || 'Music',
     image: null,
     isPromotion: false,
     vouchers: [],
@@ -116,27 +115,6 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                 {touched.category && errors.category && <span className="text-xs text-red-500">{errors.category as string}</span>}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <DatePicker
-                  label="Start Date & Time"
-                  name="startDate"
-                  value={values.startDate}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={errors.startDate as string}
-                  touched={!!touched.startDate}
-                />
-                <DatePicker
-                  label="End Date & Time"
-                  name="endDate"
-                  value={values.endDate}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={errors.endDate as string}
-                  touched={!!touched.endDate}
-                />
-              </div>
-
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-700">Location</label>
                 <input
@@ -178,21 +156,26 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                   />
                   {touched.price && errors.price && <span className="text-xs text-red-500">{errors.price as string}</span>}
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-sm font-semibold text-gray-700">Total Seats</label>
-                  <input
-                    type="number"
-                    name="totalSeats"
-                    value={values.totalSeats}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="100"
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
-                      touched.totalSeats && errors.totalSeats ? 'border-red-500' : 'border-gray-200'
-                    }`}
-                  />
-                  {touched.totalSeats && errors.totalSeats && <span className="text-xs text-red-500">{errors.totalSeats as string}</span>}
-                </div>
+                <div className="space-y-2">
+            <label className="text-sm font-semibold text-gray-700">Total Seats</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                <Users className="w-5 h-5" />
+              </div>
+              <input
+                type="number"
+                name="seatTotal"
+                value={values.seatTotal}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="100"
+                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                  touched.seatTotal && errors.seatTotal ? 'border-red-500' : 'border-gray-200'
+                }`}
+              />
+            </div>
+            {touched.seatTotal && errors.seatTotal && <span className="text-xs text-red-500">{errors.seatTotal as string}</span>}
+          </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -211,6 +194,50 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-gray-700">Start Date</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <input
+                type="datetime-local"
+                name="startDate"
+                value={values.startDate}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                  touched.startDate && errors.startDate ? 'border-red-500' : 'border-gray-200'
+                }`}
+                required
+              />
+            </div>
+            {touched.startDate && errors.startDate && <span className="text-xs text-red-500">{errors.startDate as string}</span>}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-gray-700">End Date</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <input
+                type="datetime-local"
+                name="endDate"
+                value={values.endDate}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                  touched.endDate && errors.endDate ? 'border-red-500' : 'border-gray-200'
+                }`}
+                required
+              />
+            </div>
+            {touched.endDate && errors.endDate && <span className="text-xs text-red-500">{errors.endDate as string}</span>}
+          </div>
+        </div>
+
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold text-gray-700">Description</label>
             <textarea
@@ -228,6 +255,18 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
           </div>
 
           {values.isPromotion && <VoucherForm />}
+
+          {/* Validation Summary */}
+          {Object.keys(errors).length > 0 && touched.title && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+              <p className="text-sm font-bold text-red-700 mb-1">Please fix the following errors:</p>
+              <ul className="list-disc list-inside text-xs text-red-600">
+                {Object.entries(errors).map(([key, val]) => (
+                  <li key={key}>{val as string}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="flex items-center justify-end gap-4 pt-6 border-t">
             <Button

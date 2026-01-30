@@ -1,25 +1,48 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
+import { Button } from '../components/ui/button';
 import CheckoutForm from '../components/transactions/CheckoutForm';
 import type { CheckoutData } from '../components/transactions/CheckoutForm';
 import PriceSummary from '../components/transactions/PriceSummary';
+import { useEventStore } from '../store/event.store';
+import { useTransactionStore } from '../store/transaction.store';
+import { useAuthStore } from '../store/auth.store';
+import { toast } from 'react-hot-toast';
+import type { Event } from '../types';
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  const { getEventById, isLoading: isEventsLoading } = useEventStore();
+  const { createTransaction, isLoading: isTxLoading } = useTransactionStore();
+  const { user } = useAuthStore();
+  
+  const [event, setEvent] = useState<Event | null>(null);
+  const [availablePoints, setAvailablePoints] = useState(0);
 
-  // Mock data - In real app, this would come from an API or Store
-  const event = {
-    id: '1',
-    title: 'Coldplay: Music of the Spheres World Tour',
-    price: 1500000,
-    imageUrl: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    date: 'Oct 25, 2026',
-    location: 'Gelora Bung Karno Stadium, Jakarta'
-  };
+  React.useEffect(() => {
+    const loadEvent = async () => {
+        if (!id) {
+          console.warn('No event ID provided in URL');
+          return;
+        }
+        try {
+          const data = await getEventById(id);
+          if (data) {
+            setEvent(data);
+            console.log('Event loaded:', data);
+          } else {
+            console.warn('No event data returned');
+          }
+        } catch (error) {
+          console.error('Error loading event:', error);
+        }
+        setAvailablePoints(50000); 
+    };
+    loadEvent();
+  }, [id, getEventById, user]);
 
-  const availablePoints = 50000;
   const [checkoutValues, setCheckoutValues] = useState<CheckoutData>({
     quantity: 1,
     usePoints: false,
@@ -27,16 +50,86 @@ const CheckoutPage: React.FC = () => {
     voucherCode: ''
   });
 
-  const handleCheckoutSubmit = (data: CheckoutData) => {
-    setIsLoading(true);
+  const handleCheckoutSubmit = async (data: CheckoutData) => {
     setCheckoutValues(data);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate('/payment-proof/tx-123456');
-    }, 1500);
+    if (!event) {
+      toast.error('Event not found');
+      return;
+    }
+
+    try {
+      const transactionPayload = {
+        eventId: event.id,
+        pointsUsed: data.usePoints ? availablePoints : 0,
+        voucherId: data.voucherId,
+        items: [{
+          eventId: event.id,
+          quantity: data.quantity,
+          price: event.price
+        }]
+      };
+
+      console.log('Creating transaction with:', transactionPayload);
+      
+      const transaction = await createTransaction(transactionPayload);
+      
+      console.log('Transaction created:', transaction);
+      toast.success('Transaction created! Please complete payment.');
+      navigate(`/payment-proof/${transaction.id}`);
+    } catch (err: any) {
+      console.error('Checkout error details:', {
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        message: err.response?.data?.message,
+        errors: err.response?.data?.errors,
+        fullData: err.response?.data,
+        requestData: {
+          eventId: event.id,
+          pointsUsed: data.usePoints ? availablePoints : 0,
+          voucherId: data.voucherId,
+          items: [{
+            eventId: event.id,
+            quantity: data.quantity,
+            price: event.price
+          }]
+        }
+      });
+      
+      // Build error message from validation errors
+      let errorMsg = err.response?.data?.message || 'Failed to create transaction';
+      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+        const validationErrors = err.response.data.errors.map((e: any) => e.message || e).join(', ');
+        errorMsg = `Validation Error: ${validationErrors}`;
+      }
+      
+      toast.error(errorMsg);
+    }
   };
+
+  if (!event && isEventsLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading event details...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!event && !isEventsLoading) {
+    return (
+        <Layout>
+          <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+            <h2 className="text-2xl font-black text-slate-900 uppercase">Event Not Found</h2>
+            <p className="text-gray-500 mt-2">Event ID: {id}</p>
+            <Button onClick={() => navigate('/')} className="mt-8">Back to Discovery</Button>
+          </div>
+        </Layout>
+      );
+  }
 
   return (
     <Layout>
@@ -51,43 +144,48 @@ const CheckoutPage: React.FC = () => {
 
             <div className="bg-slate-100 p-6 rounded-2xl flex flex-col md:flex-row gap-6 border border-slate-200">
               <div className="w-full md:w-48 h-32 rounded-xl overflow-hidden shadow-md">
-                <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+                <img src={event?.imageUrl} alt={event?.title} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 space-y-2">
                 <div className="flex items-center space-x-2 text-indigo-600 font-bold text-xs uppercase tracking-widest">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span>{event.date}</span>
+                  <span>{event?.startDate ? new Date(event.startDate).toLocaleDateString() : ''}</span>
                 </div>
-                <h2 className="text-2xl font-black text-slate-900 leading-tight">{event.title}</h2>
+                <h2 className="text-2xl font-black text-slate-900 leading-tight">{event?.title}</h2>
                 <p className="text-slate-600 font-medium flex items-center">
                   <svg className="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.828a2 2 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  {event.location}
+                  {event?.location}
                 </p>
               </div>
             </div>
 
-            <CheckoutForm 
-              eventPrice={event.price} 
-              availablePoints={availablePoints}
-              onSubmit={handleCheckoutSubmit}
-              isLoading={isLoading}
-            />
+            {event && (
+              <CheckoutForm 
+                eventId={event.id}
+                eventPrice={event.price} 
+                availablePoints={availablePoints}
+                onSubmit={handleCheckoutSubmit}
+                isLoading={isTxLoading}
+              />
+            )}
           </div>
 
           {/* Sticky Summary Sidebar */}
           <div className="w-full lg:w-96">
             <div className="sticky top-24 space-y-6">
-              <PriceSummary 
-                unitPrice={event.price}
-                quantity={checkoutValues.quantity}
-                pointsDiscount={checkoutValues.usePoints ? availablePoints : 0}
-                voucherDiscount={checkoutValues.voucherCode ? 100000 : 0} // Hardcoded mock voucher discount
-              />
+              {event && (
+                <PriceSummary 
+                  unitPrice={event.price}
+                  quantity={checkoutValues.quantity}
+                  pointsDiscount={checkoutValues.usePoints ? availablePoints : 0}
+                  voucherDiscount={checkoutValues.discountPercent ? (event.price * checkoutValues.quantity * checkoutValues.discountPercent) / 100 : 0} 
+                />
+              )}
               
               <div className="p-6 bg-slate-900 rounded-2xl text-white">
                 <h4 className="font-bold text-lg mb-2 flex items-center">
