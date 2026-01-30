@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/home';
+import { DiscoverEvents } from './pages/DiscoverEvents';
 import { EventDetail } from './pages/EventDetail';
 import { Admin } from './pages/Admin';
 import { Login } from './pages/Login';
@@ -50,6 +51,7 @@ function App() {
         <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/discover" element={<DiscoverEvents />} />
           <Route path="/event/:id" element={<EventDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
