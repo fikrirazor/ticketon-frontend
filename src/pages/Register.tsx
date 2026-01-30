@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
-import { User, Mail, Lock, ArrowRight, UserCircle } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { User, Mail, Lock, ArrowRight, UserCircle, Sparkles } from 'lucide-react';
 import { useAuthStore } from '../store/auth.store';
 import { getErrorMessage } from '../lib/axiosInstance';
 
@@ -40,31 +40,33 @@ export const Register: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
-            {/* Background Elements */}
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden py-12 px-4">
+            {/* Subtle background elements */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-                <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-3xl"></div>
-                <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-3xl"></div>
+                <div className="absolute top-[-5%] right-[-5%] w-[40%] h-[40%] bg-primary opacity-[0.03] rounded-full blur-[100px]"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-[35%] h-[35%] bg-blue-500 opacity-[0.02] rounded-full blur-[120px]"></div>
             </div>
 
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 p-8 z-10 m-4">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
-                    <p className="text-gray-500 text-sm">Join PwdkEvent and start your journey</p>
+            <div className="w-full max-w-md bg-white rounded-[3rem] shadow-3xl shadow-slate-200/50 border border-slate-100 p-10 z-10 transition-all">
+                <div className="text-center mb-10">
+                     <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-6 shadow-xl shadow-blue-100 border border-blue-100 group-hover:rotate-0 transition-transform">
+                        <Sparkles className="w-8 h-8 text-blue-500" />
+                    </div>
+                    <h2 className="text-4xl font-black text-slate-900 mb-2 tracking-tight">Daftar Akun</h2>
+                    <p className="text-slate-500 font-bold text-sm">Bergabung dan temukan pengalaman barumu</p>
                 </div>
 
                 {error && (
-                    <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl text-center font-medium animate-in fade-in slide-in-from-top-2">
+                    <div className="mb-8 p-4 bg-red-50 border border-red-100 text-red-600 text-xs rounded-2xl text-center font-black animate-in fade-in slide-in-from-top-2 uppercase tracking-widest">
                         {error}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Name Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 ml-1">Full Name</label>
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                                 <User className="w-5 h-5" />
                             </div>
                             <input
@@ -72,18 +74,17 @@ export const Register: React.FC = () => {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                placeholder="John Doe"
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                placeholder="Contoh: John Doe"
+                                className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-slate-900"
                                 required
                             />
                         </div>
                     </div>
 
-                    {/* Email Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 ml-1">Email Address</label>
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Alamat Email</label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                                 <Mail className="w-5 h-5" />
                             </div>
                             <input
@@ -91,89 +92,81 @@ export const Register: React.FC = () => {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
-                                placeholder="john@example.com"
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                placeholder="nama@email.com"
+                                className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-slate-900"
                                 required
                             />
                         </div>
                     </div>
 
-                    {/* Password Input */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 ml-1">Password</label>
-                        <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
-                                <Lock className="w-5 h-5" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Kata Sandi</label>
+                            <div className="relative group">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    placeholder="••••••••"
+                                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-slate-900"
+                                    required
+                                />
                             </div>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="••••••••"
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                                required
-                            />
                         </div>
-                    </div>
-
-                    {/* Confirm Password Input */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 ml-1">Confirm Password</label>
-                        <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
-                                <Lock className="w-5 h-5" />
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Konfirmasi</label>
+                            <div className="relative group">
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    placeholder="••••••••"
+                                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-slate-900"
+                                    required
+                                />
                             </div>
-                            <input
-                                type="password"
-                                name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                placeholder="••••••••"
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                                required
-                            />
                         </div>
                     </div>
 
-                    {/* Role Selection */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 ml-1">I want to be an</label>
+                        <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Daftar Sebagai</label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                                 <UserCircle className="w-5 h-5" />
                             </div>
                             <select
                                 name="role"
                                 value={formData.role}
                                 onChange={handleChange}
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none"
+                                className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all appearance-none font-bold text-slate-900 cursor-pointer"
                                 required
                             >
-                                <option value="CUSTOMER">Participant (Buying Tickets)</option>
-                                <option value="ORGANIZER">Organizer (Creating Events)</option>
+                                <option value="CUSTOMER">Peserta (Beli Tiket)</option>
+                                <option value="ORGANIZER">Penyelenggara (Buat Event)</option>
                             </select>
                         </div>
                     </div>
 
-                    <Button type="submit" disabled={isLoading} className="w-full h-12 text-base bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/20 rounded-xl group">
-                        {isLoading ? 'Creating Account...' : 'Sign Up'}
-                        {!isLoading && <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />}
+                    <Button type="submit" disabled={isLoading} className="w-full py-8 text-lg font-black bg-primary hover:bg-orange-600 shadow-2xl shadow-primary/30 rounded-2xl group border-0 transition-all hover:-translate-y-1 active:scale-95 text-white">
+                        {isLoading ? 'MENDAFTAR...' : 'DAFTAR SEKARANG'}
+                        {!isLoading && <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />}
                     </Button>
                 </form>
 
-                <div className="mt-8 text-center">
-                    <p className="text-sm text-gray-500">
-                        Already have an account?{' '}
-                        <Link to="/login" className="font-semibold text-primary hover:text-orange-700 transition-colors">
-                            Log in
+                <div className="mt-10 text-center">
+                    <p className="text-sm text-slate-500 font-medium">
+                        Sudah punya akun?{' '}
+                        <Link to="/login" className="font-black text-primary hover:underline transition-colors focus:outline-none">
+                            Masuk Sini
                         </Link>
                     </p>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                    <Link to="/" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
-                        Back to Home
+                <div className="mt-10 pt-8 border-t border-slate-100 text-center">
+                    <Link to="/" className="text-[10px] font-black text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">
+                        KEMBALI KE BERANDA
                     </Link>
                 </div>
             </div>
