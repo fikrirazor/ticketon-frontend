@@ -19,7 +19,8 @@ import {
   ShieldCheck,
   Zap,
   Info,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import type { Event } from '../types';
