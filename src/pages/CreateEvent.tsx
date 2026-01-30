@@ -5,7 +5,7 @@ import { Layout } from '../components/Layout';
 import { EventForm } from '../components/events/EventForm';
 import type { EventFormValues, VoucherValue } from '../components/events/EventForm';
 import { ArrowLeft, MapPin, Calendar, Users, Tag, X } from 'lucide-react';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import { useEventStore } from '../store/event.store';
 import { getErrorMessage } from '../lib/axiosInstance';
 

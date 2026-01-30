@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import { useEventStore } from '../store/event.store';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

@@ -36,7 +36,18 @@ export const useAuthStore = create<AuthState>()(
             "/auth/signin",
             credentials,
           );
+          
+          // Debug: Log full response
+          console.log('=== LOGIN RESPONSE ===');
+          console.log('Full response:', response);
+          console.log('Response data:', response.data);
+          console.log('Response data.data:', response.data.data);
+          
           const { user, token } = response.data.data;
+          
+          console.log('Extracted user:', user);
+          console.log('User role:', user?.role);
+          console.log('Extracted token:', token);
 
           localStorage.setItem("token", token);
           set({ user, isAuthenticated: true });
@@ -73,10 +84,29 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           const response = await axiosInstance.get("/users/profile");
+          
+          // Debug: Log full response
+          console.log('=== GET ME RESPONSE ===');
+          console.log('Full response:', response);
+          console.log('Response data:', response.data);
+          console.log('Response data.data:', response.data.data);
+          
           // Backend returns { success: true, message: "...", data: { user } }
           const userData = response.data.data?.user;
+          
+          console.log('Extracted userData:', userData);
+          console.log('User role from profile:', userData?.role);
+          
           if (userData) {
-            set({ user: userData, isAuthenticated: true });
+            // WORKAROUND: If backend doesn't send role, preserve it from existing state
+            const currentUser = useAuthStore.getState().user;
+            const userWithRole = {
+              ...userData,
+              role: userData.role || currentUser?.role || 'CUSTOMER' // Preserve existing role if not in response
+            };
+            
+            console.log('Final user with role:', userWithRole);
+            set({ user: userWithRole, isAuthenticated: true });
           } else {
             console.error("No user data in response");
             localStorage.removeItem("token");

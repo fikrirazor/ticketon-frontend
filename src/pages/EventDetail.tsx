@@ -18,9 +18,11 @@ import {
   Heart,
   ShieldCheck,
   Zap,
-  Info
+  Info,
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import type { Event } from '../types';
 
 export const EventDetail = () => {
@@ -36,17 +38,14 @@ export const EventDetail = () => {
 
   const handleReserveClick = () => {
     if (!isAuthenticated) {
-      console.warn('User not authenticated, redirecting to login');
       navigate('/login', { state: { from: location.pathname } });
       return;
     }
 
     if (!user) {
-      console.warn('User data not loaded, waiting...');
       return;
     }
 
-    console.log('User authenticated, navigating to checkout:', { eventId: event?.id, user });
     navigate(`/checkout/${event?.id}`);
   };
 
@@ -70,7 +69,7 @@ export const EventDetail = () => {
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 font-medium animate-pulse">Loading event details...</p>
+          <p className="text-slate-500 font-bold animate-pulse">Menyiapkan detail event...</p>
         </div>
       </Layout>
     );
@@ -79,14 +78,14 @@ export const EventDetail = () => {
   if (!event) {
     return (
       <Layout>
-        <div className="max-w-2xl mx-auto py-20 px-4 text-center">
-          <div className="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500">
-            <Info className="w-10 h-10" />
+        <div className="max-w-2xl mx-auto py-32 px-4 text-center">
+          <div className="bg-red-50 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-red-500 shadow-xl shadow-red-100">
+            <Info className="w-12 h-12" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Event Not Found</h2>
-          <p className="text-gray-600 mb-8 text-lg">The event you're looking for might have been canceled or removed.</p>
-          <Button onClick={() => navigate('/')} className="px-8 py-6 rounded-2xl text-lg font-bold">
-            <ArrowLeft className="w-5 h-5 mr-2" /> Back to Discovery
+          <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Event Tidak Ditemukan</h2>
+          <p className="text-slate-500 mb-10 text-lg font-medium">Halaman yang kamu cari mungkin sudah dihapus atau dipindahkan.</p>
+          <Button onClick={() => navigate('/')} className="px-10 py-6 rounded-2xl text-lg font-black bg-primary hover:bg-orange-600 shadow-xl shadow-primary/20 border-0">
+            <ArrowLeft className="w-5 h-5 mr-2" /> KEMBALI KE BERANDA
           </Button>
         </div>
       </Layout>
@@ -97,182 +96,202 @@ export const EventDetail = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Breadcrumb & Actions */}
-        <div className="flex justify-between items-center mb-8">
-          <Link to="/" className="inline-flex items-center text-gray-500 hover:text-primary transition-colors font-medium">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Events
-          </Link>
-          <div className="flex gap-2">
-            <button className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all hover:border-gray-300 shadow-sm">
-              <Share2 className="w-5 h-5" />
-            </button>
-            <button className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all hover:border-gray-300 shadow-sm">
-              <Heart className="w-5 h-5" />
-            </button>
+      <div className="pt-24 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumb & Actions */}
+          <div className="flex justify-between items-center mb-10">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+              <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+              <ChevronRight className="w-4 h-4" />
+              <Link to="/discover" className="hover:text-primary transition-colors">Discover</Link>
+              <ChevronRight className="w-4 h-4" />
+              <span className="text-slate-900 truncate max-w-[200px]">{event.title}</span>
+            </div>
+            <div className="flex gap-3">
+              <button className="p-3 rounded-2xl border border-slate-100 bg-white text-slate-400 hover:text-primary hover:bg-slate-50 transition-all shadow-sm hover:shadow-xl hover:-translate-y-1">
+                <Share2 className="w-5 h-5" />
+              </button>
+              <button className="p-3 rounded-2xl border border-slate-100 bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all shadow-sm hover:shadow-xl hover:-translate-y-1">
+                <Heart className="w-5 h-5" />
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Main Content (Left) */}
-          <div className="lg:col-span-8 space-y-10">
-            {/* Header Image */}
-            <div className="relative group aspect-[16/9] md:aspect-[21/9] rounded-[2.5rem] overflow-hidden shadow-2xl bg-gray-100">
-              <img 
-                src={getFullImageUrl(event.imageUrl)} 
-                alt={event.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
-              <div className="absolute top-6 left-6 flex gap-2">
-                <span className="px-5 py-2.5 bg-white/95 backdrop-blur-md rounded-2xl text-primary font-bold text-sm shadow-xl flex items-center gap-2">
-                  <Zap className="w-4 h-4" /> {event.category}
-                </span>
-                {event.seatLeft < 20 && event.seatLeft > 0 && (
-                  <span className="px-5 py-2.5 bg-orange-500/95 backdrop-blur-md rounded-2xl text-white font-bold text-sm shadow-xl border border-white/20">
-                    Low Spots LEFT
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* Main Content (Left) */}
+            <div className="lg:col-span-8 space-y-12">
+              {/* Header Image */}
+              <div className="relative group aspect-video rounded-[3rem] overflow-hidden shadow-3xl shadow-slate-200/50 border border-slate-100">
+                <img 
+                  src={getFullImageUrl(event.imageUrl)} 
+                  alt={event.title}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                />
+                <div className="absolute top-8 left-8 flex gap-3">
+                  <span className="px-6 py-3 bg-white/95 backdrop-blur-md rounded-2xl text-primary font-black text-sm shadow-2xl flex items-center gap-2 border border-orange-100">
+                    <Zap className="w-4 h-4 fill-primary" /> {event.category.toUpperCase()}
                   </span>
-                )}
+                  {event.seatLeft < 20 && event.seatLeft > 0 && (
+                    <span className="px-6 py-3 bg-red-500/90 backdrop-blur-md rounded-2xl text-white font-black text-sm shadow-2xl border border-red-400/20 animate-pulse">
+                      SISA SEDIKIT!
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Quick Info Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/50 backdrop-blur-xl border border-white p-6 rounded-[2.5rem] shadow-xl shadow-gray-200/50">
-              <div className="flex items-center gap-4 px-4 py-2 border-r border-gray-100 last:border-0">
-                <div className="p-3 bg-primary/10 rounded-2xl">
-                  <Calendar className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider font-extrabold text-gray-400">Date</p>
-                  <p className="text-sm font-black text-gray-900 truncate">{new Date(event.startDate).toLocaleDateString()}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 px-4 py-2 border-r border-gray-100 last:border-0">
-                <div className="p-3 bg-blue-500/10 rounded-2xl">
-                  <Clock className="w-6 h-6 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider font-extrabold text-gray-400">Time</p>
-                  <p className="text-sm font-black text-gray-900">19:00 - 23:00</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 px-4 py-2 border-r border-gray-100 last:border-0">
-                <div className="p-3 bg-purple-500/10 rounded-2xl">
-                  <MapPin className="w-6 h-6 text-purple-500" />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider font-extrabold text-gray-400">Location</p>
-                  <p className="text-sm font-black text-gray-900 truncate">{event.location.split(',')[0]}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 px-4 py-2 last:border-0">
-                <div className="p-3 bg-green-500/10 rounded-2xl">
-                  <Star className="w-6 h-6 text-green-500 fill-green-500" />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider font-extrabold text-gray-400">Rating</p>
-                  <p className="text-sm font-black text-gray-900">{averageRating || 'New'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="space-y-6 px-4">
-              <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
-                About this Event <div className="h-1 flex-1 bg-gray-50 rounded-full"></div>
-              </h2>
-              <p className="text-gray-600 leading-loose text-lg font-medium whitespace-pre-wrap">
-                {event.description}
-              </p>
-            </div>
-
-            {/* Organizer */}
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-              <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-tr from-primary to-orange-400 p-1">
-                  <div className="w-full h-full rounded-[1.8rem] bg-white flex items-center justify-center text-3xl font-black text-primary">
-                    {event.organizer?.name ? event.organizer.name.charAt(0) : '?'}
+              {/* Quick Info Bar */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white border border-slate-100 p-8 rounded-[2.5rem] shadow-2xl shadow-slate-100">
+                <div className="flex items-center gap-4 px-2 border-r border-slate-100 last:border-0">
+                  <div className="p-4 bg-orange-50 rounded-2xl text-primary">
+                    <Calendar className="w-7 h-7" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Tanggal</p>
+                    <p className="text-sm font-black text-slate-900 truncate">{new Date(event.startDate).toLocaleDateString()}</p>
                   </div>
                 </div>
-                <div className="text-center md:text-left flex-1">
-                  <p className="text-primary font-black uppercase tracking-[0.2em] text-xs mb-2">Organized By</p>
-                  <h3 className="text-3xl font-black mb-3">{event.organizer?.name || 'Unknown Organizer'}</h3>
-                  <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm font-bold text-slate-300">
-                    <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-green-400" /> Verified Organizer</span>
-                    <span className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400" /> Top Rated</span>
+                <div className="flex items-center gap-4 px-2 border-r border-slate-100 last:border-0">
+                  <div className="p-4 bg-blue-50 rounded-2xl text-blue-500">
+                    <Clock className="w-7 h-7" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Waktu</p>
+                    <p className="text-sm font-black text-slate-900">19:00 WIB</p>
                   </div>
                 </div>
-                <Link 
-                  to={`/organizer/${encodeURIComponent(event.organizer.id)}`}
-                  className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl font-black transition-all hover:scale-105 active:scale-95"
-                >
-                  View Profile
-                </Link>
-              </div>
-            </div>
-
-            {/* Reviews */}
-            <div className="space-y-8 px-4 pt-10">
-              <div className="flex justify-between items-end">
-                <div>
-                   <h2 className="text-3xl font-black text-gray-900 tracking-tight">Community Reviews</h2>
-                   <p className="text-gray-500 font-bold mt-1">What people are saying about this event</p>
+                <div className="flex items-center gap-4 px-2 border-r border-slate-100 last:border-0">
+                  <div className="p-4 bg-purple-50 rounded-2xl text-purple-500">
+                    <MapPin className="w-7 h-7" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Lokasi</p>
+                    <p className="text-sm font-black text-slate-900 truncate">{event.location.split(',')[0]}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-4xl font-black text-gray-900">{averageRating}</div>
-                  <div className="flex gap-0.5 mt-1">
-                    {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 fill-primary text-primary" />)}
+                <div className="flex items-center gap-4 px-2 last:border-0">
+                  <div className="p-4 bg-yellow-50 rounded-2xl text-yellow-500">
+                    <Star className="w-7 h-7 fill-current" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Rating</p>
+                    <p className="text-sm font-black text-slate-900">{averageRating || 'BARU'}</p>
                   </div>
                 </div>
               </div>
-              <RatingDistribution reviews={reviews} />
-              <ReviewList reviews={reviews} />
-            </div>
-          </div>
 
-          {/* Checkout (Right) */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-10 space-y-6">
-              <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/50 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-primary/10 transition-colors"></div>
-                
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Official Ticket</p>
-                <div className="flex items-baseline gap-2 mb-8">
-                  <span className="text-4xl font-black text-gray-900">Rp {event.price.toLocaleString()}</span>
-                  <span className="text-gray-400 font-bold">/ Person</span>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  <div className="p-5 rounded-3xl bg-gray-50 border border-gray-100 flex items-center justify-between group-hover:bg-white group-hover:border-primary/20 transition-all">
-                    <span className="flex items-center gap-3 text-gray-600 font-bold"><Users className="w-5 h-5 text-primary" /> Availability</span>
-                    <span className="text-gray-900 font-black">{event.seatLeft} / {event.seatTotal}</span>
-                  </div>
-                  <div className="p-5 rounded-3xl bg-gray-50 border border-gray-100 flex items-center justify-between group-hover:bg-white group-hover:border-primary/20 transition-all">
-                    <span className="flex items-center gap-3 text-gray-600 font-bold"><ShieldCheck className="w-5 h-5 text-primary" /> Multi-Day Entry</span>
-                    <span className="text-gray-900 font-black">Inc.</span>
+              {/* Description */}
+              <div className="space-y-8">
+                <div className="flex items-center gap-6">
+                  <h2 className="text-3xl font-black text-slate-900 tracking-tight">Tentang Event</h2>
+                  <div className="h-2 flex-1 bg-slate-50 rounded-full">
+                    <div className="h-full w-24 bg-primary rounded-full" />
                   </div>
                 </div>
-
-                <Button 
-                  onClick={handleReserveClick}
-                  disabled={event.seatLeft <= 0}
-                  className="w-full py-8 rounded-[2rem] bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-2xl shadow-orange-500/40 text-lg font-black uppercase tracking-widest transition-all hover:-translate-y-1 active:scale-95"
-                >
-                  {event.seatLeft > 0 ? 'Reserve Spot' : 'Sold Out'}
-                </Button>
-
-                <p className="text-center text-xs text-gray-400 font-bold mt-6 tracking-tight">
-                  Price inclusive of all taxes. Free cancellation within 24h.
+                <p className="text-slate-600 leading-loose text-lg font-medium whitespace-pre-wrap">
+                  {event.description}
                 </p>
               </div>
 
-              {/* Promo Card */}
-              <div className="bg-primary/5 p-8 rounded-[2.5rem] border border-primary/10">
-                <h4 className="font-black text-gray-900 mb-2">Planning for group?</h4>
-                <p className="text-sm text-gray-600 font-medium leading-relaxed mb-4">Get 10% off for bookings over 5 people. Limited time offer!</p>
-                <button className="text-primary font-black text-sm hover:underline">Learn More →</button>
+              {/* Organizer */}
+              <div className="bg-slate-50 p-12 rounded-[3.5rem] border border-slate-100 flex flex-col md:flex-row items-center gap-10 group overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary opacity-[0.03] rounded-full blur-3xl -mr-32 -mt-32" />
+                
+                <div className="w-28 h-28 rounded-3xl bg-white shadow-2xl flex items-center justify-center text-4xl font-black text-primary border border-slate-100 transform group-hover:rotate-6 transition-transform">
+                  {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : '?'}
+                </div>
+                
+                <div className="text-center md:text-left flex-1 min-w-0">
+                  <p className="text-primary font-black uppercase tracking-[0.3em] text-[10px] mb-3">Diselenggarakan Oleh</p>
+                  <h3 className="text-3xl font-black text-slate-900 mb-4 truncate">{event.organizer?.name || 'Organizer'}</h3>
+                  <div className="flex flex-wrap justify-center md:justify-start gap-6">
+                    <span className="flex items-center gap-2 text-xs font-bold text-slate-500"><ShieldCheck className="w-5 h-5 text-green-500" /> Verified Organizer</span>
+                    <span className="flex items-center gap-2 text-xs font-bold text-slate-500 group-hover:text-primary transition-colors"><Star className="w-5 h-5 text-yellow-500 fill-current" /> High Rating</span>
+                  </div>
+                </div>
+                
+                <Link 
+                  to={`/organizer/${encodeURIComponent(event.organizer.id)}`}
+                  className="px-8 py-5 bg-white hover:bg-primary hover:text-white border border-slate-200 hover:border-primary text-slate-900 rounded-2xl font-black text-sm transition-all shadow-sm hover:shadow-xl hover:shadow-primary/20"
+                >
+                  LIHAT PROFIL
+                </Link>
+              </div>
+
+              {/* Reviews */}
+              <div className="space-y-12 pt-10">
+                <div className="flex items-end justify-between">
+                  <div className="space-y-2">
+                     <h2 className="text-3xl font-black text-slate-900 tracking-tight">Review Komunitas</h2>
+                     <p className="text-slate-500 font-medium">Apa kata mereka yang sudah merasakan keseruannya</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-5xl font-black text-slate-900 flex items-center gap-3 justify-end">
+                      {averageRating} <Star className="w-10 h-10 text-yellow-400 fill-current" />
+                    </div>
+                    <p className="text-slate-400 font-bold mt-1 text-xs uppercase tracking-widest">{reviews.length} TOTAL REVIEWS</p>
+                  </div>
+                </div>
+                <div className="bg-slate-50 rounded-[3rem] p-10 border border-slate-100">
+                  <RatingDistribution reviews={reviews} />
+                  <div className="mt-12">
+                    <ReviewList reviews={reviews} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Checkout Sticky (Right) */}
+            <div className="lg:col-span-4">
+              <div className="sticky top-28 space-y-8">
+                <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-3xl shadow-slate-200/50 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-primary/10 transition-colors" />
+                  
+                  <div className="relative z-10">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6">Informasi Tiket</p>
+                    <div className="flex flex-col mb-10">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Mulai Dari</span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-5xl font-black text-slate-900 tracking-tighter">Rp {event.price.toLocaleString()}</span>
+                        <span className="text-slate-400 font-bold text-sm">/pax</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 mb-10">
+                      <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group-hover:border-primary/20 transition-all">
+                        <span className="flex items-center gap-3 text-slate-500 font-bold"><Users className="w-5 h-5 text-primary" /> Kapasitas</span>
+                        <span className="text-slate-900 font-black">{event.seatLeft} <span className="text-slate-400 text-xs">Tersisa</span></span>
+                      </div>
+                      <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group-hover:border-primary/20 transition-all">
+                        <span className="flex items-center gap-3 text-slate-500 font-bold"><ShieldCheck className="w-5 h-5 text-primary" /> Keamanan</span>
+                        <span className="text-slate-900 font-black uppercase text-xs tracking-widest">Terjamin</span>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={handleReserveClick}
+                      disabled={event.seatLeft <= 0}
+                      className="w-full py-8 rounded-2xl bg-primary hover:bg-orange-600 text-white shadow-2xl shadow-primary/30 text-xl font-black uppercase tracking-widest transition-all hover:-translate-y-1 active:scale-95 border-0"
+                    >
+                      {event.seatLeft > 0 ? (isAuthenticated ? 'PESAN SEKARANG' : 'MASUK UNTUK PESAN') : 'HABIS TERJUAL'}
+                    </Button>
+
+                    <p className="text-center text-[10px] text-slate-400 font-bold mt-8 tracking-tight uppercase tracking-[0.1em]">
+                      Konfirmasi Instan &bull; E-Ticket Langsung Dikirim
+                    </p>
+                  </div>
+                </div>
+
+                {/* Promo Card */}
+                <div className="bg-primary p-8 rounded-[2.5rem] text-white shadow-2xl shadow-primary/20 relative overflow-hidden group">
+                  <div className="absolute -right-8 -bottom-8 opacity-20 transform rotate-12 transition-transform group-hover:rotate-0">
+                    <Sparkles className="w-32 h-32" />
+                  </div>
+                  <div className="relative z-10">
+                    <h4 className="font-black text-xl mb-2">Beli Banyak Lebih Hemat!</h4>
+                    <p className="text-white/80 text-sm font-medium leading-relaxed mb-6">Gunakan kode PROMOEVENT untuk diskon 10% untuk pembelian minimal 5 tiket.</p>
+                    <button className="text-white font-black text-xs underline decoration-2 underline-offset-4 hover:text-orange-100 transition-colors uppercase tracking-widest">Cek Promo Lainnya →</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -281,4 +300,3 @@ export const EventDetail = () => {
     </Layout>
   );
 };
-

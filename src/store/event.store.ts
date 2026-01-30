@@ -74,8 +74,8 @@ export const useEventStore = create<EventState>((set, get) => ({
       const { filter } = get();
       const result = await eventAPI.getAllEvents({
         search: filter.search || undefined,
-        category: filter.category || undefined,
-        location: filter.location || undefined,
+        category: filter.category && filter.category !== 'All' ? filter.category : undefined,
+        location: filter.location && filter.location !== 'All' ? filter.location : undefined,
         page: filter.page,
         limit: filter.limit,
       });

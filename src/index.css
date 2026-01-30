@@ -1,16 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #f97316;
+  --color-primary: #f97316; /* Vibrant Orange */
   --color-primary-hover: #ea580c;
-  --color-secondary: #3b82f6;
+  --color-secondary: #006ce6; /* Tiket blue for accents/buttons if needed, or keep orange */
   --color-ring: #f97316;
+  
+  --color-background: #ffffff; /* White bg */
+  --color-surface: #f4f4f5; /* Zinc 100 - Light surface */
+  --color-surface-hover: #e4e4e7; /* Zinc 200 */
+  --color-border: #e4e4e7;
 
   --font-sans: Inter, system-ui, sans-serif;
 }
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply bg-[var(--color-background)] text-slate-900 font-sans antialiased tracking-tight;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

@@ -4,7 +4,7 @@ import { useTransactionStore } from '../store/transaction.store';
 import { useAuthStore } from '../store/auth.store';
 import type { Transaction } from '../types';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 const UserTransactionsPage: React.FC = () => {

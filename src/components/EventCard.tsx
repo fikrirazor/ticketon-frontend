@@ -1,76 +1,72 @@
 import React from 'react';
-import { MapPin, Calendar, Users } from 'lucide-react';
-import type { Event } from '../types';
-import { Button } from './ui/Button';
 import { Link } from 'react-router-dom';
+import { Calendar, MapPin, Tag, Star, ArrowRight } from 'lucide-react';
+import { Button } from './ui/button';
 import { getFullImageUrl } from '../lib/axiosInstance';
+import type { Event } from '../types';
 
 interface EventCardProps {
   event: Event;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const date = new Date(event.startDate).toLocaleDateString('en-ID', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
-      <div className="relative h-48 w-full shrink-0 overflow-hidden">
-        <img
-          src={getFullImageUrl(event.imageUrl)}
-          alt={event.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-md text-sm font-bold text-gray-800 shadow-sm">
-          Rp {event.price.toLocaleString('id-ID')}
-        </div>
-        <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium text-white">
-          {event.category}
-        </div>
-      </div>
-
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="mb-2">
-          <span className="text-xs font-semibold text-primary uppercase tracking-wide">
-            {event.organizer.name}
+    <Link to={`/event/${event.id}`} className="group block h-full">
+      <div className="flex flex-col h-full bg-white rounded-3xl border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-2 relative">
+        {/* Category Label */}
+        <div className="absolute top-4 left-4 z-10">
+          <span className="px-3 py-1.5 bg-white/95 backdrop-blur-md border border-slate-100 rounded-xl text-[10px] font-black text-slate-900 uppercase tracking-widest shadow-lg">
+            {event.category}
           </span>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-          {event.title}
-        </h3>
-
-        <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-grow">
-          {event.description}
-        </p>
-
-        <div className="space-y-2 mb-4 border-t border-gray-100 pt-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Calendar className="w-4 h-4 text-gray-400" />
-            <span>{date}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <MapPin className="w-4 h-4 text-gray-400" />
-            <span className="truncate">{event.location}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Users className="w-4 h-4 text-gray-400" />
-            <span>
-              <span className="font-semibold text-gray-900">{event.seatLeft}</span> / {event.seatTotal} seats left
-            </span>
-          </div>
+        {/* Image Section */}
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img
+            src={getFullImageUrl(event.imageUrl)}
+            alt={event.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
 
-        <Link to={`/event/${event.id}`} className="mt-auto">
-          <Button className="w-full bg-primary hover:bg-orange-600 text-white">
-            View Details
-          </Button>
-        </Link>
+        {/* Content Section */}
+        <div className="p-6 flex flex-col flex-grow bg-white">
+          <div className="flex items-center gap-1.5 mb-3">
+             <div className="flex text-orange-400">
+               {[1,2,3,4,5].map(s => <Star key={s} className="w-3 h-3 fill-current" />)}
+             </div>
+             <span className="text-[10px] font-bold text-slate-400">4.8 (1.2k)</span>
+          </div>
+
+          <h3 className="text-lg font-black text-slate-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+            {event.title}
+          </h3>
+
+          <div className="space-y-2 mb-6">
+            <div className="flex items-center text-slate-500 gap-2">
+              <Calendar className="w-4 h-4 text-primary/60" />
+              <span className="text-xs font-bold">{new Date(event.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </div>
+            <div className="flex items-center text-slate-500 gap-2">
+              <MapPin className="w-4 h-4 text-primary/60" />
+              <span className="text-xs font-bold truncate">{event.location.split(',')[0]}</span>
+            </div>
+          </div>
+
+          <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Mulai Dari</span>
+              <span className="text-primary font-black text-xl">
+                Rp {event.price.toLocaleString()}
+              </span>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all transform group-hover:rotate-12">
+              <ArrowRight className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };

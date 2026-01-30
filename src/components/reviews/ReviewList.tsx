@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Star, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Review } from '../../types';
 import { cn } from '../../lib/utils';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 interface ReviewListProps {
   reviews: Review[];
