@@ -26,7 +26,9 @@ const OrganizerEventsPage: React.FC = () => {
             {events.map(event => (
               <div key={event.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                 <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                <p className="text-sm text-gray-600">{event.location}</p>
+                <p className="text-sm text-gray-600">
+                  {typeof event.location === 'object' ? event.location.city : (event.location || 'Location TBA')}
+                </p>
                 <p className="text-sm text-gray-500">IDR {event.price.toLocaleString()}</p>
               </div>
             ))}
