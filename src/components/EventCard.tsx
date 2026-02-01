@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Tag, Star, ArrowRight } from 'lucide-react';
-import { Button } from './ui/button';
+import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import { getFullImageUrl } from '../lib/axiosInstance';
 import type { Event } from '../types';
 
@@ -32,12 +31,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
         {/* Content Section */}
         <div className="p-6 flex flex-col flex-grow bg-white">
-          <div className="flex items-center gap-1.5 mb-3">
-             <div className="flex text-orange-400">
-               {[1,2,3,4,5].map(s => <Star key={s} className="w-3 h-3 fill-current" />)}
-             </div>
-             <span className="text-[10px] font-bold text-slate-400">4.8 (1.2k)</span>
-          </div>
 
           <h3 className="text-lg font-black text-slate-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
             {event.title}
@@ -50,13 +43,15 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             </div>
             <div className="flex items-center text-slate-500 gap-2">
               <MapPin className="w-4 h-4 text-primary/60" />
-              <span className="text-xs font-bold truncate">{event.location.split(',')[0]}</span>
+              <span className="text-xs font-bold truncate">
+                {typeof event.location === 'object' ? event.location.city : (event.location || 'Location TBA')}
+              </span>
             </div>
           </div>
 
           <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Mulai Dari</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Harga Tiket</span>
               <span className="text-primary font-black text-xl">
                 Rp {event.price.toLocaleString()}
               </span>

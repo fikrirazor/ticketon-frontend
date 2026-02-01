@@ -159,7 +159,7 @@ const CheckoutPage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.828a2 2 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  {event?.location}
+                  {typeof event?.location === 'object' ? event.location.city : (event?.location || 'Location Unknown')}
                 </p>
               </div>
             </div>

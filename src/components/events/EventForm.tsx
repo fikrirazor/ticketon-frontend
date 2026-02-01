@@ -1,12 +1,18 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { ImageUpload } from '../ui/ImageUpload';
 import { VoucherForm } from './VoucherForm';
 import { Button } from '../ui/button';
 import { Calendar, Users, Layout } from 'lucide-react';
 
-const CATEGORIES = ['Music', 'Workshop', 'Conference', 'Sport', 'Arts', 'Food'];
+const CATEGORIES = ["MUSIC", "NIGHTLIFE", "WORKSHOP", "FOOD", "ARTS", "SPORTS", "TECH"];
+
+const DUMMY_DESCRIPTIONS = [
+  "Join us for an unforgettable evening of excitement! This event brings together enthusiasts from all walks of life to celebrate creativity and passion. Expect high energy, amazing people, and memories that will last a lifetime.",
+  "Experience the ultimate gathering of industry leaders and innovators. This session is designed to inspire, educate, and connect you with the brightest minds in the field. Don't miss out on this unique opportunity to grow!",
+  "A soulful journey through rhythm and melody. Get ready for a night where the atmosphere is electric and the vibes are unmatched. Perfect for anyone looking to escape the ordinary and enjoy top-tier entertainment.",
+  "Unlock your potential with our hands-on workshop led by seasoned professionals. Whether you're a beginner or an expert, you'll find valuable insights and practical skills to take your craft to the next level."
+];
 
 export interface VoucherValue {
   code: string;
@@ -18,12 +24,13 @@ export interface EventFormValues {
   title: string;
   description: string;
   location: string;
+  address: string;
   startDate: string;
   endDate: string;
   price: number;
   seatTotal: number;
   category: string;
-  image: File | null;
+  imageUrl: string;
   isPromotion: boolean;
   vouchers: VoucherValue[];
 }
@@ -32,11 +39,13 @@ const EventSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
   description: Yup.string().required('Description is required'),
   location: Yup.string().required('Location is required'),
+  address: Yup.string().required('Detailed address is required'),
   startDate: Yup.string().required('Start date is required'),
   endDate: Yup.string().required('End date is required'),
   price: Yup.number().min(0, 'Price cannot be negative').required('Price is required'),
   seatTotal: Yup.number().min(1, 'At least 1 seat is required').required('Total seats is required'),
   category: Yup.string().oneOf(CATEGORIES).required('Category is required'),
+  imageUrl: Yup.string().url('Must be a valid URL').optional(),
   isPromotion: Yup.boolean(),
   vouchers: Yup.array().of(
     Yup.object().shape({
@@ -61,10 +70,11 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
     startDate: initialValues?.startDate || '',
     endDate: initialValues?.endDate || '',
     location: initialValues?.location || '',
+    address: initialValues?.address || '',
     price: initialValues?.price || 0,
     seatTotal: initialValues?.seatTotal || 0,
-    category: initialValues?.category || 'Music',
-    image: null,
+    category: initialValues?.category || 'MUSIC',
+    imageUrl: '',
     isPromotion: false,
     vouchers: [],
     ...initialValues,
@@ -129,16 +139,41 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                 />
                 {touched.location && errors.location && <span className="text-xs text-red-500">{errors.location as string}</span>}
               </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold text-gray-700">Detailed Address</label>
+                <textarea
+                  name="address"
+                  value={values.address}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="e.g. Jl. Asia Afrika No.1, Jakarta Pusat"
+                  rows={2}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none ${
+                    touched.address && errors.address ? 'border-red-500' : 'border-gray-200'
+                  }`}
+                />
+                {touched.address && errors.address && <span className="text-xs text-red-500">{errors.address as string}</span>}
+              </div>
             </div>
 
             {/* Right Column */}
             <div className="space-y-6">
-              <ImageUpload
-                label="Event Image Cover"
-                onChange={(file) => setFieldValue('image', file)}
-                error={errors.image as string}
-                touched={!!touched.image}
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold text-gray-700">Event Image URL (Optional)</label>
+                <input
+                  name="imageUrl"
+                  value={values.imageUrl}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="https://example.com/image.jpg"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
+                    touched.imageUrl && errors.imageUrl ? 'border-red-500' : 'border-gray-200'
+                  }`}
+                />
+                {touched.imageUrl && errors.imageUrl && <span className="text-xs text-red-500">{errors.imageUrl as string}</span>}
+                <p className="text-[10px] text-gray-400 mt-1">Provide a direct link to your event cover image.</p>
+              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
@@ -239,7 +274,19 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
         </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-gray-700">Description</label>
+            <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-semibold text-gray-700">Description</label>
+                <button
+                    type="button"
+                    onClick={() => {
+                        const randomDesc = DUMMY_DESCRIPTIONS[Math.floor(Math.random() * DUMMY_DESCRIPTIONS.length)];
+                        setFieldValue('description', randomDesc);
+                    }}
+                    className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold hover:bg-primary/20 transition-colors"
+                >
+                    Generate Dummy Description
+                </button>
+            </div>
             <textarea
               name="description"
               value={values.description}
