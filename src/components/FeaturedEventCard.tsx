@@ -11,8 +11,8 @@ interface FeaturedEventCardProps {
 export const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event }) => {
   return (
     <Link to={`/event/${event.id}`} className="group block">
-      <div className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
-        <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="bg-white rounded-4xl border border-slate-100 overflow-hidden shadow-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2">
+        <div className="relative aspect-16/10 overflow-hidden">
           <img
             src={getFullImageUrl(event.imageUrl)}
             alt={event.title}
@@ -41,18 +41,22 @@ export const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event }) =
             </div>
             <div className="flex items-center gap-3 py-2 px-3 bg-slate-50 rounded-xl border border-slate-100">
               <MapPin className="w-4 h-4 text-primary" />
-              <span className="text-xs font-bold text-slate-600 truncate">{event.location}</span>
+              <span className="text-xs font-bold text-slate-600 truncate">
+                {typeof event.location === 'object' ? event.location.city : (event.location || 'Location TBA')}
+              </span>
             </div>
           </div>
 
-          <div className="pt-4 flex items-center justify-between">
+          <div className="pt-4 flex items-center justify-between border-t border-slate-50 mt-4">
             <div className="flex items-baseline gap-1">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Starts from</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Harga Tiket</span>
               <span className="text-xl font-black text-primary">Rp {event.price.toLocaleString()}</span>
             </div>
-            <div className="flex items-center gap-1 text-orange-400 font-black text-xs">
-              <Star className="w-4 h-4 fill-current" /> 4.9
-            </div>
+            {event.rating && event.rating > 0 && (
+              <div className="flex items-center gap-1.5 text-orange-400 font-black text-xs">
+                <Star className="w-4 h-4 fill-current" /> {event.rating.toFixed(1)}
+              </div>
+            )}
           </div>
         </div>
       </div>
