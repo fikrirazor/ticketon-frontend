@@ -99,20 +99,20 @@ export const EventDetail = () => {
       <div className="pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb & Actions */}
-          <div className="flex justify-between items-center mb-10">
-            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
               <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3 h-3" />
               <Link to="/discover" className="hover:text-primary transition-colors">Discover</Link>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3 h-3" />
               <span className="text-slate-900 truncate max-w-[200px]">{event.title}</span>
             </div>
-            <div className="flex gap-3">
-              <button className="p-3 rounded-2xl border border-slate-100 bg-white text-slate-400 hover:text-primary hover:bg-slate-50 transition-all shadow-sm hover:shadow-xl hover:-translate-y-1">
-                <Share2 className="w-5 h-5" />
+            <div className="flex gap-2">
+              <button className="p-2.5 rounded-xl border border-slate-100 bg-white text-slate-400 hover:text-primary hover:bg-slate-50 transition-all shadow-sm">
+                <Share2 className="w-4 h-4" />
               </button>
-              <button className="p-3 rounded-2xl border border-slate-100 bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all shadow-sm hover:shadow-xl hover:-translate-y-1">
-                <Heart className="w-5 h-5" />
+              <button className="p-2.5 rounded-xl border border-slate-100 bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all shadow-sm">
+                <Heart className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -121,18 +121,18 @@ export const EventDetail = () => {
             {/* Main Content (Left) */}
             <div className="lg:col-span-8 space-y-12">
               {/* Header Image */}
-              <div className="relative group aspect-video rounded-[3rem] overflow-hidden shadow-3xl shadow-slate-200/50 border border-slate-100">
+              <div className="relative group aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-100">
                 <img 
                   src={getFullImageUrl(event.imageUrl)} 
                   alt={event.title}
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
-                <div className="absolute top-8 left-8 flex gap-3">
-                  <span className="px-6 py-3 bg-white/95 backdrop-blur-md rounded-2xl text-primary font-black text-sm shadow-2xl flex items-center gap-2 border border-orange-100">
-                    <Zap className="w-4 h-4 fill-primary" /> {event.category.toUpperCase()}
+                <div className="absolute top-6 left-6 flex gap-2">
+                  <span className="px-4 py-2 bg-white/95 backdrop-blur-md rounded-xl text-primary font-bold text-xs shadow-xl flex items-center gap-2 border border-slate-100 uppercase tracking-wider">
+                    <Zap className="w-3.5 h-3.5 fill-primary" /> {event.category}
                   </span>
                   {event.seatLeft < 20 && event.seatLeft > 0 && (
-                    <span className="px-6 py-3 bg-red-500/90 backdrop-blur-md rounded-2xl text-white font-black text-sm shadow-2xl border border-red-400/20 animate-pulse">
+                    <span className="px-4 py-2 bg-red-500 rounded-xl text-white font-bold text-xs shadow-xl border border-red-400/20">
                       SISA SEDIKIT!
                     </span>
                   )}
@@ -140,42 +140,36 @@ export const EventDetail = () => {
               </div>
 
               {/* Quick Info Bar */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white border border-slate-100 p-8 rounded-[2.5rem] shadow-2xl shadow-slate-100">
-                <div className="flex items-center gap-4 px-2 border-r border-slate-100 last:border-0">
-                  <div className="p-4 bg-orange-50 rounded-2xl text-primary">
-                    <Calendar className="w-7 h-7" />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50/50 border border-slate-100 p-6 rounded-3xl">
+                <div className="flex flex-col gap-1 p-2">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Tanggal</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Tanggal</p>
-                    <p className="text-sm font-black text-slate-900 truncate">{new Date(event.startDate).toLocaleDateString()}</p>
-                  </div>
+                  <p className="text-sm font-bold text-slate-900">{new Date(event.startDate).toLocaleDateString()}</p>
                 </div>
-                <div className="flex items-center gap-4 px-2 border-r border-slate-100 last:border-0">
-                  <div className="p-4 bg-blue-50 rounded-2xl text-blue-500">
-                    <Clock className="w-7 h-7" />
+                <div className="flex flex-col gap-1 p-2 border-l border-slate-100">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Waktu</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Waktu</p>
-                    <p className="text-sm font-black text-slate-900">19:00 WIB</p>
-                  </div>
+                  <p className="text-sm font-bold text-slate-900">19:00 WIB</p>
                 </div>
-                <div className="flex items-center gap-4 px-2 border-r border-slate-100 last:border-0">
-                  <div className="p-4 bg-purple-50 rounded-2xl text-purple-500">
-                    <MapPin className="w-7 h-7" />
+                <div className="flex flex-col gap-1 p-2 border-l border-slate-100">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Lokasi</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Lokasi</p>
-                    <p className="text-sm font-black text-slate-900 truncate">{event.location.split(',')[0]}</p>
-                  </div>
+                  <p className="text-sm font-bold text-slate-900 truncate">
+                    {typeof event.location === 'object' ? event.location.city : (event.location || 'Lokasi TBA')}
+                  </p>
                 </div>
-                <div className="flex items-center gap-4 px-2 last:border-0">
-                  <div className="p-4 bg-yellow-50 rounded-2xl text-yellow-500">
-                    <Star className="w-7 h-7 fill-current" />
+                <div className="flex flex-col gap-1 p-2 border-l border-slate-100">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Star className="w-3.5 h-3.5" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Rating</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Rating</p>
-                    <p className="text-sm font-black text-slate-900">{averageRating || 'BARU'}</p>
-                  </div>
+                  <p className="text-sm font-bold text-slate-900">{event.rating && event.rating > 0 ? event.rating.toFixed(1) : 'BARU'}</p>
                 </div>
               </div>
 
@@ -193,25 +187,31 @@ export const EventDetail = () => {
               </div>
 
               {/* Organizer */}
-              <div className="bg-slate-50 p-12 rounded-[3.5rem] border border-slate-100 flex flex-col md:flex-row items-center gap-10 group overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary opacity-[0.03] rounded-full blur-3xl -mr-32 -mt-32" />
-                
-                <div className="w-28 h-28 rounded-3xl bg-white shadow-2xl flex items-center justify-center text-4xl font-black text-primary border border-slate-100 transform group-hover:rotate-6 transition-transform">
+              <div className="bg-slate-50 p-8 md:p-10 rounded-3xl border border-slate-100 flex flex-col md:flex-row items-center gap-8 group">
+                <div className="w-20 h-20 rounded-2xl bg-white shadow-sm flex items-center justify-center text-3xl font-bold text-primary border border-slate-100">
                   {event.organizer?.name ? event.organizer.name.charAt(0).toUpperCase() : '?'}
                 </div>
                 
                 <div className="text-center md:text-left flex-1 min-w-0">
-                  <p className="text-primary font-black uppercase tracking-[0.3em] text-[10px] mb-3">Diselenggarakan Oleh</p>
-                  <h3 className="text-3xl font-black text-slate-900 mb-4 truncate">{event.organizer?.name || 'Organizer'}</h3>
-                  <div className="flex flex-wrap justify-center md:justify-start gap-6">
-                    <span className="flex items-center gap-2 text-xs font-bold text-slate-500"><ShieldCheck className="w-5 h-5 text-green-500" /> Verified Organizer</span>
-                    <span className="flex items-center gap-2 text-xs font-bold text-slate-500 group-hover:text-primary transition-colors"><Star className="w-5 h-5 text-yellow-500 fill-current" /> High Rating</span>
+                  <p className="text-slate-400 font-bold uppercase tracking-wider text-[10px] mb-1">Diselenggarakan Oleh</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2 truncate">{event.organizer?.name || 'Organizer'}</h3>
+                  <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                    <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                      <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                      Verified
+                    </span>
+                    {event.rating && event.rating > 4.5 && (
+                      <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                        <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                        Top Rated
+                      </span>
+                    )}
                   </div>
                 </div>
                 
                 <Link 
                   to={`/organizer/${encodeURIComponent(event.organizer.id)}`}
-                  className="px-8 py-5 bg-white hover:bg-primary hover:text-white border border-slate-200 hover:border-primary text-slate-900 rounded-2xl font-black text-sm transition-all shadow-sm hover:shadow-xl hover:shadow-primary/20"
+                  className="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-xl font-bold text-xs transition-all shadow-sm"
                 >
                   LIHAT PROFIL
                 </Link>
@@ -243,53 +243,51 @@ export const EventDetail = () => {
             {/* Checkout Sticky (Right) */}
             <div className="lg:col-span-4">
               <div className="sticky top-28 space-y-8">
-                <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-3xl shadow-slate-200/50 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-primary/10 transition-colors" />
-                  
+                <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
                   <div className="relative z-10">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6">Informasi Tiket</p>
-                    <div className="flex flex-col mb-10">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Mulai Dari</span>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-6">Informasi Tiket</p>
+                    <div className="flex flex-col mb-8">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Harga Mulai Dari</span>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-5xl font-black text-slate-900 tracking-tighter">Rp {event.price.toLocaleString()}</span>
+                        <span className="text-4xl font-black text-slate-900">Rp {event.price.toLocaleString()}</span>
                         <span className="text-slate-400 font-bold text-sm">/pax</span>
                       </div>
                     </div>
-
-                    <div className="space-y-4 mb-10">
-                      <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group-hover:border-primary/20 transition-all">
-                        <span className="flex items-center gap-3 text-slate-500 font-bold"><Users className="w-5 h-5 text-primary" /> Kapasitas</span>
-                        <span className="text-slate-900 font-black">{event.seatLeft} <span className="text-slate-400 text-xs">Tersisa</span></span>
+ 
+                    <div className="space-y-3 mb-8">
+                      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <span className="flex items-center gap-2.5 text-slate-500 font-bold text-xs"><Users className="w-4 h-4 text-primary/70" /> Kapasitas</span>
+                        <span className="text-slate-900 font-bold text-sm">{event.seatLeft} <span className="text-slate-400 text-[10px]">Tersisa</span></span>
                       </div>
-                      <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group-hover:border-primary/20 transition-all">
-                        <span className="flex items-center gap-3 text-slate-500 font-bold"><ShieldCheck className="w-5 h-5 text-primary" /> Keamanan</span>
-                        <span className="text-slate-900 font-black uppercase text-xs tracking-widest">Terjamin</span>
+                      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                        <span className="flex items-center gap-2.5 text-slate-500 font-bold text-xs"><ShieldCheck className="w-4 h-4 text-primary/70" /> Jaminan</span>
+                        <span className="text-slate-900 font-bold text-[10px] uppercase tracking-wider">Tiket 100% Aman</span>
                       </div>
                     </div>
-
+ 
                     <Button 
                       onClick={handleReserveClick}
                       disabled={event.seatLeft <= 0}
-                      className="w-full py-8 rounded-2xl bg-primary hover:bg-orange-600 text-white shadow-2xl shadow-primary/30 text-xl font-black uppercase tracking-widest transition-all hover:-translate-y-1 active:scale-95 border-0"
+                      className="w-full py-7 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold uppercase tracking-wider transition-all border-0"
                     >
                       {event.seatLeft > 0 ? (isAuthenticated ? 'PESAN SEKARANG' : 'MASUK UNTUK PESAN') : 'HABIS TERJUAL'}
                     </Button>
-
-                    <p className="text-center text-[10px] text-slate-400 font-bold mt-8 tracking-tight uppercase tracking-[0.1em]">
+ 
+                    <p className="text-center text-[10px] text-slate-400 font-medium mt-6 tracking-wide uppercase">
                       Konfirmasi Instan &bull; E-Ticket Langsung Dikirim
                     </p>
                   </div>
                 </div>
 
                 {/* Promo Card */}
-                <div className="bg-primary p-8 rounded-[2.5rem] text-white shadow-2xl shadow-primary/20 relative overflow-hidden group">
-                  <div className="absolute -right-8 -bottom-8 opacity-20 transform rotate-12 transition-transform group-hover:rotate-0">
-                    <Sparkles className="w-32 h-32" />
+                <div className="bg-slate-900 p-8 rounded-3xl text-white relative overflow-hidden group">
+                  <div className="absolute -right-6 -bottom-6 opacity-10 transform rotate-12 transition-transform group-hover:rotate-0">
+                    <Sparkles className="w-24 h-24" />
                   </div>
                   <div className="relative z-10">
-                    <h4 className="font-black text-xl mb-2">Beli Banyak Lebih Hemat!</h4>
-                    <p className="text-white/80 text-sm font-medium leading-relaxed mb-6">Gunakan kode PROMOEVENT untuk diskon 10% untuk pembelian minimal 5 tiket.</p>
-                    <button className="text-white font-black text-xs underline decoration-2 underline-offset-4 hover:text-orange-100 transition-colors uppercase tracking-widest">Cek Promo Lainnya →</button>
+                    <h4 className="font-bold text-lg mb-2">Beli Banyak Lebih Hemat!</h4>
+                    <p className="text-slate-400 text-xs font-medium leading-relaxed mb-6">Gunakan kode PROMOEVENT untuk diskon 10% untuk pembelian minimal 5 tiket.</p>
+                    <button className="text-primary font-bold text-[10px] uppercase tracking-widest hover:text-primary/80 transition-colors">Cek Promo Lainnya →</button>
                   </div>
                 </div>
               </div>

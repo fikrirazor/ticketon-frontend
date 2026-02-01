@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 export const FilterPanel = () => {
   const { filter, setCategory, setLocation } = useEventStore();
 
-  const categories = ['All', 'Music', 'Technology', 'Art', 'Business', 'Sports'];
+  const categories = ['All', 'MUSIC', 'NIGHTLIFE', 'WORKSHOP', 'FOOD', 'ARTS', 'SPORTS', 'TECH'];
   const locations = ['All', 'Jakarta', 'Bandung', 'Bali', 'Surabaya', 'Yogyakarta', 'Medan'];
 
   const handleCategoryClick = (cat: string) => {

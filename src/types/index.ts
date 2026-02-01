@@ -4,7 +4,8 @@ export interface Event {
   description: string;
   startDate: string;
   endDate: string;
-  location: string;
+  location: string | { id: number; city: string };
+  address: string;
   price: number;
   seatTotal: number;
   seatLeft: number;
@@ -16,6 +17,8 @@ export interface Event {
   };
   imageUrl: string;
   isPromoted?: boolean;
+  rating?: number;
+  totalReviews?: number;
 }
 
 export type EventCategory = 'Music' | 'Technology' | 'Art' | 'Business' | 'Sports' | 'All';
