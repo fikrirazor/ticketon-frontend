@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Star, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Sparkles } from 'lucide-react';
 import { getFullImageUrl } from '../lib/axiosInstance';
 import type { Event } from '../types';
 
@@ -52,11 +52,6 @@ export const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event }) =
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Harga Tiket</span>
               <span className="text-xl font-black text-primary">Rp {event.price.toLocaleString()}</span>
             </div>
-            {event.rating && event.rating > 0 && (
-              <div className="flex items-center gap-1.5 text-orange-400 font-black text-xs">
-                <Star className="w-4 h-4 fill-current" /> {event.rating.toFixed(1)}
-              </div>
-            )}
           </div>
         </div>
       </div>

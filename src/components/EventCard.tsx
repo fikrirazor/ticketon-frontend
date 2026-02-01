@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Star, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import { getFullImageUrl } from '../lib/axiosInstance';
 import type { Event } from '../types';
 
@@ -31,16 +31,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
         {/* Content Section */}
         <div className="p-6 flex flex-col flex-grow bg-white">
-          {event.rating && event.rating > 0 && (
-            <div className="flex items-center gap-1.5 mb-3">
-               <div className="flex text-orange-400">
-                 <Star className="w-3 h-3 fill-current" />
-               </div>
-               <span className="text-[10px] font-bold text-slate-400">
-                 {event.rating.toFixed(1)} ({event.totalReviews || 0})
-               </span>
-            </div>
-          )}
 
           <h3 className="text-lg font-black text-slate-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
             {event.title}
