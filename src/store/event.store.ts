@@ -24,10 +24,17 @@ interface EventState {
   setPage: (page: number) => void;
   fetchEvents: () => Promise<void>;
   getEventById: (id: string) => Promise<Event | undefined>;
-  createEvent: (eventData: FormData) => Promise<Event>;
+  createEvent: (eventData: FormData | Record<string, unknown>) => Promise<Event>;
   updateEvent: (id: string, eventData: Partial<Event>) => Promise<Event>;
   deleteEvent: (id: string) => Promise<void>;
-  createVoucher: (eventId: string, voucherData: any) => Promise<void>;
+  createVoucher: (eventId: string, voucherData: {
+    code: string;
+    discountAmount?: number;
+    discountPercent?: number;
+    maxUsage: number;
+    startDate: string;
+    endDate: string;
+  }) => Promise<void>;
   clearError: () => void;
 }
 
@@ -172,8 +179,8 @@ export const useEventStore = create<EventState>((set, get) => ({
     try {
       await voucherAPI.createVoucher(eventId, voucherData);
       set({ error: null });
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to create voucher';
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to create voucher';
       set({ error: errorMsg });
       throw err;
     } finally {

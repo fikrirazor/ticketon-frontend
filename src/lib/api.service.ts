@@ -33,9 +33,10 @@ export const eventAPI = {
   /**
    * Create new event (Organizer only)
    */
-  createEvent: async (eventData: FormData): Promise<Event> => {
+  createEvent: async (eventData: FormData | Record<string, unknown>): Promise<Event> => {
+    const isFormData = eventData instanceof FormData;
     const response = await axiosInstance.post('/events', eventData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': isFormData ? 'multipart/form-data' : 'application/json' },
     });
     return response.data.data;
   },
@@ -152,6 +153,19 @@ export const voucherAPI = {
     const response = await axiosInstance.get(`/vouchers/${code}/validate`, {
       params: { eventId },
     });
+    return response.data.data;
+  },
+};
+
+/**
+ * LOCATION API SERVICES
+ */
+export const locationAPI = {
+  /**
+   * Get all locations
+   */
+  getLocations: async () => {
+    const response = await axiosInstance.get('/locations');
     return response.data.data;
   },
 };

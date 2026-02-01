@@ -122,7 +122,7 @@ const TransactionDetailPage: React.FC = () => {
                 <div>
                   <h4 className="font-black text-slate-900">{event?.title}</h4>
                   <p className="text-sm text-slate-500 mt-1 font-medium">{event?.startDate ? new Date(event.startDate).toLocaleDateString() : ''}</p>
-                  <p className="text-sm text-slate-500 font-medium">{event?.location}</p>
+                  <p className="text-sm text-slate-500 font-medium">{event?.location || 'Location Unknown'}</p>
                 </div>
               </div>
             </div>

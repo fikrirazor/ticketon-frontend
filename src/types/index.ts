@@ -5,6 +5,7 @@ export interface Event {
   startDate: string;
   endDate: string;
   location: string;
+  address: string;
   price: number;
   seatTotal: number;
   seatLeft: number;

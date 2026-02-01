@@ -165,7 +165,9 @@ export const EventDetail = () => {
                   </div>
                   <div className="min-w-0">
                     <p className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400 mb-0.5">Lokasi</p>
-                    <p className="text-sm font-black text-slate-900 truncate">{event.location.split(',')[0]}</p>
+                    <p className="text-sm font-black text-slate-900 truncate">
+                      {event.location ? (typeof event.location === 'string' ? event.location.split(',')[0] : 'Lokasi TBA') : 'Lokasi TBA'}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 px-2 last:border-0">

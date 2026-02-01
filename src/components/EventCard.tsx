@@ -50,7 +50,9 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             </div>
             <div className="flex items-center text-slate-500 gap-2">
               <MapPin className="w-4 h-4 text-primary/60" />
-              <span className="text-xs font-bold truncate">{event.location.split(',')[0]}</span>
+              <span className="text-xs font-bold truncate">
+                {event.location ? (typeof event.location === 'string' ? event.location.split(',')[0] : 'Location TBA') : 'Location TBA'}
+              </span>
             </div>
           </div>
 

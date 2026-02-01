@@ -4,9 +4,31 @@ import { useEventStore } from '../store/event.store';
 import { SearchBar } from '../components/SearchBar';
 import { FilterPanel } from '../components/FilterPanel';
 import { Telescope, Compass } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export const DiscoverEvents = () => {
-    const { events, isLoading } = useEventStore();
+    const { events, isLoading, setLocation, setCategory, fetchEvents } = useEventStore();
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        const locationParam = searchParams.get('location');
+        const categoryParam = searchParams.get('category');
+        
+        let hasParam = false;
+        if (locationParam) {
+            setLocation(locationParam);
+            hasParam = true;
+        }
+        if (categoryParam) {
+            setCategory(categoryParam);
+            hasParam = true;
+        }
+
+        if (!hasParam) {
+            fetchEvents();
+        }
+    }, [searchParams, setLocation, setCategory, fetchEvents]);
 
     return (
         <Layout>

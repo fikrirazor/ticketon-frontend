@@ -20,20 +20,10 @@ export const CreateEvent: React.FC = () => {
   const handleSubmit = async (values: EventFormValues) => {
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      Object.keys(values).forEach(key => {
-        if (key === 'vouchers') {
-            // Vouchers are created separately
-        } else if (key === 'image' && values.image) {
-            formData.append(key, values.image);
-        } else if (key === 'isPromotion') {
-             formData.append(key, String(values.isPromotion));
-        } else {
-            formData.append(key, String(values[key as keyof EventFormValues]));
-        }
-      });
-
-      const newEvent = await createEvent(formData);
+      const payload: Partial<EventFormValues> & Record<string, any> = { ...values };
+      delete payload.vouchers;
+      
+      const newEvent = await createEvent(payload);
       
       // Create vouchers if enabled and present
       if (values.isPromotion && values.vouchers && values.vouchers.length > 0) {
@@ -101,15 +91,18 @@ export const CreateEvent: React.FC = () => {
             <div className="p-0">
               {/* Cover Image Preview */}
               <div className="h-64 md:h-80 bg-gray-200 relative overflow-hidden">
-                {previewData.image ? (
+                {previewData.imageUrl ? (
                   <img
-                    src={URL.createObjectURL(previewData.image)}
+                    src={previewData.imageUrl}
                     alt="Cover"
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Invalid+Image+URL';
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    No image uploaded
+                    No image URL provided
                   </div>
                 )}
                 <div className="absolute top-4 left-4">
@@ -127,9 +120,14 @@ export const CreateEvent: React.FC = () => {
                       {previewData.title || 'Event Title'}
                     </h2>
                     <div className="flex items-center text-gray-600 gap-4 flex-wrap">
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        <span className="text-sm">{previewData.location || 'Location'}</span>
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="w-4 h-4 text-primary" />
+                          <span className="text-sm">{previewData.location || 'Location'}</span>
+                        </div>
+                        {previewData.address && (
+                          <span className="text-xs text-gray-500 ml-5.5">{previewData.address}</span>
+                        )}
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4 text-primary" />
