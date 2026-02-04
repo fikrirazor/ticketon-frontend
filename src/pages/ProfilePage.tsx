@@ -17,6 +17,12 @@ const ProfilePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  React.useEffect(() => {
+    const handleOpenEdit = () => setIsEditing(true);
+    window.addEventListener('open-profile-edit', handleOpenEdit);
+    return () => window.removeEventListener('open-profile-edit', handleOpenEdit);
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -69,11 +75,15 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto py-8 px-4 max-w-4xl">
+      <div className="container mx-auto pt-24 pb-8 px-4 max-w-4xl">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">My Profile</h1>
           {!isEditing && (
-            <Button onClick={() => setIsEditing(true)} variant="outline">
+            <Button
+              onClick={() => setIsEditing(true)}
+              variant="primary"
+              className="animate-pulse-subtle shadow-orange-500/20 shadow-lg"
+            >
               Update Profile
             </Button>
           )}
