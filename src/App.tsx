@@ -24,21 +24,21 @@ import UserTransactionsPage from './pages/UserTransactionsPage'; // Halaman tran
 
 function App() {
   const getMe = useAuthStore((state) => state.getMe);
-  const isLoading = useAuthStore((state) => state.isLoading);
+  const [isAuthReady, setIsAuthReady] = React.useState(false);
 
   React.useEffect(() => {
-    getMe().catch((error) => {
-      console.error("Failed to initialize auth:", error);
+    getMe().finally(() => {
+      setIsAuthReady(true);
     });
   }, [getMe]);
 
-  // Show loading state during auth initialization
-  if (isLoading) {
+  // Show loading state only during initial auth check
+  if (!isAuthReady) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading...</p>
+          <p className="text-slate-500 font-medium">Memuat Aplikasi...</p>
         </div>
       </div>
     );
@@ -49,84 +49,84 @@ function App() {
       <Toaster position="top-right" />
       <ErrorBoundary>
         <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/discover" element={<DiscoverEvents />} />
-          <Route path="/event/:id" element={<EventDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/organizer/:name" element={<OrganizerProfile />} />
-          
-          {/* Profile Routes */}
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/organizer/events"
-            element={
-              <ProtectedRoute allowedRoles={['ORGANIZER']}>
-                <OrganizerEventsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/transactions"
-            element={
-              <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
-                <UserTransactionsPage />
-              </ProtectedRoute>
-            }
-          />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/discover" element={<DiscoverEvents />} />
+            <Route path="/event/:id" element={<EventDetail />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/organizer/:name" element={<OrganizerProfile />} />
 
-          {/* Transaction Flow */}
-          <Route
-            path="/checkout/:id"
-            element={
-              <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
-                <CheckoutPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/payment-proof/:transactionId"
-            element={
-              <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
-                <PaymentProofPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/transaction/:transactionId"
-            element={
-              <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
-                <TransactionDetailPage />
-              </ProtectedRoute>
-            }
-          />
+            {/* Profile Routes */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/organizer/events"
+              element={
+                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                  <OrganizerEventsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                  <UserTransactionsPage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/create-event"
-            element={
-              <ProtectedRoute allowedRoles={['ORGANIZER']}>
-                <CreateEvent />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowedRoles={['ORGANIZER']}>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
+            {/* Transaction Flow */}
+            <Route
+              path="/checkout/:id"
+              element={
+                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment-proof/:transactionId"
+              element={
+                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                  <PaymentProofPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/transaction/:transactionId"
+              element={
+                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                  <TransactionDetailPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/create-event"
+              element={
+                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                  <CreateEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Router>
       </ErrorBoundary>
     </>
   );

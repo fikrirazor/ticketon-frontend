@@ -82,7 +82,8 @@ const ProfilePage: React.FC = () => {
             <Button
               onClick={() => setIsEditing(true)}
               variant="primary"
-              className="animate-pulse-subtle shadow-orange-500/20 shadow-lg"
+              size="sm"
+              className="animate-pulse-subtle shadow-orange-500/20 shadow-lg px-5 rounded-full text-xs font-semibold"
             >
               Update Profile
             </Button>

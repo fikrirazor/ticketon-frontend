@@ -5,6 +5,7 @@ import { User, Mail, ArrowRight, UserCircle, Sparkles, Tag } from 'lucide-react'
 import { useAuthStore } from '../store/auth.store';
 import { getErrorMessage } from '../lib/axiosInstance';
 import { SuccessModal } from '../components/ui/success-modal';
+import toast from 'react-hot-toast';
 
 export const Register: React.FC = () => {
     const navigate = useNavigate();
@@ -65,12 +66,22 @@ export const Register: React.FC = () => {
 
             await register(registrationData);
 
-            console.log('Registration successful, showing modal after delay');
-            // Use setTimeout to ensure modal shows after all state updates
-            setTimeout(() => {
-                console.log('Setting modal to true');
-                setShowSuccessModal(true);
-            }, 100);
+            // Logout immediately because the user wants to be redirected to login page
+            logout();
+
+            toast.success('Pendaftaran Berhasil!', {
+                duration: 5000,
+                icon: '🎉',
+                style: {
+                    borderRadius: '16px',
+                    background: '#333',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                },
+            });
+
+            console.log('Registration successful, showing modal');
+            setShowSuccessModal(true);
         } catch (err) {
             console.error('Registration failed:', err);
             setError(getErrorMessage(err));
@@ -78,12 +89,10 @@ export const Register: React.FC = () => {
     };
 
     const handleLoginRedirect = () => {
-        console.log('Login redirect clicked');
-        // Logout to clear the auto-login from registration
-        logout();
+        console.log('Redirecting to login page action triggered');
         setShowSuccessModal(false);
-        console.log('Redirecting to login page');
-        navigate('/login');
+        // Direct assignment is usually very reliable
+        window.location.href = '/login';
     };
 
     return (
