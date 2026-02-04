@@ -20,6 +20,7 @@ interface AuthState {
   register: (userData: Record<string, any>) => Promise<void>;
   logout: () => void;
   getMe: () => Promise<void>;
+  updateProfile: (formData: FormData) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -127,15 +128,8 @@ export const useAuthStore = create<AuthState>()(
           console.log('User role from profile:', userData?.role);
 
           if (userData) {
-            // WORKAROUND: If backend doesn't send role, preserve it from existing state
-            const currentUser = useAuthStore.getState().user;
-            const userWithRole = {
-              ...userData,
-              role: userData.role || currentUser?.role || 'CUSTOMER' // Preserve existing role if not in response
-            };
-
-            console.log('Final user with role:', userWithRole);
-            set({ user: userWithRole, isAuthenticated: true });
+            console.log('Final user data:', userData);
+            set({ user: userData, isAuthenticated: true });
           } else {
             console.error("No user data in response");
             localStorage.removeItem("token");
@@ -145,6 +139,28 @@ export const useAuthStore = create<AuthState>()(
           console.error("getMe error:", error.response?.status, error.response?.data);
           localStorage.removeItem("token");
           set({ user: null, isAuthenticated: false });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      updateProfile: async (formData: FormData) => {
+        set({ isLoading: true });
+        try {
+          const response = await axiosInstance.put("/users/profile", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          const userData = response.data.data?.user;
+
+          if (userData) {
+            set({ user: userData });
+          }
+        } catch (error: any) {
+          console.error("updateProfile error:", error.response?.status, error.response?.data);
+          throw error;
         } finally {
           set({ isLoading: false });
         }
