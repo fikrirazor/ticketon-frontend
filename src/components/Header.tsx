@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useAuthStore } from "../store/auth.store";
-import { Compass, Plus, Search, User, LogOut, Ticket } from "lucide-react";
+import { Compass, Plus, Search, User, LogOut, Ticket, LayoutDashboard } from "lucide-react";
 
 export const Header = () => {
   const location = useLocation();
@@ -86,13 +86,22 @@ export const Header = () => {
               </Link>
 
               {user?.role?.toUpperCase() === "ORGANIZER" && (
-                <Link
-                  to="/organizer/events"
-                  className="flex items-center px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors"
-                >
-                  <Ticket className="w-4 h-4 mr-3" />
-                  Manage Events
-                </Link>
+                <>
+                  <Link
+                    to="/organizer/dashboard"
+                    className="flex items-center px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors font-bold"
+                  >
+                    <LayoutDashboard className="w-4 h-4 mr-3" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/organizer/events"
+                    className="flex items-center px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors"
+                  >
+                    <Ticket className="w-4 h-4 mr-3" />
+                    Manage Events
+                  </Link>
+                </>
               )}
 
               <Link
@@ -143,8 +152,8 @@ export const Header = () => {
   return (
     <header
       className={`fixed top-0 z-50 w-full px-4 transition-all duration-300 ${scrolled || !isHome
-          ? 'bg-white border-b border-gray-100 py-3 shadow-md'
-          : 'bg-transparent py-5'
+        ? 'bg-white border-b border-gray-100 py-3 shadow-md'
+        : 'bg-transparent py-5'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -175,8 +184,8 @@ export const Header = () => {
           <Link
             to="/discover"
             className={`flex items-center gap-2 text-sm font-bold transition-colors ${location.pathname === "/discover"
-                ? "text-primary"
-                : (scrolled || !isHome ? "text-slate-600 hover:text-primary" : "text-white/90 hover:text-white")
+              ? "text-primary"
+              : (scrolled || !isHome ? "text-slate-600 hover:text-primary" : "text-white/90 hover:text-white")
               }`}
           >
             <Compass className="w-4 h-4" />
@@ -185,8 +194,8 @@ export const Header = () => {
           <Link
             to="/create-event"
             className={`flex items-center gap-2 text-sm font-bold transition-colors ${location.pathname === "/create-event"
-                ? "text-primary"
-                : (scrolled || !isHome ? "text-slate-600 hover:text-primary" : "text-white/90 hover:text-white")
+              ? "text-primary"
+              : (scrolled || !isHome ? "text-slate-600 hover:text-primary" : "text-white/90 hover:text-white")
               }`}
           >
             <Plus className="w-4 h-4" />

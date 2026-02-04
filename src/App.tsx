@@ -18,9 +18,10 @@ import { useAuthStore } from './store/auth.store';
 import { Toaster } from 'react-hot-toast';
 
 // Impor komponen-komponen halaman baru
-import ProfilePage from './pages/ProfilePage'; // Buat file ini nanti
-import OrganizerEventsPage from './pages/OrganizerEventsPage'; // Buat file ini nanti
-import UserTransactionsPage from './pages/UserTransactionsPage'; // Halaman transaksi pengguna
+import ProfilePage from './pages/ProfilePage';
+import OrganizerEventsPage from './pages/OrganizerEventsPage';
+import UserTransactionsPage from './pages/UserTransactionsPage';
+import { OrganizerDashboard } from './pages/OrganizerDashboard';
 
 function App() {
   const getMe = useAuthStore((state) => state.getMe);
@@ -114,6 +115,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['ORGANIZER']}>
                   <CreateEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/organizer/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                  <OrganizerDashboard />
                 </ProtectedRoute>
               }
             />
