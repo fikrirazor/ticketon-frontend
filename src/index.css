@@ -1,25 +1,43 @@
 @import "tailwindcss";
+
+/* Import Font: Urbanist untuk Sans (mirip Jeton) dan Stack Sans Notch */
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+/* Note: Pastikan font Stack Sans Notch tersedia di penyedia font Anda atau lokal */
 @import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@700&display=swap');
 
 @theme {
-  --color-primary: #f97316; /* Vibrant Orange */
-  --color-primary-hover: #ea580c;
-  --color-secondary: #006ce6; /* Tiket blue for accents/buttons if needed, or keep orange */
-  --color-ring: #f97316;
+  /* Colors - Diambil dari palette Jeton yang vibran */
+  --color-primary: #FF6B52; 
+  --color-primary-hover: #E85A42;
+  --color-secondary: #FF4B6E; /* Diganti ke Rose agar harmonis dengan oren Jeton */
+  --color-ring: #FF6B5266; /* Orange dengan opacity untuk focus ring */
   
-  --color-background: #ffffff; /* White bg */
-  --color-surface: #f4f4f5; /* Zinc 100 - Light surface */
-  --color-surface-hover: #e4e4e7; /* Zinc 200 */
-  --color-border: #e4e4e7;
+  /* Surfaces & Borders */
+  --color-background: #ffffff;
+  --color-surface: #f8f8f9; /* Soft grey-white agar lebih modern */
+  --color-surface-hover: #f1f1f3;
+  --color-border: #efeff1;
 
-  --font-sans: Inter, system-ui, sans-serif;
-  --font-stack-notch: "Stack Sans Notch", sans-serif;
-
+  /* Typography - Menggunakan Urbanist sebagai default sans */
+  --font-sans: "Urbanist", "Inter", system-ui, sans-serif;
+  --font-stack-notch: "Stack Sans Notch", var(--font-sans);
 }
 
 @layer base {
   body {
-    @apply bg-[var(--color-background)] text-slate-900 font-sans antialiased tracking-tight;
+    /* Menggunakan variabel dari @theme secara langsung */
+    background-color: var(--color-background);
+    color: var(--color-slate-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.02em; /* Urbanist terlihat lebih bagus dengan tracking agak rapat */
+  }
+  
+  /* Heading default menggunakan Urbanist Bold */
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    letter-spacing: -0.03em;
   }
 }
 
@@ -30,5 +48,10 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Utilitas tambahan untuk gradasi mirip background Jeton */
+  .bg-jeton-gradient {
+    background: linear-gradient(135deg, #FF4B6E 0%, #FF6B52 50%, #FFBD8B 100%);
   }
 }

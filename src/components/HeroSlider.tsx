@@ -103,8 +103,8 @@ export const HeroSlider = () => {
             {/* Content Container */}
             <div className="relative z-10 w-full max-w-5xl px-6 text-center space-y-8">
                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-xl">
-                        Cari Event <span className="text-primary italic">Impianmu</span>
+                    <h1 className="text-4xl font-extrabold md:text-6xl font-black text-white leading-tight drop-shadow-xl">
+                        CARI EVENT <span className="text-primary italic">IMPIANMU</span>
                     </h1>
                     <p className="text-white/90 text-lg md:text-xl font-medium max-w-2xl mx-auto drop-shadow-lg">
                         Cari event seru, konser, workshop, dan banyak lagi di Ticketon.
