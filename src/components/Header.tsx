@@ -1,20 +1,21 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "./ui/button"; // Shadcn Button
+import { AnimatedButtonText } from "./ui/animated-button-text";
 import { useAuthStore } from "../store/auth.store";
-import { Compass, Plus, Search, User, LogOut, Ticket } from "lucide-react";
+import { Plus, User, LogOut, Ticket, Globe, ChevronDown, Compass } from "lucide-react";
 
 export const Header = () => {
   const location = useLocation();
   const { user, isAuthenticated, isLoading, logout } = useAuthStore();
   const [scrolled, setScrolled] = useState(false);
 
-  // Check if we are on the home page for transparency effect
+  // Check if we are on the home page
   const isHome = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -26,7 +27,7 @@ export const Header = () => {
 
   const renderAuthContent = () => {
     if (isLoading) {
-      return <div className="h-9 w-24 bg-white/10 rounded animate-pulse"></div>;
+      return <div className="h-9 w-24 bg-white/20 rounded animate-pulse"></div>;
     }
 
     if (isAuthenticated) {
@@ -108,21 +109,30 @@ export const Header = () => {
     }
 
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-4">
+         <div className="hidden md:flex items-center">
+            <Button variant="ghost" size="sm" className={`gap-2 font-medium ${
+                scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white/80 hover:bg-white/10'
+            }`}>
+                <Globe className="w-4 h-4" />
+                EN
+                <ChevronDown className="w-3 h-3 opacity-70" />
+            </Button>
+         </div>
+
         <Link to="/login">
           <Button
             variant="ghost"
-            size="sm"
-            className={`font-medium hidden sm:inline-flex ${
-              scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white hover:bg-white/10'
+            className={`font-medium ${
+               scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white hover:bg-white/10' 
             }`}
           >
-            Sign In
+            Log in
           </Button>
         </Link>
         <Link to="/register">
-          <Button size="sm" className="bg-primary hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 border-0">
-            Sign Up
+          <Button className="bg-primary hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 border-0 rounded-lg px-6">
+            <AnimatedButtonText text="Sign up" />
           </Button>
         </Link>
       </div>
@@ -131,36 +141,22 @@ export const Header = () => {
 
   return (
     <header
-        className={`fixed top-0 z-50 w-full px-4 transition-all duration-300 ${
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
           scrolled || !isHome 
           ? 'bg-white border-b border-gray-100 py-3 shadow-md' 
           : 'bg-transparent py-5'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="w-full px-4 md:px-8 flex items-center justify-between">
         <div className="flex items-center gap-12">
             <Link
             to="/"
             className="hover:opacity-80 transition-opacity"
             >
-            <span className={`text-2xl font-black tracking-tighter ${
+            <span className={`font-stack-notch font-bold text-2xl tracking-tighter ${
               scrolled || !isHome ? 'text-primary' : 'text-white'
             }`}>TICKETON</span>
             </Link>
-
-             {/* Search Bar - Desktop */}
-             <div className={`relative hidden grow md:block lg:max-w-md transition-all duration-300 ${
-               scrolled || !isHome ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
-             }`}>
-                <div className="group relative flex items-center rounded-full border border-gray-200 bg-slate-50 px-4 py-2 transition-all focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
-                  <Search className="w-4 h-4 text-slate-400 mr-2" />
-                  <input 
-                      type="text" 
-                      placeholder="Search events..." 
-                      className="bg-transparent border-none focus:ring-0 text-sm w-full text-slate-900 placeholder:text-slate-400"
-                  />
-                </div>
-            </div>
           </div>
 
         <nav className="hidden md:flex items-center gap-8">

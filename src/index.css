@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@700&display=swap');
 
 @theme {
   --color-primary: #f97316; /* Vibrant Orange */
@@ -12,6 +13,8 @@
   --color-border: #e4e4e7;
 
   --font-sans: Inter, system-ui, sans-serif;
+  --font-stack-notch: "Stack Sans Notch", sans-serif;
+
 }
 
 @layer base {
