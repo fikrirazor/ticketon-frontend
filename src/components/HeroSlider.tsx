@@ -88,7 +88,7 @@ export const HeroSlider = () => {
 
 
     return (
-        <div className="relative w-full h-[550px] md:h-[650px] flex items-center justify-center">
+        <div className="relative w-full h-[550px] md:h-screen flex items-center justify-center">
             {/* Scenic Background Image (Tiket.com style) - Overflow hidden moved here */}
             <div className="absolute inset-0 overflow-hidden">
                 <img 

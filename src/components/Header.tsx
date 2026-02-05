@@ -147,8 +147,8 @@ export const Header = () => {
           : 'bg-transparent py-5'
         }`}
     >
-      <div className="w-full px-4 md:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-12">
+      <div className="relative w-full px-4 md:px-8 h-10 flex items-center justify-between">
+        <div className="flex items-center gap-12 z-20"> {/* Added z-20 to ensure it's above absolute nav if overlaps */}
             <Link
             to="/"
             className="hover:opacity-80 transition-opacity"
@@ -159,7 +159,8 @@ export const Header = () => {
             </Link>
           </div>
 
-        <nav className="hidden md:flex items-center gap-8">
+        {/* Absolute Centered Nav */}
+        <nav className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center gap-8 z-10">
           <Link
             to="/discover"
             className={`flex items-center gap-2 text-sm font-bold transition-colors ${
@@ -184,7 +185,7 @@ export const Header = () => {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 z-20">
           {renderAuthContent()}
         </div>
       </div>
