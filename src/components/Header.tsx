@@ -94,13 +94,6 @@ export const Header = () => {
                     <LayoutDashboard className="w-4 h-4 mr-3" />
                     Dashboard
                   </Link>
-                  <Link
-                    to="/organizer/events"
-                    className="flex items-center px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary transition-colors"
-                  >
-                    <Ticket className="w-4 h-4 mr-3" />
-                    Manage Events
-                  </Link>
                 </>
               )}
 

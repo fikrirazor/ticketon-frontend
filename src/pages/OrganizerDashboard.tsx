@@ -5,15 +5,13 @@ import {
     Calendar,
     DollarSign,
     Users,
-    Plus,
     Edit,
     Trash2,
     TrendingUp,
-    ArrowLeft,
     AlertCircle
 } from 'lucide-react';
-import { Button } from '../components/ui/button';
 import { Link } from 'react-router-dom';
+import { OrganizerLayout } from '../components/OrganizerLayout';
 
 export const OrganizerDashboard: React.FC = () => {
     const { user } = useAuthStore();
@@ -22,6 +20,7 @@ export const OrganizerDashboard: React.FC = () => {
         events,
         transactions,
         isLoading,
+        error: storeError,
         fetchStats,
         fetchEvents,
         fetchTransactions
@@ -51,6 +50,7 @@ export const OrganizerDashboard: React.FC = () => {
 
     const getStatusColor = (status: string) => {
         switch (status) {
+            case 'DONE':
             case 'SUCCESS': return 'bg-green-100 text-green-700 border-green-200';
             case 'WAITING_PAYMENT': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
             case 'WAITING_ADMIN': return 'bg-blue-100 text-blue-700 border-blue-200';
@@ -60,24 +60,21 @@ export const OrganizerDashboard: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50/50 pt-24 pb-12 px-4 md:px-8">
-            <div className="max-w-7xl mx-auto space-y-8">
+        <OrganizerLayout>
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {/* Error Display */}
+                {storeError && (
+                    <div className="bg-red-50 border border-red-100 text-red-700 px-6 py-4 rounded-[2rem] flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5 shrink-0" />
+                        <p className="text-sm font-bold">{storeError}</p>
+                    </div>
+                )}
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="space-y-2">
-                        <Link to="/" className="inline-flex items-center text-xs font-black text-slate-400 uppercase tracking-[0.2em] hover:text-primary transition-colors group">
-                            <ArrowLeft className="w-3 h-3 mr-2 group-hover:-translate-x-1 transition-transform" />
-                            Kembali ke Beranda
-                        </Link>
+                    <div className="space-y-1">
                         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Dashboard Penyelenggara</h1>
-                        <p className="text-slate-500 font-medium">Selamat datang kembali, {user?.name}. Kelola event Anda di sini.</p>
+                        <p className="text-slate-500 font-medium">Selamat datang kembali, {user?.name}.</p>
                     </div>
-                    <Link to="/create-event">
-                        <Button className="bg-primary hover:bg-orange-600 shadow-xl shadow-primary/20 rounded-2xl px-6 py-6 text-sm font-black text-white border-0 group">
-                            <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" />
-                            BUAT EVENT BARU
-                        </Button>
-                    </Link>
                 </div>
 
                 {/* Stats Grid */}
@@ -190,7 +187,7 @@ export const OrganizerDashboard: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </OrganizerLayout>
     );
 };
 
