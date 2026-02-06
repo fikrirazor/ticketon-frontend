@@ -169,9 +169,9 @@ export const Header = () => {
           <Button
             variant="ghost"
             size="sm"
-            className={`font-medium hidden sm:inline-flex ${
+            className={`font-bold hidden sm:inline-flex ${
               scrolled || !isHome
-                ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                ? "text-slate-700 hover:text-primary hover:bg-slate-100"
                 : "text-white hover:text-white hover:bg-white/10"
             }`}
           >
@@ -179,7 +179,7 @@ export const Header = () => {
           </Button>
         </Link>
         <Link to="/register">
-          <Button className="bg-primary hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 border-0 rounded-lg px-6">
+          <Button className="bg-primary hover:bg-orange-700 text-white shadow-xl shadow-orange-500/30 transition-all transform hover:-translate-y-0.5 border-0 rounded-lg px-6 font-black uppercase tracking-tight">
             <AnimatedButtonText text="Sign up" />
           </Button>
         </Link>

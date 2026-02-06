@@ -176,17 +176,37 @@ export default function Aurora(props: AuroraProps) {
     ctn.appendChild(gl.canvas);
 
     let animateId = 0;
+    let lastStops: string[] = [];
+    let cachedColorArray: number[][] = [];
+
     const update = (t: number) => {
       animateId = requestAnimationFrame(update);
-      const { time = t * 0.01, speed = 1.0 } = propsRef.current;
+      const {
+        time = t * 0.01,
+        speed = 1.0,
+        amplitude: amp = amplitude,
+        blend: bld = blend,
+        colorStops: stops = colorStops,
+      } = propsRef.current;
+
       program.uniforms.uTime.value = time * speed * 0.1;
-      program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
-      program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
-      const stops = propsRef.current.colorStops ?? colorStops;
-      program.uniforms.uColorStops.value = stops.map((hex: string) => {
-        const c = new Color(hex);
-        return [c.r, c.g, c.b];
-      });
+      program.uniforms.uAmplitude.value = amp;
+      program.uniforms.uBlend.value = bld;
+
+      // Only update colors if hex strings changed
+      const stopsChanged =
+        stops.length !== lastStops.length ||
+        stops.some((s, i) => s !== lastStops[i]);
+
+      if (stopsChanged) {
+        cachedColorArray = stops.map((hex: string) => {
+          const c = new Color(hex);
+          return [c.r, c.g, c.b];
+        });
+        lastStops = [...stops];
+        program.uniforms.uColorStops.value = cachedColorArray;
+      }
+
       renderer.render({ scene: mesh });
     };
     animateId = requestAnimationFrame(update);
@@ -201,7 +221,7 @@ export default function Aurora(props: AuroraProps) {
       }
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [amplitude, blend, colorStops]);
+  }, [amplitude, blend, colorStops]); // Added back essentials to ensure initial values are captured correctly, though propsRef handles updates. Internal props might be better. Actually, empty is fine if we use propsRef but for first frame we need them. Let's use empty and ensure propsRef is set.
 
   return <div ref={ctnDom} className="w-full h-full" />;
 }
