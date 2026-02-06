@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button"; // Shadcn Button
 import { AnimatedButtonText } from "./ui/animated-button-text";
 import { useAuthStore } from "../store/auth.store";
-import { Plus, User, LogOut, Ticket, Globe, ChevronDown, Compass } from "lucide-react";
-import { Compass, Plus, Search, User, LogOut, Ticket, LayoutDashboard } from "lucide-react";
+import { Plus, User, LogOut, Ticket, Globe, ChevronDown, Compass, Search, LayoutDashboard } from "lucide-react";
 
 export const Header = () => {
   const location = useLocation();
@@ -138,9 +137,6 @@ export const Header = () => {
         <Link to="/login">
           <Button
             variant="ghost"
-            className={`font-medium ${
-               scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white hover:bg-white/10' 
-            }`}
             size="sm"
             className={`font-medium hidden sm:inline-flex ${scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white hover:bg-white/10'
               }`}
@@ -159,22 +155,6 @@ export const Header = () => {
 
   return (
     <header
-        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-          scrolled || !isHome 
-          ? 'bg-white border-b border-gray-100 py-3 shadow-md' 
-          : 'bg-transparent py-5'
-        }`}
-    >
-      <div className="relative w-full px-4 md:px-8 h-10 flex items-center justify-between">
-        <div className="flex items-center gap-12 z-20"> {/* Added z-20 to ensure it's above absolute nav if overlaps */}
-            <Link
-            to="/"
-            className="hover:opacity-80 transition-opacity"
-            >
-            <span className={`font-stack-notch font-bold text-2xl tracking-tighter ${
-              scrolled || !isHome ? 'text-primary' : 'text-white'
-            }`}>TICKETON</span>
-            </Link>
       className={`fixed top-0 z-50 w-full px-4 transition-all duration-300 ${scrolled || !isHome
         ? 'bg-white border-b border-gray-100 py-3 shadow-md'
         : 'bg-transparent py-5'
