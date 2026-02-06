@@ -1,7 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "./ui/button"; // Shadcn Button
+import { AnimatedButtonText } from "./ui/animated-button-text";
 import { useAuthStore } from "../store/auth.store";
+import { Plus, User, LogOut, Ticket, Globe, ChevronDown, Compass } from "lucide-react";
 import { Compass, Plus, Search, User, LogOut, Ticket, LayoutDashboard } from "lucide-react";
 
 export const Header = () => {
@@ -9,12 +11,12 @@ export const Header = () => {
   const { user, isAuthenticated, isLoading, logout } = useAuthStore();
   const [scrolled, setScrolled] = useState(false);
 
-  // Check if we are on the home page for transparency effect
+  // Check if we are on the home page
   const isHome = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -26,7 +28,7 @@ export const Header = () => {
 
   const renderAuthContent = () => {
     if (isLoading) {
-      return <div className="h-9 w-24 bg-white/10 rounded animate-pulse"></div>;
+      return <div className="h-9 w-24 bg-white/20 rounded animate-pulse"></div>;
     }
 
     if (isAuthenticated) {
@@ -122,20 +124,33 @@ export const Header = () => {
     }
 
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-4">
+         <div className="hidden md:flex items-center">
+            <Button variant="ghost" size="sm" className={`gap-2 font-medium ${
+                scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white/80 hover:bg-white/10'
+            }`}>
+                <Globe className="w-4 h-4" />
+                EN
+                <ChevronDown className="w-3 h-3 opacity-70" />
+            </Button>
+         </div>
+
         <Link to="/login">
           <Button
             variant="ghost"
+            className={`font-medium ${
+               scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white hover:bg-white/10' 
+            }`}
             size="sm"
             className={`font-medium hidden sm:inline-flex ${scrolled || !isHome ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' : 'text-white hover:text-white hover:bg-white/10'
               }`}
           >
-            Sign In
+            Log in
           </Button>
         </Link>
         <Link to="/register">
-          <Button size="sm" className="bg-primary hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 border-0">
-            Sign Up
+          <Button className="bg-primary hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 border-0 rounded-lg px-6">
+            <AnimatedButtonText text="Sign up" />
           </Button>
         </Link>
       </div>
@@ -144,6 +159,22 @@ export const Header = () => {
 
   return (
     <header
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          scrolled || !isHome 
+          ? 'bg-white border-b border-gray-100 py-3 shadow-md' 
+          : 'bg-transparent py-5'
+        }`}
+    >
+      <div className="relative w-full px-4 md:px-8 h-10 flex items-center justify-between">
+        <div className="flex items-center gap-12 z-20"> {/* Added z-20 to ensure it's above absolute nav if overlaps */}
+            <Link
+            to="/"
+            className="hover:opacity-80 transition-opacity"
+            >
+            <span className={`font-stack-notch font-bold text-2xl tracking-tighter ${
+              scrolled || !isHome ? 'text-primary' : 'text-white'
+            }`}>TICKETON</span>
+            </Link>
       className={`fixed top-0 z-50 w-full px-4 transition-all duration-300 ${scrolled || !isHome
         ? 'bg-white border-b border-gray-100 py-3 shadow-md'
         : 'bg-transparent py-5'
@@ -173,7 +204,8 @@ export const Header = () => {
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8">
+        {/* Absolute Centered Nav */}
+        <nav className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center gap-8 z-10">
           <Link
             to="/discover"
             className={`flex items-center gap-2 text-sm font-bold transition-colors ${location.pathname === "/discover"
@@ -196,7 +228,7 @@ export const Header = () => {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 z-20">
           {renderAuthContent()}
         </div>
       </div>
