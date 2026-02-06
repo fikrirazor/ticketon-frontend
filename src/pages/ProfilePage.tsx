@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Layout } from '../components/Layout';
 import { useAuthStore } from '../store/auth.store';
 import { Button } from '../components/ui/button';
-import { Camera, Save, X, User as UserIcon } from 'lucide-react';
+import { Camera, Save, X, User as UserIcon, Copy, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getFullImageUrl } from '../lib/axiosInstance';
 
@@ -16,6 +16,7 @@ const ProfilePage: React.FC = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [copied, setCopied] = useState(false);
 
   React.useEffect(() => {
     const handleOpenEdit = () => setIsEditing(true);
@@ -191,12 +192,12 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Personal Information</span>
                   <div className="space-y-1">
                     <p className="text-slate-500 text-xs font-medium">Email Address</p>
-                    <p className="text-slate-900 font-bold">{user?.email}</p>
+                    <p className="text-slate-900 font-bold break-all">{user?.email}</p>
                   </div>
                 </div>
 
@@ -208,6 +209,32 @@ const ProfilePage: React.FC = () => {
                       <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
                       Active
                     </p>
+                  </div>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-100 flex flex-col">
+                  <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Referral Code</span>
+                  <div className="space-y-1">
+                    <p className="text-slate-500 text-xs font-medium">Your Unique Code</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-primary font-black text-lg tracking-wider">{user?.referralCode || '-'}</p>
+                      {user?.referralCode && (
+                        <button
+                          onClick={() => {
+                            if (user.referralCode) {
+                              navigator.clipboard.writeText(user.referralCode);
+                              toast.success('Referral code copied!');
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 2000);
+                            }
+                          }}
+                          className="p-2 hover:bg-orange-200/50 rounded-lg transition-colors text-primary"
+                          title="Copy referral code"
+                        >
+                          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

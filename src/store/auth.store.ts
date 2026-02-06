@@ -10,6 +10,7 @@ interface User {
   email: string;
   role: UserRole;
   avatarUrl?: string;
+  referralCode?: string;
 }
 
 interface AuthState {
