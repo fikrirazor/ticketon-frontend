@@ -131,6 +131,7 @@ export const HeroSlider = () => {
         <img
           src={image1}
           alt="Scenic Background"
+          fetchPriority="high"
           className="w-full h-full bg-transparent object-cover scale-105 animate-pulse-slow "
         />
         {/*                 <video
@@ -144,7 +145,7 @@ export const HeroSlider = () => {
                     <source src={sawah} type="video/mp4" />
                     Your browser does not support the video tag.
                 </video> */}
-        <div className="absolute inset-0 z-[1] pointer-events-none opacity-80 mix-blend-screen">
+        <div className="absolute inset-0 z-1 pointer-events-none opacity-80 mix-blend-screen">
           <Aurora colorStops={["#858585", "#5a5858"]} amplitude={3} blend={1} />
         </div>
       </div>

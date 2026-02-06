@@ -28,11 +28,17 @@ export const Footer = () => {
               langsung untukmu.
             </p>
             <div className="flex gap-3 pt-2">
-              {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+              {[
+                { Icon: Facebook, label: "Facebook" },
+                { Icon: Twitter, label: "Twitter" },
+                { Icon: Instagram, label: "Instagram" },
+                { Icon: Linkedin, label: "LinkedIn" },
+              ].map(({ Icon, label }, i) => (
                 <a
                   key={i}
                   href="#"
-                  className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all transform hover:-translate-y-1"
+                  aria-label={label}
+                  className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-all transform hover:-translate-y-1"
                 >
                   <Icon className="w-5 h-5" />
                 </a>
@@ -42,9 +48,9 @@ export const Footer = () => {
 
           {/* Column 2: Discover */}
           <div className="space-y-6">
-            <h4 className="text-slate-900 font-black text-sm uppercase tracking-[0.2em]">
+            <h3 className="text-slate-900 font-black text-sm uppercase tracking-[0.2em]">
               Discover
-            </h4>
+            </h3>
             <ul className="space-y-4 text-sm font-bold">
               <li>
                 <Link
@@ -87,9 +93,9 @@ export const Footer = () => {
 
           {/* Column 3: Support */}
           <div className="space-y-6">
-            <h4 className="text-slate-900 font-black text-sm uppercase tracking-[0.2em]">
+            <h3 className="text-slate-900 font-black text-sm uppercase tracking-[0.2em]">
               Support
-            </h4>
+            </h3>
             <ul className="space-y-4 text-sm font-bold">
               <li>
                 <Link
@@ -132,15 +138,15 @@ export const Footer = () => {
 
           {/* Column 4: Contact Info */}
           <div className="space-y-6">
-            <h4 className="text-slate-900 font-black text-sm uppercase tracking-[0.2em]">
+            <h3 className="text-slate-900 font-black text-sm uppercase tracking-[0.2em]">
               Office
-            </h4>
+            </h3>
             <ul className="space-y-4 text-sm font-bold">
               <li className="flex items-start gap-3 group">
-                <div className="p-2.5 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                <div className="p-2.5 rounded-xl bg-slate-100 text-slate-600 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                   <MapPin className="w-4 h-4 shrink-0" />
                 </div>
-                <span className="text-slate-500 leading-relaxed">
+                <span className="text-slate-700 leading-relaxed">
                   Jl. Sudirman No. 123, Jakarta Selatan, Indonesia
                 </span>
               </li>
