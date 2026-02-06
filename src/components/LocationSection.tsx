@@ -2,13 +2,21 @@ import { MapPin, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SpotlightCard from './SpotlightCard';
 
+// Import location images
+import jakartaImg from '../assets/location/jakarta.webp';
+import bandungImg from '../assets/location/bandung.webp';
+import baliImg from '../assets/location/bali.webp';
+import surabayaImg from '../assets/location/surabaya.webp';
+import yogyakartaImg from '../assets/location/yogyakarta.webp';
+import medanImg from '../assets/location/medan.webp';
+
 const locations = [
-  { name: 'Jakarta', image: 'https://images.unsplash.com/photo-1500315331616-db4f707c24d1?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Bandung', image: 'https://images.unsplash.com/photo-1555655823-5ec94928178a?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Bali', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Surabaya', image: 'https://images.unsplash.com/photo-1583321500900-82807e458f3c?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Yogyakarta', image: 'https://images.unsplash.com/photo-1571768202030-22c9f6445ed4?q=80&w=600&auto=format&fit=crop' },
-  { name: 'Medan', image: 'https://images.unsplash.com/photo-1596402184320-417d7178abc2?q=80&w=600&auto=format&fit=crop' },
+  { name: 'Jakarta', image: jakartaImg },
+  { name: 'Bandung', image: bandungImg },
+  { name: 'Bali', image: baliImg },
+  { name: 'Surabaya', image: surabayaImg },
+  { name: 'Yogyakarta', image: yogyakartaImg },
+  { name: 'Medan', image: medanImg },
 ];
 
 export const LocationSection = () => {

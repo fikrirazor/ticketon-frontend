@@ -12,14 +12,23 @@ import {
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
+// Import category images
+import musicImg from '../assets/category/music.webp';
+import nightlifeImg from '../assets/category/nightlife.webp';
+import workshopImg from '../assets/category/workshop.webp';
+import cookingsImg from '../assets/category/cookings.webp';
+import artsImg from '../assets/category/arts.webp';
+import sportsImg from '../assets/category/sports.webp';
+import techImg from '../assets/category/tech.webp';
+
 const STATIC_CATEGORIES = [
-  { name: 'MUSIC', icon: Music, image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
-  { name: 'NIGHTLIFE', icon: Moon, image: 'https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
-  { name: 'WORKSHOP', icon: Lightbulb, image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
-  { name: 'FOOD', icon: Utensils, image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
-  { name: 'ARTS', icon: Palette, image: 'https://images.unsplash.com/photo-1460661619275-dcfcd0f305a7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
-  { name: 'SPORTS', icon: Trophy, image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
-  { name: 'TECH', icon: Cpu, image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3' },
+  { name: 'MUSIC', icon: Music, image: musicImg },
+  { name: 'NIGHTLIFE', icon: Moon, image: nightlifeImg },
+  { name: 'WORKSHOP', icon: Lightbulb, image: workshopImg },
+  { name: 'FOOD', icon: Utensils, image: cookingsImg },
+  { name: 'ARTS', icon: Palette, image: artsImg },
+  { name: 'SPORTS', icon: Trophy, image: sportsImg },
+  { name: 'TECH', icon: Cpu, image: techImg },
 ];
 
 export const CategorySection = () => {
