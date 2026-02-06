@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import type { Event } from '../types';
-import { eventAPI, voucherAPI } from '../lib/api.service';
+import { create } from "zustand";
+import type { Event } from "../types";
+import { eventAPI, voucherAPI } from "../lib/api.service";
 
 interface EventState {
   events: Event[];
@@ -24,17 +24,22 @@ interface EventState {
   setPage: (page: number) => void;
   fetchEvents: () => Promise<void>;
   getEventById: (id: string) => Promise<Event | undefined>;
-  createEvent: (eventData: FormData | Record<string, unknown>) => Promise<Event>;
+  createEvent: (
+    eventData: FormData | Record<string, unknown>,
+  ) => Promise<Event>;
   updateEvent: (id: string, eventData: Partial<Event>) => Promise<Event>;
   deleteEvent: (id: string) => Promise<void>;
-  createVoucher: (eventId: string, voucherData: {
-    code: string;
-    discountAmount?: number;
-    discountPercent?: number;
-    maxUsage: number;
-    startDate: string;
-    endDate: string;
-  }) => Promise<void>;
+  createVoucher: (
+    eventId: string,
+    voucherData: {
+      code: string;
+      discountAmount?: number;
+      discountPercent?: number;
+      maxUsage: number;
+      startDate: string;
+      endDate: string;
+    },
+  ) => Promise<void>;
   clearError: () => void;
 }
 
@@ -44,9 +49,9 @@ export const useEventStore = create<EventState>((set, get) => ({
   isLoading: false,
   error: null,
   filter: {
-    category: '',
-    location: '',
-    search: '',
+    category: "",
+    location: "",
+    search: "",
     page: 1,
     limit: 10,
   },
@@ -81,23 +86,30 @@ export const useEventStore = create<EventState>((set, get) => ({
       const { filter } = get();
       const result = await eventAPI.getAllEvents({
         search: filter.search || undefined,
-        category: filter.category && filter.category !== 'All' ? filter.category : undefined,
-        location: filter.location && filter.location !== 'All' ? filter.location : undefined,
+        category:
+          filter.category && filter.category !== "All"
+            ? filter.category
+            : undefined,
+        location:
+          filter.location && filter.location !== "All"
+            ? filter.location
+            : undefined,
         page: filter.page,
         limit: filter.limit,
       });
-      
-      set({ 
-        events: result.events || [], 
+
+      set({
+        events: result.events || [],
         pagination: result.pagination || { total: 0, totalPages: 0 },
-        error: null
+        error: null,
       });
-    } catch (err: any) {
-      console.error('Failed to fetch events:', err);
-      set({ 
-        events: [], 
+    } catch (err: unknown) {
+      console.error("Failed to fetch events:", err);
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      set({
+        events: [],
         pagination: { total: 0, totalPages: 0 },
-        error: err.response?.data?.message || 'Failed to fetch events'
+        error: errResponse.response?.data?.message || "Failed to fetch events",
       });
     } finally {
       set({ isLoading: false });
@@ -110,8 +122,11 @@ export const useEventStore = create<EventState>((set, get) => ({
       const event = await eventAPI.getEventById(id);
       set({ currentEvent: event, error: null });
       return event;
-    } catch (err: any) {
-      set({ error: err.response?.data?.message || 'Failed to fetch event' });
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      set({
+        error: errResponse.response?.data?.message || "Failed to fetch event",
+      });
       return undefined;
     } finally {
       set({ isLoading: false });
@@ -122,13 +137,15 @@ export const useEventStore = create<EventState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const newEvent = await eventAPI.createEvent(eventData);
-      set((state) => ({ 
+      set((state) => ({
         events: [newEvent, ...state.events],
-        error: null
+        error: null,
       }));
       return newEvent;
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to create event';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to create event";
       set({ error: errorMsg });
       throw err;
     } finally {
@@ -142,14 +159,17 @@ export const useEventStore = create<EventState>((set, get) => ({
       const updatedEvent = await eventAPI.updateEvent(id, eventData);
       set((state) => ({
         events: state.events.map((event) =>
-          event.id === id ? updatedEvent : event
+          event.id === id ? updatedEvent : event,
         ),
-        currentEvent: state.currentEvent?.id === id ? updatedEvent : state.currentEvent,
-        error: null
+        currentEvent:
+          state.currentEvent?.id === id ? updatedEvent : state.currentEvent,
+        error: null,
       }));
       return updatedEvent;
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to update event';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to update event";
       set({ error: errorMsg });
       throw err;
     } finally {
@@ -163,10 +183,12 @@ export const useEventStore = create<EventState>((set, get) => ({
       await eventAPI.deleteEvent(id);
       set((state) => ({
         events: state.events.filter((event) => event.id !== id),
-        error: null
+        error: null,
       }));
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to delete event';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to delete event";
       set({ error: errorMsg });
       throw err;
     } finally {
@@ -180,7 +202,8 @@ export const useEventStore = create<EventState>((set, get) => ({
       await voucherAPI.createVoucher(eventId, voucherData);
       set({ error: null });
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to create voucher';
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to create voucher";
       set({ error: errorMsg });
       throw err;
     } finally {

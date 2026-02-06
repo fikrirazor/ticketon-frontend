@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Calendar, MapPin, ArrowRight } from 'lucide-react';
-import { getFullImageUrl } from '../lib/axiosInstance';
-import type { Event } from '../types';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Calendar, MapPin, ArrowRight } from "lucide-react";
+import { getFullImageUrl } from "../lib/axiosInstance";
+import type { Event } from "../types";
 
 interface EventCardProps {
   event: Event;
@@ -31,7 +31,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
         {/* Content Section */}
         <div className="p-6 flex flex-col flex-grow bg-white">
-
           <h3 className="text-lg font-black text-slate-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
             {event.title}
           </h3>
@@ -39,19 +38,29 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <div className="space-y-2 mb-6">
             <div className="flex items-center text-slate-500 gap-2">
               <Calendar className="w-4 h-4 text-primary/60" />
-              <span className="text-xs font-bold">{new Date(event.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+              <span className="text-xs font-bold">
+                {new Date(event.startDate).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
             </div>
             <div className="flex items-center text-slate-500 gap-2">
               <MapPin className="w-4 h-4 text-primary/60" />
               <span className="text-xs font-bold truncate">
-                {typeof event.location === 'object' ? event.location.city : (event.location || 'Location TBA')}
+                {typeof event.location === "object"
+                  ? event.location.city
+                  : event.location || "Location TBA"}
               </span>
             </div>
           </div>
 
           <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Harga Tiket</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                Harga Tiket
+              </span>
               <span className="text-primary font-black text-xl">
                 Rp {event.price.toLocaleString()}
               </span>

@@ -1,29 +1,29 @@
 // src/App.tsx
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Home } from './pages/home';
-import { DiscoverEvents } from './pages/DiscoverEvents';
-import { EventDetail } from './pages/EventDetail';
-import { Admin } from './pages/Admin';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
-import { CreateEvent } from './pages/CreateEvent';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import CheckoutPage from './pages/Checkout';
-import PaymentProofPage from './pages/PaymentProof';
-import TransactionDetailPage from './pages/TransactionDetailPage';
-import { OrganizerProfile } from './pages/OrganizerProfile';
-import { useAuthStore } from './store/auth.store';
-import { Toaster } from 'react-hot-toast';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Home } from "./pages/home";
+import { DiscoverEvents } from "./pages/DiscoverEvents";
+import { EventDetail } from "./pages/EventDetail";
+import { Admin } from "./pages/Admin";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+import { CreateEvent } from "./pages/CreateEvent";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import CheckoutPage from "./pages/Checkout";
+import PaymentProofPage from "./pages/PaymentProof";
+import TransactionDetailPage from "./pages/TransactionDetailPage";
+import { OrganizerProfile } from "./pages/OrganizerProfile";
+import { useAuthStore } from "./store/auth.store";
+import { Toaster } from "react-hot-toast";
 
 // Impor komponen-komponen halaman baru
-import ProfilePage from './pages/ProfilePage';
-import OrganizerEventsPage from './pages/OrganizerEventsPage';
-import UserTransactionsPage from './pages/UserTransactionsPage';
-import { OrganizerDashboard } from './pages/OrganizerDashboard';
+import ProfilePage from "./pages/ProfilePage";
+import OrganizerEventsPage from "./pages/OrganizerEventsPage";
+import UserTransactionsPage from "./pages/UserTransactionsPage";
+import { OrganizerDashboard } from "./pages/OrganizerDashboard";
 
-import { EditEvent } from './pages/EditEvent';
+import { EditEvent } from "./pages/EditEvent";
 
 function App() {
   const getMe = useAuthStore((state) => state.getMe);
@@ -64,7 +64,7 @@ function App() {
             <Route
               path="/profile"
               element={
-                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["CUSTOMER", "ORGANIZER"]}>
                   <ProfilePage />
                 </ProtectedRoute>
               }
@@ -72,7 +72,7 @@ function App() {
             <Route
               path="/organizer/events"
               element={
-                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["ORGANIZER"]}>
                   <OrganizerEventsPage />
                 </ProtectedRoute>
               }
@@ -80,7 +80,7 @@ function App() {
             <Route
               path="/transactions"
               element={
-                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["CUSTOMER", "ORGANIZER"]}>
                   <UserTransactionsPage />
                 </ProtectedRoute>
               }
@@ -90,7 +90,7 @@ function App() {
             <Route
               path="/checkout/:id"
               element={
-                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["CUSTOMER", "ORGANIZER"]}>
                   <CheckoutPage />
                 </ProtectedRoute>
               }
@@ -98,7 +98,7 @@ function App() {
             <Route
               path="/payment-proof/:transactionId"
               element={
-                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["CUSTOMER", "ORGANIZER"]}>
                   <PaymentProofPage />
                 </ProtectedRoute>
               }
@@ -106,7 +106,7 @@ function App() {
             <Route
               path="/transaction/:transactionId"
               element={
-                <ProtectedRoute allowedRoles={['CUSTOMER', 'ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["CUSTOMER", "ORGANIZER"]}>
                   <TransactionDetailPage />
                 </ProtectedRoute>
               }
@@ -115,7 +115,7 @@ function App() {
             <Route
               path="/create-event"
               element={
-                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["ORGANIZER"]}>
                   <CreateEvent />
                 </ProtectedRoute>
               }
@@ -123,7 +123,7 @@ function App() {
             <Route
               path="/edit-event/:id"
               element={
-                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["ORGANIZER"]}>
                   <EditEvent />
                 </ProtectedRoute>
               }
@@ -131,7 +131,7 @@ function App() {
             <Route
               path="/organizer/dashboard"
               element={
-                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["ORGANIZER"]}>
                   <OrganizerDashboard />
                 </ProtectedRoute>
               }
@@ -139,7 +139,7 @@ function App() {
             <Route
               path="/admin"
               element={
-                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                <ProtectedRoute allowedRoles={["ORGANIZER"]}>
                   <Admin />
                 </ProtectedRoute>
               }

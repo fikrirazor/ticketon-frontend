@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useOrganizerStore } from '../store/organizer.store';
-import { OrganizerLayout } from '../components/OrganizerLayout';
-import { Calendar, Users, Edit, Trash2, Search, Plus, MapPin, AlertTriangle, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import toast, { Toaster } from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { useOrganizerStore } from "../store/organizer.store";
+import { OrganizerLayout } from "../components/OrganizerLayout";
+import {
+  Calendar,
+  Users,
+  Edit,
+  Trash2,
+  Search,
+  Plus,
+  MapPin,
+  AlertTriangle,
+  X,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import toast, { Toaster } from "react-hot-toast";
+import type { Event } from "../types";
 
 const OrganizerEventsPage: React.FC = () => {
   const { events, fetchEvents, deleteEvent, isLoading } = useOrganizerStore();
-  const [eventToDelete, setEventToDelete] = useState<any | null>(null);
+  const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
@@ -21,10 +32,18 @@ const OrganizerEventsPage: React.FC = () => {
     setIsDeleting(true);
     try {
       await deleteEvent(eventToDelete.id);
-      toast.success('Event berhasil dihapus');
+      toast.success("Event berhasil dihapus");
       setEventToDelete(null);
-    } catch (error: any) {
-      toast.error(error.message || 'Gagal menghapus event');
+    } catch (error: unknown) {
+      const errResponse = error as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      toast.error(
+        errResponse.response?.data?.message ||
+          errResponse.message ||
+          "Gagal menghapus event",
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -38,8 +57,12 @@ const OrganizerEventsPage: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">List Event</h1>
-            <p className="text-slate-500 font-medium">Kelola semua event yang telah Anda buat.</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+              List Event
+            </h1>
+            <p className="text-slate-500 font-medium">
+              Kelola semua event yang telah Anda buat.
+            </p>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative group hidden md:block">
@@ -64,24 +87,35 @@ const OrganizerEventsPage: React.FC = () => {
           {isLoading && events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Memuat Data...</p>
+              <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
+                Memuat Data...
+              </p>
             </div>
           ) : events.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((event) => (
-                <div key={event.id} className="group bg-slate-50/50 hover:bg-white border border-transparent hover:border-slate-100 rounded-[2rem] p-6 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50">
+                <div
+                  key={event.id}
+                  className="group bg-slate-50/50 hover:bg-white border border-transparent hover:border-slate-100 rounded-[2rem] p-6 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50"
+                >
                   <div className="aspect-video rounded-2xl overflow-hidden bg-slate-200 mb-6 relative">
                     <img
-                      src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400'}
+                      src={
+                        event.imageUrl ||
+                        "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400"
+                      }
                       alt={event.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg">
                       <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">
-                        {typeof event.price === 'number' && event.price > 0
-                          ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(event.price)
-                          : 'GRATIS'
-                        }
+                        {typeof event.price === "number" && event.price > 0
+                          ? new Intl.NumberFormat("id-ID", {
+                              style: "currency",
+                              currency: "IDR",
+                              minimumFractionDigits: 0,
+                            }).format(event.price)
+                          : "GRATIS"}
                       </p>
                     </div>
                   </div>
@@ -93,11 +127,17 @@ const OrganizerEventsPage: React.FC = () => {
                   <div className="space-y-2 mb-6">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
                       <Calendar size={14} className="text-slate-400" />
-                      {new Date(event.startDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}
+                      {new Date(event.startDate).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
                     </div>
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
                       <MapPin size={14} className="text-slate-400" />
-                      {typeof event.location === 'object' ? event.location.city : (event.location || 'Location TBA')}
+                      {typeof event.location === "object"
+                        ? event.location.city
+                        : event.location || "Location TBA"}
                     </div>
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
                       <Users size={14} className="text-slate-400" />
@@ -127,8 +167,12 @@ const OrganizerEventsPage: React.FC = () => {
               <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                 <Calendar className="w-10 h-10 text-slate-300" />
               </div>
-              <h3 className="text-xl font-black text-slate-900 mb-2">Belum Ada Event</h3>
-              <p className="text-slate-500 font-medium mb-8 max-w-xs">Mulai buat event pertama Anda dan jangkau ribuan peserta.</p>
+              <h3 className="text-xl font-black text-slate-900 mb-2">
+                Belum Ada Event
+              </h3>
+              <p className="text-slate-500 font-medium mb-8 max-w-xs">
+                Mulai buat event pertama Anda dan jangkau ribuan peserta.
+              </p>
               <Link to="/create-event">
                 <Button className="bg-primary hover:bg-orange-600 text-white font-black rounded-2xl px-8 py-6 border-0 shadow-lg shadow-primary/20">
                   BUAT EVENT SEKARANG
@@ -161,7 +205,11 @@ const OrganizerEventsPage: React.FC = () => {
               </h3>
 
               <p className="text-slate-500 font-medium mb-8 leading-relaxed">
-                Anda akan menghapus <span className="text-slate-900 font-bold">"{eventToDelete.title}"</span>. Tindakan ini tidak dapat dibatalkan.
+                Anda akan menghapus{" "}
+                <span className="text-slate-900 font-bold">
+                  "{eventToDelete.title}"
+                </span>
+                . Tindakan ini tidak dapat dibatalkan.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
@@ -170,7 +218,7 @@ const OrganizerEventsPage: React.FC = () => {
                   disabled={isDeleting}
                   className="flex-1 bg-red-500 hover:bg-red-600 text-white border-0 font-black rounded-2xl py-6 h-auto shadow-lg shadow-red-200 transition-all active:scale-95"
                 >
-                  {isDeleting ? 'MENGHAPUS...' : 'YA, HAPUS SEKARANG'}
+                  {isDeleting ? "MENGHAPUS..." : "YA, HAPUS SEKARANG"}
                 </Button>
                 <Button
                   onClick={() => setEventToDelete(null)}

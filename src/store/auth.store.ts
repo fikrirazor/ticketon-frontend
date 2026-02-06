@@ -27,7 +27,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: Record<string, string>) => Promise<void>;
-  register: (userData: Record<string, any>) => Promise<void>;
+  register: (userData: Record<string, unknown>) => Promise<void>;
   logout: () => void;
   getMe: () => Promise<void>;
   updateProfile: (formData: FormData) => Promise<void>;
@@ -49,16 +49,16 @@ export const useAuthStore = create<AuthState>()(
           );
 
           // Debug: Log full response
-          console.log('=== LOGIN RESPONSE ===');
-          console.log('Full response:', response);
-          console.log('Response data:', response.data);
-          console.log('Response data.data:', response.data.data);
+          console.log("=== LOGIN RESPONSE ===");
+          console.log("Full response:", response);
+          console.log("Response data:", response.data);
+          console.log("Response data.data:", response.data.data);
 
           const { user, token } = response.data.data;
 
-          console.log('Extracted user:', user);
-          console.log('User role:', user?.role);
-          console.log('Extracted token:', token);
+          console.log("Extracted user:", user);
+          console.log("User role:", user?.role);
+          console.log("Extracted token:", token);
 
           localStorage.setItem("token", token);
           set({ user, isAuthenticated: true });
@@ -71,36 +71,53 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           // Debug: Log the data being sent
-          console.log('=== REGISTER REQUEST ===');
-          console.log('User data being sent:', userData);
-          console.log('API URL:', axiosInstance.defaults.baseURL);
+          console.log("=== REGISTER REQUEST ===");
+          console.log("User data being sent:", userData);
+          console.log("API URL:", axiosInstance.defaults.baseURL);
 
           const response = await axiosInstance.post("/auth/signup", userData);
 
           // Debug: Log response
-          console.log('=== REGISTER RESPONSE ===');
-          console.log('Full response:', response);
-          console.log('Response data:', response.data);
+          console.log("=== REGISTER RESPONSE ===");
+          console.log("Full response:", response);
+          console.log("Response data:", response.data);
 
           const { user, token } = response.data.data;
 
           localStorage.setItem("token", token);
           set({ user, isAuthenticated: true });
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const errResponse = error as {
+            response?: {
+              status?: number;
+              data?: {
+                errors?: Array<{ field?: string; message?: string } | string>;
+              };
+            };
+          };
           // Debug: Log error details
-          console.error('=== REGISTER ERROR ===');
-          console.error('Error response:', error.response);
-          console.error('Error data:', error.response?.data);
-          console.error('Error status:', error.response?.status);
+          console.error("=== REGISTER ERROR ===");
+          console.error("Error response:", errResponse.response);
+          console.error("Error data:", errResponse.response?.data);
+          console.error("Error status:", errResponse.response?.status);
 
           // Check if there are validation errors
-          if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
-            console.error('Validation errors:', error.response.data.errors);
+          if (
+            errResponse.response?.data?.errors &&
+            Array.isArray(errResponse.response.data.errors)
+          ) {
+            console.error(
+              "Validation errors:",
+              errResponse.response.data.errors,
+            );
             // Format validation errors for display
-            const validationMessages = error.response.data.errors.map((err: any) =>
-              `${err.field || 'Field'}: ${err.message || err}`
-            ).join(', ');
-            console.error('Formatted validation errors:', validationMessages);
+            const validationMessages = errResponse.response.data.errors
+              .map((err) => {
+                if (typeof err === "string") return err;
+                return `${err.field || "Field"}: ${err.message || err}`;
+              })
+              .join(", ");
+            console.error("Formatted validation errors:", validationMessages);
           }
 
           throw error;
@@ -126,27 +143,34 @@ export const useAuthStore = create<AuthState>()(
           const response = await axiosInstance.get("/users/profile");
 
           // Debug: Log full response
-          console.log('=== GET ME RESPONSE ===');
-          console.log('Full response:', response);
-          console.log('Response data:', response.data);
-          console.log('Response data.data:', response.data.data);
+          console.log("=== GET ME RESPONSE ===");
+          console.log("Full response:", response);
+          console.log("Response data:", response.data);
+          console.log("Response data.data:", response.data.data);
 
           // Backend returns { success: true, message: "...", data: { user } }
           const userData = response.data.data?.user;
 
-          console.log('Extracted userData:', userData);
-          console.log('User role from profile:', userData?.role);
+          console.log("Extracted userData:", userData);
+          console.log("User role from profile:", userData?.role);
 
           if (userData) {
-            console.log('Final user data:', userData);
+            console.log("Final user data:", userData);
             set({ user: userData, isAuthenticated: true });
           } else {
             console.error("No user data in response");
             localStorage.removeItem("token");
             set({ user: null, isAuthenticated: false });
           }
-        } catch (error: any) {
-          console.error("getMe error:", error.response?.status, error.response?.data);
+        } catch (error: unknown) {
+          const errResponse = error as {
+            response?: { status?: number; data?: unknown };
+          };
+          console.error(
+            "getMe error:",
+            errResponse.response?.status,
+            errResponse.response?.data,
+          );
           localStorage.removeItem("token");
           set({ user: null, isAuthenticated: false });
         } finally {
@@ -168,8 +192,15 @@ export const useAuthStore = create<AuthState>()(
           if (userData) {
             set({ user: userData });
           }
-        } catch (error: any) {
-          console.error("updateProfile error:", error.response?.status, error.response?.data);
+        } catch (error: unknown) {
+          const errResponse = error as {
+            response?: { status?: number; data?: unknown };
+          };
+          console.error(
+            "updateProfile error:",
+            errResponse.response?.status,
+            errResponse.response?.data,
+          );
           throw error;
         } finally {
           set({ isLoading: false });

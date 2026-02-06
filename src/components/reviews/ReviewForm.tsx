@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
-import { Star } from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '../../lib/utils';
-import { useReviewStore } from '../../store/review.store';
+import React, { useState } from "react";
+import { Star } from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
+import { useReviewStore } from "../../store/review.store";
 
 interface ReviewFormProps {
   eventId: string;
   onSuccess?: () => void;
 }
 
-export const ReviewForm: React.FC<ReviewFormProps> = ({ eventId, onSuccess }) => {
+export const ReviewForm: React.FC<ReviewFormProps> = ({
+  eventId,
+  onSuccess,
+}) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { addReview } = useReviewStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,8 +26,8 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ eventId, onSuccess }) =>
 
     setIsSubmitting(true);
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
     addReview({
       eventId,
       rating,
@@ -33,15 +36,22 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ eventId, onSuccess }) =>
 
     setIsSubmitting(false);
     setRating(0);
-    setComment('');
+    setComment("");
     if (onSuccess) onSuccess();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6"
+    >
       <div className="space-y-2">
-        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Rate your experience</h3>
-        <p className="text-sm text-slate-500 font-medium">How would you rate this event?</p>
+        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">
+          Rate your experience
+        </h3>
+        <p className="text-sm text-slate-500 font-medium">
+          How would you rate this event?
+        </p>
       </div>
 
       <div className="flex items-center space-x-2">
@@ -59,7 +69,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ eventId, onSuccess }) =>
                 "w-8 h-8 transition-colors",
                 (hover || rating) >= star
                   ? "fill-yellow-400 text-yellow-400"
-                  : "text-slate-200"
+                  : "text-slate-200",
               )}
             />
           </button>
@@ -72,7 +82,10 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ eventId, onSuccess }) =>
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="comment" className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+        <label
+          htmlFor="comment"
+          className="text-sm font-bold text-slate-700 uppercase tracking-wider"
+        >
           Comment (Optional)
         </label>
         <textarea

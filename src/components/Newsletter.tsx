@@ -1,5 +1,5 @@
-import { Mail, ArrowRight, BellRing } from 'lucide-react';
-import { Button } from './ui/button';
+import { Mail, ArrowRight, BellRing } from "lucide-react";
+import { Button } from "./ui/button";
 
 export const Newsletter = () => {
   return (
@@ -19,15 +19,16 @@ export const Newsletter = () => {
           Jangan Sampai Ketinggalan!
         </h2>
         <p className="text-slate-500 max-w-lg mx-auto mb-12 text-lg font-medium leading-relaxed">
-          Dapatkan info event terbaru, konser artis favorit, dan promo eksklusif langsung di emailmu.
+          Dapatkan info event terbaru, konser artis favorit, dan promo eksklusif
+          langsung di emailmu.
         </p>
 
         <form className="max-w-xl mx-auto flex flex-col sm:flex-row gap-4 p-2 bg-slate-50 rounded-[2rem] border border-slate-200 focus-within:ring-4 focus-within:ring-primary/10 transition-all">
           <div className="flex-1 flex items-center px-6">
             <Mail className="w-5 h-5 text-slate-400 mr-3" />
-            <input 
-              type="email" 
-              placeholder="Masukkan alamat email kamu..." 
+            <input
+              type="email"
+              placeholder="Masukkan alamat email kamu..."
               className="w-full py-4 bg-transparent text-slate-900 font-bold placeholder:text-slate-400 focus:outline-none text-lg"
             />
           </div>

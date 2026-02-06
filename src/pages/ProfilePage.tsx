@@ -1,18 +1,18 @@
 // src/pages/ProfilePage.tsx
-import React, { useState, useRef } from 'react';
-import { Layout } from '../components/Layout';
-import { useAuthStore } from '../store/auth.store';
-import { Button } from '../components/ui/button';
-import { Camera, Save, X, User as UserIcon, Copy, Check } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { getFullImageUrl } from '../lib/axiosInstance';
+import React, { useState, useRef } from "react";
+import { Layout } from "../components/Layout";
+import { useAuthStore } from "../store/auth.store";
+import { Button } from "../components/ui/button";
+import { Camera, Save, X, User as UserIcon, Copy, Check } from "lucide-react";
+import toast from "react-hot-toast";
+import { getFullImageUrl } from "../lib/axiosInstance";
 
 const ProfilePage: React.FC = () => {
   const { user, updateProfile, isLoading } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [password, setPassword] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -20,8 +20,9 @@ const ProfilePage: React.FC = () => {
 
   React.useEffect(() => {
     const handleOpenEdit = () => setIsEditing(true);
-    window.addEventListener('open-profile-edit', handleOpenEdit);
-    return () => window.removeEventListener('open-profile-edit', handleOpenEdit);
+    window.addEventListener("open-profile-edit", handleOpenEdit);
+    return () =>
+      window.removeEventListener("open-profile-edit", handleOpenEdit);
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,28 +41,33 @@ const ProfilePage: React.FC = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    if (name !== user?.name) formData.append('name', name);
-    if (email !== user?.email) formData.append('email', email);
-    if (password) formData.append('password', password);
-    if (selectedFile) formData.append('avatar', selectedFile);
+    if (name !== user?.name) formData.append("name", name);
+    if (email !== user?.email) formData.append("email", email);
+    if (password) formData.append("password", password);
+    if (selectedFile) formData.append("avatar", selectedFile);
 
     try {
       await updateProfile(formData);
-      toast.success('Profile updated successfully!');
+      toast.success("Profile updated successfully!");
       setIsEditing(false);
-      setPassword('');
+      setPassword("");
       setSelectedFile(null);
       setPreviewUrl(null);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update profile');
+    } catch (error: unknown) {
+      const errResponse = error as {
+        response?: { data?: { message?: string } };
+      };
+      toast.error(
+        errResponse.response?.data?.message || "Failed to update profile",
+      );
     }
   };
 
   const cancelEdit = () => {
     setIsEditing(false);
-    setName(user?.name || '');
-    setEmail(user?.email || '');
-    setPassword('');
+    setName(user?.name || "");
+    setEmail(user?.email || "");
+    setPassword("");
     setPreviewUrl(null);
     setSelectedFile(null);
   };
@@ -98,7 +104,11 @@ const ProfilePage: React.FC = () => {
                 <div className="relative group">
                   <div className="w-32 h-32 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center border-4 border-white shadow-lg">
                     {getAvatarSource() ? (
-                      <img src={getAvatarSource()!} alt="Avatar" className="w-full h-full object-cover" />
+                      <img
+                        src={getAvatarSource()!}
+                        alt="Avatar"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <UserIcon className="w-16 h-16 text-slate-300" />
                     )}
@@ -118,12 +128,16 @@ const ProfilePage: React.FC = () => {
                     className="hidden"
                   />
                 </div>
-                <p className="mt-2 text-sm text-slate-500">Click icon to change photo</p>
+                <p className="mt-2 text-sm text-slate-500">
+                  Click icon to change photo
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Full Name</label>
+                  <label className="text-sm font-semibold text-slate-700">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     value={name}
@@ -134,7 +148,9 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Email Address</label>
+                  <label className="text-sm font-semibold text-slate-700">
+                    Email Address
+                  </label>
                   <input
                     type="email"
                     value={email}
@@ -145,7 +161,9 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-semibold text-slate-700">New Password (leave blank to keep current)</label>
+                  <label className="text-sm font-semibold text-slate-700">
+                    New Password (leave blank to keep current)
+                  </label>
                   <input
                     type="password"
                     value={password}
@@ -158,14 +176,22 @@ const ProfilePage: React.FC = () => {
 
               <div className="flex gap-4 pt-4">
                 <Button type="submit" className="flex-1" disabled={isLoading}>
-                  {isLoading ? 'Saving...' : (
+                  {isLoading ? (
+                    "Saving..."
+                  ) : (
                     <>
                       <Save className="w-4 h-4 mr-2" />
                       Save Changes
                     </>
                   )}
                 </Button>
-                <Button type="button" variant="outline" className="flex-1" onClick={cancelEdit} disabled={isLoading}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={cancelEdit}
+                  disabled={isLoading}
+                >
                   <X className="w-4 h-4 mr-2" />
                   Cancel
                 </Button>
@@ -176,16 +202,24 @@ const ProfilePage: React.FC = () => {
               <div className="flex flex-col md:flex-row items-center gap-8 mb-10">
                 <div className="w-32 h-32 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center text-primary border-4 border-white shadow-xl ring-1 ring-slate-100">
                   {getAvatarSource() ? (
-                    <img src={getAvatarSource()!} alt="Avatar" className="w-full h-full object-cover" />
+                    <img
+                      src={getAvatarSource()!}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <span className="text-4xl font-bold">
-                      {user?.name ? user.name.charAt(0).toUpperCase() : '?'}
+                      {user?.name ? user.name.charAt(0).toUpperCase() : "?"}
                     </span>
                   )}
                 </div>
                 <div className="text-center md:text-left">
-                  <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-1">{user?.name}</h2>
-                  <p className="text-slate-500 font-medium mb-3">{user?.email}</p>
+                  <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-1">
+                    {user?.name}
+                  </h2>
+                  <p className="text-slate-500 font-medium mb-3">
+                    {user?.email}
+                  </p>
                   <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
                     {user?.role}
                   </div>
@@ -195,18 +229,28 @@ const ProfilePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Personal Info */}
                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex flex-col">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Personal Information</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                    Personal Information
+                  </span>
                   <div className="space-y-1">
-                    <p className="text-slate-500 text-xs font-medium">Email Address</p>
-                    <p className="text-slate-900 font-bold break-all">{user?.email}</p>
+                    <p className="text-slate-500 text-xs font-medium">
+                      Email Address
+                    </p>
+                    <p className="text-slate-900 font-bold break-all">
+                      {user?.email}
+                    </p>
                   </div>
                 </div>
 
                 {/* Account Status */}
                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex flex-col">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Account Status</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                    Account Status
+                  </span>
                   <div className="space-y-1">
-                    <p className="text-slate-500 text-xs font-medium">Verified Account</p>
+                    <p className="text-slate-500 text-xs font-medium">
+                      Verified Account
+                    </p>
                     <p className="text-emerald-600 font-bold flex items-center">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
                       Active
@@ -216,17 +260,23 @@ const ProfilePage: React.FC = () => {
 
                 {/* Referral Code */}
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-100 flex flex-col">
-                  <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Referral Program</span>
+                  <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">
+                    Referral Program
+                  </span>
                   <div className="space-y-1">
-                    <p className="text-slate-500 text-xs font-medium">Your Unique Code</p>
+                    <p className="text-slate-500 text-xs font-medium">
+                      Your Unique Code
+                    </p>
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-primary font-black text-xl tracking-wider">{user?.referralCode || '-'}</p>
+                      <p className="text-primary font-black text-xl tracking-wider">
+                        {user?.referralCode || "-"}
+                      </p>
                       {user?.referralCode && (
                         <button
                           onClick={() => {
                             if (user.referralCode) {
                               navigator.clipboard.writeText(user.referralCode);
-                              toast.success('Referral code copied!');
+                              toast.success("Referral code copied!");
                               setCopied(true);
                               setTimeout(() => setCopied(false), 2000);
                             }
@@ -234,7 +284,11 @@ const ProfilePage: React.FC = () => {
                           className="p-2 hover:bg-orange-200/50 rounded-lg transition-colors text-primary"
                           title="Copy referral code"
                         >
-                          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          {copied ? (
+                            <Check className="w-4 h-4" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
                         </button>
                       )}
                     </div>
@@ -243,44 +297,77 @@ const ProfilePage: React.FC = () => {
 
                 {/* Points Balance */}
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100/50 border border-indigo-100 flex flex-col">
-                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Points Balance</span>
+                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">
+                    Points Balance
+                  </span>
                   <div className="space-y-1">
-                    <p className="text-slate-500 text-xs font-medium">Available Points</p>
+                    <p className="text-slate-500 text-xs font-medium">
+                      Available Points
+                    </p>
                     <div className="flex items-baseline gap-1">
-                      <p className="text-indigo-600 font-black text-2xl tracking-tight">{(user?.totalPoints || 0).toLocaleString()}</p>
-                      <span className="text-indigo-400 text-xs font-bold font-sans">pts</span>
+                      <p className="text-indigo-600 font-black text-2xl tracking-tight">
+                        {(user?.totalPoints || 0).toLocaleString()}
+                      </p>
+                      <span className="text-indigo-400 text-xs font-bold font-sans">
+                        pts
+                      </span>
                     </div>
-                    <p className="text-[9px] text-slate-400 font-medium mt-1 uppercase tracking-tight">Points expire in 3 months</p>
+                    <p className="text-[9px] text-slate-400 font-medium mt-1 uppercase tracking-tight">
+                      Points expire in 3 months
+                    </p>
                   </div>
                 </div>
 
                 {/* Coupons */}
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100 flex flex-col md:col-span-2 lg:col-span-2">
-                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">Active Coupons</span>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">
+                    Active Coupons
+                  </span>
                   <div className="flex flex-wrap gap-4">
                     {user?.coupons && user.coupons.length > 0 ? (
                       user.coupons.map((coupon) => (
-                        <div key={coupon.id} className="bg-white/60 border border-emerald-200 rounded-xl p-3 flex-1 min-w-[200px]">
+                        <div
+                          key={coupon.id}
+                          className="bg-white/60 border border-emerald-200 rounded-xl p-3 flex-1 min-w-[200px]"
+                        >
                           <div className="flex justify-between items-start mb-1">
-                            <span className="text-emerald-700 font-black text-lg font-mono">{coupon.code}</span>
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bold uppercase">Ready</span>
+                            <span className="text-emerald-700 font-black text-lg font-mono">
+                              {coupon.code}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bold uppercase">
+                              Ready
+                            </span>
                           </div>
                           <div className="flex justify-between items-end">
                             <div>
-                              <p className="text-slate-500 text-[10px] font-medium">Discount Value</p>
-                              <p className="text-emerald-600 font-bold text-sm">Rp {coupon.discount.toLocaleString()}</p>
+                              <p className="text-slate-500 text-[10px] font-medium">
+                                Discount Value
+                              </p>
+                              <p className="text-emerald-600 font-bold text-sm">
+                                Rp {coupon.discount.toLocaleString()}
+                              </p>
                             </div>
                             <div className="text-right">
-                              <p className="text-slate-400 text-[9px] font-medium">Valid until</p>
-                              <p className="text-slate-600 text-[10px] font-bold">{new Date(coupon.expiresAt).toLocaleDateString()}</p>
+                              <p className="text-slate-400 text-[9px] font-medium">
+                                Valid until
+                              </p>
+                              <p className="text-slate-600 text-[10px] font-bold">
+                                {new Date(
+                                  coupon.expiresAt,
+                                ).toLocaleDateString()}
+                              </p>
                             </div>
                           </div>
                         </div>
                       ))
                     ) : (
                       <div className="flex flex-col items-center justify-center w-full py-4 text-slate-400">
-                        <p className="text-sm font-medium">No active coupons available</p>
-                        <p className="text-[10px]">Invite friends to get discount coupons!</p>
+                        <p className="text-sm font-medium">
+                          No active coupons available
+                        </p>
+                        <p className="text-[10px]">
+                          Invite friends to get discount coupons!
+                        </p>
                       </div>
                     )}
                   </div>

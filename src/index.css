@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 /* Import Font: Urbanist untuk Sans (mirip Jeton) dan Stack Sans Notch */
-@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap");
 /* Note: Pastikan font Stack Sans Notch tersedia di penyedia font Anda atau lokal */
-@import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@700&display=swap");
 
 @theme {
   /* Colors - Diambil dari palette Jeton yang vibran */
-  --color-primary: #FF6B52; 
-  --color-primary-hover: #E85A42;
-  --color-secondary: #FF4B6E; /* Diganti ke Rose agar harmonis dengan oren Jeton */
-  --color-ring: #FF6B5266; /* Orange dengan opacity untuk focus ring */
-  
+  --color-primary: #ff6b52;
+  --color-primary-hover: #e85a42;
+  --color-secondary: #ff4b6e; /* Diganti ke Rose agar harmonis dengan oren Jeton */
+  --color-ring: #ff6b5266; /* Orange dengan opacity untuk focus ring */
+
   /* Surfaces & Borders */
   --color-background: #ffffff;
   --color-surface: #f8f8f9; /* Soft grey-white agar lebih modern */
@@ -33,9 +33,12 @@
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.02em; /* Urbanist terlihat lebih bagus dengan tracking agak rapat */
   }
-  
+
   /* Heading default menggunakan Urbanist Bold */
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-weight: 700;
     letter-spacing: -0.03em;
   }
@@ -47,7 +50,8 @@
   }
 
   @keyframes pulse-subtle {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
       transform: scale(1);
     }
@@ -66,6 +70,6 @@
 
   /* Utilitas tambahan untuk gradasi mirip background Jeton */
   .bg-jeton-gradient {
-    background: linear-gradient(135deg, #FF4B6E 0%, #FF6B52 50%, #FFBD8B 100%);
+    background: linear-gradient(135deg, #ff4b6e 0%, #ff6b52 50%, #ffbd8b 100%);
   }
 }

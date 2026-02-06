@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 
 interface CountdownTimerProps {
   expiryDate: string; // ISO string
@@ -6,20 +6,24 @@ interface CountdownTimerProps {
   className?: string;
 }
 
-const CountdownTimer: React.FC<CountdownTimerProps> = ({ expiryDate, onExpire, className = '' }) => {
+const CountdownTimer: React.FC<CountdownTimerProps> = ({
+  expiryDate,
+  onExpire,
+  className = "",
+}) => {
   const calculateTimeLeft = useCallback(() => {
     const difference = +new Date(expiryDate) - +new Date();
     let timeLeft = {
       hours: 0,
       minutes: 0,
-      seconds: 0
+      seconds: 0,
     };
 
     if (difference > 0) {
       timeLeft = {
         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60)
+        seconds: Math.floor((difference / 1000) % 60),
       };
     }
 
@@ -34,8 +38,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ expiryDate, onExpire, c
       const newTimeLeft = calculateTimeLeft();
       setTimeLeft(newTimeLeft);
 
-      const totalSeconds = newTimeLeft.hours * 3600 + newTimeLeft.minutes * 60 + newTimeLeft.seconds;
-      
+      const totalSeconds =
+        newTimeLeft.hours * 3600 +
+        newTimeLeft.minutes * 60 +
+        newTimeLeft.seconds;
+
       if (totalSeconds <= 0 && !isExpired) {
         setIsExpired(true);
         if (onExpire) onExpire();
@@ -46,14 +53,10 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ expiryDate, onExpire, c
     return () => clearInterval(timer);
   }, [calculateTimeLeft, isExpired, onExpire]);
 
-  const formatNumber = (num: number) => num.toString().padStart(2, '0');
+  const formatNumber = (num: number) => num.toString().padStart(2, "0");
 
   if (isExpired) {
-    return (
-      <div className={`text-red-600 font-bold ${className}`}>
-        EXPIRED
-      </div>
-    );
+    return <div className={`text-red-600 font-bold ${className}`}>EXPIRED</div>;
   }
 
   return (

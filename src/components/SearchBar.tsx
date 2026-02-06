@@ -1,11 +1,11 @@
-import { Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useDebounce } from '../hooks/useDebounce';
-import { useEventStore } from '../store/event.store';
+import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDebounce } from "../hooks/useDebounce";
+import { useEventStore } from "../store/event.store";
 
 export const SearchBar = () => {
   const { setSearch } = useEventStore();
-  const [localValue, setLocalValue] = useState('');
+  const [localValue, setLocalValue] = useState("");
   const debouncedValue = useDebounce(localValue, 500);
 
   useEffect(() => {

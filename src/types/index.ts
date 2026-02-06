@@ -21,15 +21,21 @@ export interface Event {
   totalReviews?: number;
 }
 
-export type EventCategory = 'Music' | 'Technology' | 'Art' | 'Business' | 'Sports' | 'All';
+export type EventCategory =
+  | "Music"
+  | "Technology"
+  | "Art"
+  | "Business"
+  | "Sports"
+  | "All";
 
 export type TransactionStatus =
-  | 'WAITING_PAYMENT'
-  | 'WAITING_ADMIN'
-  | 'DONE'
-  | 'REJECTED'
-  | 'EXPIRED'
-  | 'CANCELED';
+  | "WAITING_PAYMENT"
+  | "WAITING_ADMIN"
+  | "DONE"
+  | "REJECTED"
+  | "EXPIRED"
+  | "CANCELED";
 
 export interface Transaction {
   id: string;

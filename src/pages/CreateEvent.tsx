@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast, Toaster } from 'react-hot-toast';
-import { Layout } from '../components/Layout';
-import { EventForm } from '../components/events/EventForm';
-import type { EventFormValues, VoucherValue } from '../components/events/EventForm';
-import { ArrowLeft, MapPin, Calendar, Users, Tag, X } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { useEventStore } from '../store/event.store';
-import { getErrorMessage } from '../lib/axiosInstance';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
+import { Layout } from "../components/Layout";
+import { EventForm } from "../components/events/EventForm";
+import type {
+  EventFormValues,
+  VoucherValue,
+} from "../components/events/EventForm";
+import { ArrowLeft, MapPin, Calendar, Users, Tag, X } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { useEventStore } from "../store/event.store";
+import { getErrorMessage } from "../lib/axiosInstance";
 
 export const CreateEvent: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +23,9 @@ export const CreateEvent: React.FC = () => {
   const handleSubmit = async (values: EventFormValues) => {
     setIsLoading(true);
     try {
-      const payload: Partial<EventFormValues> & Record<string, any> = { ...values };
+      const payload: Partial<EventFormValues> & Record<string, unknown> = {
+        ...values,
+      };
       delete payload.vouchers;
 
       const newEvent = await createEvent(payload);
@@ -33,13 +38,13 @@ export const CreateEvent: React.FC = () => {
             discountPercent: voucher.amount,
             maxUsage: 100, // Default for now
             startDate: values.startDate,
-            endDate: voucher.expiryDate
+            endDate: voucher.expiryDate,
           });
         }
       }
 
-      toast.success('Event created successfully!');
-      setTimeout(() => navigate('/organizer/events'), 1500);
+      toast.success("Event created successfully!");
+      setTimeout(() => navigate("/organizer/events"), 1500);
     } catch (err) {
       toast.error(getErrorMessage(err));
     } finally {
@@ -65,8 +70,12 @@ export const CreateEvent: React.FC = () => {
             >
               <ArrowLeft className="w-4 h-4 mr-1" /> Back
             </button>
-            <h1 className="text-3xl font-extrabold text-gray-900">Create New Event</h1>
-            <p className="text-gray-500">Fill in the details below to host your amazing event</p>
+            <h1 className="text-3xl font-extrabold text-gray-900">
+              Create New Event
+            </h1>
+            <p className="text-gray-500">
+              Fill in the details below to host your amazing event
+            </p>
           </div>
         </div>
 
@@ -97,7 +106,8 @@ export const CreateEvent: React.FC = () => {
                     alt="Cover"
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Invalid+Image+URL';
+                      (e.target as HTMLImageElement).src =
+                        "https://placehold.co/600x400?text=Invalid+Image+URL";
                     }}
                   />
                 ) : (
@@ -107,7 +117,7 @@ export const CreateEvent: React.FC = () => {
                 )}
                 <div className="absolute top-4 left-4">
                   <span className="px-4 py-1 bg-primary text-white text-xs font-bold rounded-full uppercase tracking-wider">
-                    {previewData.category || 'Category'}
+                    {previewData.category || "Category"}
                   </span>
                 </div>
               </div>
@@ -117,48 +127,66 @@ export const CreateEvent: React.FC = () => {
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div className="space-y-2">
                     <h2 className="text-4xl font-black text-gray-900 leading-tight">
-                      {previewData.title || 'Event Title'}
+                      {previewData.title || "Event Title"}
                     </h2>
                     <div className="flex items-center text-gray-600 gap-4 flex-wrap">
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-1.5">
                           <MapPin className="w-4 h-4 text-primary" />
-                          <span className="text-sm">{previewData.location || 'Location'}</span>
+                          <span className="text-sm">
+                            {previewData.location || "Location"}
+                          </span>
                         </div>
                         {previewData.address && (
-                          <span className="text-xs text-gray-500 ml-5.5">{previewData.address}</span>
+                          <span className="text-xs text-gray-500 ml-5.5">
+                            {previewData.address}
+                          </span>
                         )}
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-4 h-4 text-primary" />
-                        <span className="text-sm">{previewData.startDate ? new Date(previewData.startDate).toLocaleString() : 'Date'}</span>
+                        <span className="text-sm">
+                          {previewData.startDate
+                            ? new Date(previewData.startDate).toLocaleString()
+                            : "Date"}
+                        </span>
                       </div>
                     </div>
                   </div>
                   <div className="bg-primary/5 p-4 rounded-2xl min-w-[150px] text-center">
-                    <span className="text-xs font-medium text-gray-500 uppercase block mb-1">Ticket Price</span>
+                    <span className="text-xs font-medium text-gray-500 uppercase block mb-1">
+                      Ticket Price
+                    </span>
                     <span className="text-2xl font-bold text-primary">
-                      {previewData.price === 0 ? 'FREE' : `IDR ${Number(previewData.price).toLocaleString()}`}
+                      {previewData.price === 0
+                        ? "FREE"
+                        : `IDR ${Number(previewData.price).toLocaleString()}`}
                     </span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="md:col-span-2 space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Description</h3>
+                    <h3 className="text-xl font-bold text-gray-900 border-b pb-2">
+                      Description
+                    </h3>
                     <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">
-                      {previewData.description || 'No description provided.'}
+                      {previewData.description || "No description provided."}
                     </p>
                   </div>
                   <div className="space-y-6">
-                    <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Details</h3>
+                    <h3 className="text-xl font-bold text-gray-900 border-b pb-2">
+                      Details
+                    </h3>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Users className="w-5 h-5" />
                           <span>Total Capacity</span>
                         </div>
-                        <span className="font-bold text-gray-900">{previewData.seatTotal || '0'} Seats</span>
+                        <span className="font-bold text-gray-900">
+                          {previewData.seatTotal || "0"} Seats
+                        </span>
                       </div>
                       {previewData.isPromoted && (
                         <div className="space-y-2">
@@ -166,12 +194,21 @@ export const CreateEvent: React.FC = () => {
                             <Tag className="w-5 h-5" />
                             <span>Available Offers</span>
                           </div>
-                          {previewData.vouchers.map((v: VoucherValue, i: number) => (
-                            <div key={i} className="bg-yellow-50 border border-yellow-100 p-2 rounded-lg flex justify-between items-center">
-                              <span className="text-xs font-bold text-yellow-800">{v.code}</span>
-                              <span className="text-xs font-medium text-yellow-700">{v.amount}% OFF</span>
-                            </div>
-                          ))}
+                          {previewData.vouchers.map(
+                            (v: VoucherValue, i: number) => (
+                              <div
+                                key={i}
+                                className="bg-yellow-50 border border-yellow-100 p-2 rounded-lg flex justify-between items-center"
+                              >
+                                <span className="text-xs font-bold text-yellow-800">
+                                  {v.code}
+                                </span>
+                                <span className="text-xs font-medium text-yellow-700">
+                                  {v.amount}% OFF
+                                </span>
+                              </div>
+                            ),
+                          )}
                         </div>
                       )}
                     </div>
@@ -179,7 +216,10 @@ export const CreateEvent: React.FC = () => {
                 </div>
 
                 <div className="flex justify-end pt-8">
-                  <Button onClick={() => setShowPreview(false)} className="px-8">
+                  <Button
+                    onClick={() => setShowPreview(false)}
+                    className="px-8"
+                  >
                     Close Preview
                   </Button>
                 </div>

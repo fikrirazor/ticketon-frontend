@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react';
+import React, { type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -20,7 +20,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Caught error:', error, errorInfo);
+    console.error("Caught error:", error, errorInfo);
   }
 
   public render() {
@@ -28,10 +28,12 @@ export class ErrorBoundary extends React.Component<Props, State> {
       return (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h1>
+            <h1 className="text-2xl font-bold text-red-600 mb-4">
+              Something went wrong
+            </h1>
             <p className="text-gray-600 mb-4">{this.state.error?.message}</p>
             <button
-              onClick={() => globalThis.location.href = '/'}
+              onClick={() => (globalThis.location.href = "/")}
               className="px-4 py-2 bg-primary text-white rounded hover:bg-orange-600"
             >
               Go to Home
