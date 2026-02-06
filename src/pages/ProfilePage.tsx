@@ -192,8 +192,9 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Personal Info */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex flex-col">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Personal Information</span>
                   <div className="space-y-1">
                     <p className="text-slate-500 text-xs font-medium">Email Address</p>
@@ -201,7 +202,8 @@ const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col">
+                {/* Account Status */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm flex flex-col">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Account Status</span>
                   <div className="space-y-1">
                     <p className="text-slate-500 text-xs font-medium">Verified Account</p>
@@ -212,12 +214,13 @@ const ProfilePage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Referral Code */}
                 <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-100 flex flex-col">
-                  <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Referral Code</span>
+                  <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Referral Program</span>
                   <div className="space-y-1">
                     <p className="text-slate-500 text-xs font-medium">Your Unique Code</p>
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-primary font-black text-lg tracking-wider">{user?.referralCode || '-'}</p>
+                      <p className="text-primary font-black text-xl tracking-wider">{user?.referralCode || '-'}</p>
                       {user?.referralCode && (
                         <button
                           onClick={() => {
@@ -235,6 +238,51 @@ const ProfilePage: React.FC = () => {
                         </button>
                       )}
                     </div>
+                  </div>
+                </div>
+
+                {/* Points Balance */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100/50 border border-indigo-100 flex flex-col">
+                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Points Balance</span>
+                  <div className="space-y-1">
+                    <p className="text-slate-500 text-xs font-medium">Available Points</p>
+                    <div className="flex items-baseline gap-1">
+                      <p className="text-indigo-600 font-black text-2xl tracking-tight">{(user?.totalPoints || 0).toLocaleString()}</p>
+                      <span className="text-indigo-400 text-xs font-bold font-sans">pts</span>
+                    </div>
+                    <p className="text-[9px] text-slate-400 font-medium mt-1 uppercase tracking-tight">Points expire in 3 months</p>
+                  </div>
+                </div>
+
+                {/* Coupons */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100 flex flex-col md:col-span-2 lg:col-span-2">
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">Active Coupons</span>
+                  <div className="flex flex-wrap gap-4">
+                    {user?.coupons && user.coupons.length > 0 ? (
+                      user.coupons.map((coupon) => (
+                        <div key={coupon.id} className="bg-white/60 border border-emerald-200 rounded-xl p-3 flex-1 min-w-[200px]">
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="text-emerald-700 font-black text-lg font-mono">{coupon.code}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-bold uppercase">Ready</span>
+                          </div>
+                          <div className="flex justify-between items-end">
+                            <div>
+                              <p className="text-slate-500 text-[10px] font-medium">Discount Value</p>
+                              <p className="text-emerald-600 font-bold text-sm">Rp {coupon.discount.toLocaleString()}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-slate-400 text-[9px] font-medium">Valid until</p>
+                              <p className="text-slate-600 text-[10px] font-bold">{new Date(coupon.expiresAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center w-full py-4 text-slate-400">
+                        <p className="text-sm font-medium">No active coupons available</p>
+                        <p className="text-[10px]">Invite friends to get discount coupons!</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

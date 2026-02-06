@@ -4,6 +4,13 @@ import axiosInstance from "../lib/axiosInstance";
 
 export type UserRole = "ORGANIZER" | "CUSTOMER";
 
+interface Coupon {
+  id: string;
+  code: string;
+  discount: number;
+  expiresAt: string;
+}
+
 interface User {
   id: string;
   name: string;
@@ -11,6 +18,8 @@ interface User {
   role: UserRole;
   avatarUrl?: string;
   referralCode?: string;
+  totalPoints?: number;
+  coupons?: Coupon[];
 }
 
 interface AuthState {
