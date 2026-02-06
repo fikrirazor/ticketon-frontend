@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface PriceSummaryProps {
   unitPrice: number;
@@ -13,27 +13,33 @@ const PriceSummary: React.FC<PriceSummaryProps> = ({
   quantity,
   pointsDiscount = 0,
   voucherDiscount = 0,
-  className = ''
+  className = "",
 }) => {
   const subtotal = unitPrice * quantity;
   const totalDiscount = pointsDiscount + voucherDiscount;
   const finalPrice = Math.max(0, subtotal - totalDiscount);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
   return (
-    <div className={`bg-white p-6 rounded-xl border border-slate-200 shadow-sm ${className}`}>
-      <h3 className="text-lg font-semibold mb-4 border-b pb-2">Order Summary</h3>
-      
+    <div
+      className={`bg-white p-6 rounded-xl border border-slate-200 shadow-sm ${className}`}
+    >
+      <h3 className="text-lg font-semibold mb-4 border-b pb-2">
+        Order Summary
+      </h3>
+
       <div className="space-y-3">
         <div className="flex justify-between text-slate-600">
-          <span>Subtotal ({quantity} ticket{quantity > 1 ? 's' : ''})</span>
+          <span>
+            Subtotal ({quantity} ticket{quantity > 1 ? "s" : ""})
+          </span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
 

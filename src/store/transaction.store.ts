@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import type { Transaction } from '../types';
-import { transactionAPI, voucherAPI } from '../lib/api.service';
+import { create } from "zustand";
+import type { Transaction } from "../types";
+import { transactionAPI, voucherAPI } from "../lib/api.service";
 
 interface CreateTransactionData {
   eventId: string;
@@ -16,11 +16,17 @@ interface TransactionState {
   error: string | null;
   createTransaction: (data: CreateTransactionData) => Promise<Transaction>;
   getTransactionById: (id: string) => Promise<Transaction>;
-  getUserTransactions: (page?: number, limit?: number) => Promise<Transaction[]>;
-  uploadPaymentProof: (transactionId: string, file: File) => Promise<Transaction>;
+  getUserTransactions: (
+    page?: number,
+    limit?: number,
+  ) => Promise<Transaction[]>;
+  uploadPaymentProof: (
+    transactionId: string,
+    file: File,
+  ) => Promise<Transaction>;
   cancelTransaction: (transactionId: string) => Promise<void>;
   pollTransactionStatus: (id: string) => Promise<void>;
-  validateVoucher: (code: string, eventId: string) => Promise<any>;
+  validateVoucher: (code: string, eventId: string) => Promise<unknown>;
   clearError: () => void;
 }
 
@@ -34,14 +40,16 @@ export const useTransactionStore = create<TransactionState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const transaction = await transactionAPI.createTransaction(data);
-      set((state) => ({ 
+      set((state) => ({
         transactions: [transaction, ...state.transactions],
         currentTransaction: transaction,
-        error: null
+        error: null,
       }));
       return transaction;
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to create transaction';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to create transaction";
       set({ error: errorMsg });
       throw err;
     } finally {
@@ -55,8 +63,10 @@ export const useTransactionStore = create<TransactionState>((set) => ({
       const transaction = await transactionAPI.getTransactionById(id);
       set({ currentTransaction: transaction, error: null });
       return transaction;
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to fetch transaction';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to fetch transaction";
       set({ error: errorMsg });
       throw err;
     } finally {
@@ -71,8 +81,10 @@ export const useTransactionStore = create<TransactionState>((set) => ({
       const transactions = result.transactions || [];
       set({ transactions, error: null });
       return transactions;
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to fetch transactions';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to fetch transactions";
       set({ error: errorMsg });
       return [];
     } finally {
@@ -83,15 +95,25 @@ export const useTransactionStore = create<TransactionState>((set) => ({
   uploadPaymentProof: async (transactionId, file) => {
     set({ isLoading: true, error: null });
     try {
-      const updated = await transactionAPI.uploadPaymentProof(transactionId, file);
+      const updated = await transactionAPI.uploadPaymentProof(
+        transactionId,
+        file,
+      );
       set((state) => ({
-        currentTransaction: state.currentTransaction?.id === transactionId ? updated : state.currentTransaction,
-        transactions: state.transactions.map(t => t.id === transactionId ? updated : t),
-        error: null
+        currentTransaction:
+          state.currentTransaction?.id === transactionId
+            ? updated
+            : state.currentTransaction,
+        transactions: state.transactions.map((t) =>
+          t.id === transactionId ? updated : t,
+        ),
+        error: null,
       }));
       return updated;
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to upload payment proof';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to upload payment proof";
       set({ error: errorMsg });
       throw err;
     } finally {
@@ -104,12 +126,17 @@ export const useTransactionStore = create<TransactionState>((set) => ({
     try {
       await transactionAPI.cancelTransaction(transactionId);
       set((state) => ({
-        transactions: state.transactions.filter(t => t.id !== transactionId),
-        currentTransaction: state.currentTransaction?.id === transactionId ? null : state.currentTransaction,
-        error: null
+        transactions: state.transactions.filter((t) => t.id !== transactionId),
+        currentTransaction:
+          state.currentTransaction?.id === transactionId
+            ? null
+            : state.currentTransaction,
+        error: null,
       }));
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Failed to cancel transaction';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to cancel transaction";
       set({ error: errorMsg });
       throw err;
     } finally {
@@ -121,10 +148,15 @@ export const useTransactionStore = create<TransactionState>((set) => ({
     try {
       const transaction = await transactionAPI.getTransactionById(id);
       set((state) => ({
-        currentTransaction: state.currentTransaction?.id === id ? transaction : state.currentTransaction,
-        transactions: state.transactions.map(t => t.id === id ? transaction : t),
+        currentTransaction:
+          state.currentTransaction?.id === id
+            ? transaction
+            : state.currentTransaction,
+        transactions: state.transactions.map((t) =>
+          t.id === id ? transaction : t,
+        ),
       }));
-    } catch (err) {
+    } catch {
       // Ignore polling errors
     }
   },
@@ -132,8 +164,9 @@ export const useTransactionStore = create<TransactionState>((set) => ({
   validateVoucher: async (code, eventId) => {
     try {
       return await voucherAPI.validateVoucher(code, eventId);
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || 'Invalid voucher';
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg = errResponse.response?.data?.message || "Invalid voucher";
       set({ error: errorMsg });
       throw err;
     }

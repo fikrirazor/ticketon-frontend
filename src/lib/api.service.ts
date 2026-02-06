@@ -1,5 +1,5 @@
-import axiosInstance from './axiosInstance';
-import type { Event, Transaction, Review } from '../types';
+import axiosInstance from "./axiosInstance";
+import type { Event, Transaction, Review } from "../types";
 
 /**
  * EVENTS API SERVICES
@@ -15,10 +15,10 @@ export const eventAPI = {
     page?: number;
     limit?: number;
   }) => {
-    const response = await axiosInstance.get('/events', { params });
+    const response = await axiosInstance.get("/events", { params });
     return {
       events: response.data.data,
-      pagination: response.data.pagination
+      pagination: response.data.pagination,
     };
   },
 
@@ -33,10 +33,14 @@ export const eventAPI = {
   /**
    * Create new event (Organizer only)
    */
-  createEvent: async (eventData: FormData | Record<string, unknown>): Promise<Event> => {
+  createEvent: async (
+    eventData: FormData | Record<string, unknown>,
+  ): Promise<Event> => {
     const isFormData = eventData instanceof FormData;
-    const response = await axiosInstance.post('/events', eventData, {
-      headers: { 'Content-Type': isFormData ? 'multipart/form-data' : 'application/json' },
+    const response = await axiosInstance.post("/events", eventData, {
+      headers: {
+        "Content-Type": isFormData ? "multipart/form-data" : "application/json",
+      },
     });
     return response.data.data;
   },
@@ -71,7 +75,7 @@ export const transactionAPI = {
     pointsUsed?: number;
     items: { quantity: number }[];
   }): Promise<Transaction> => {
-    const response = await axiosInstance.post('/transactions', data);
+    const response = await axiosInstance.post("/transactions", data);
     return response.data.data;
   },
 
@@ -79,7 +83,7 @@ export const transactionAPI = {
    * Get all user transactions (authenticated)
    */
   getUserTransactions: async (page: number = 1, limit: number = 10) => {
-    const response = await axiosInstance.get('/transactions/me', {
+    const response = await axiosInstance.get("/transactions/me", {
       params: { page, limit },
     });
     return response.data.data;
@@ -98,14 +102,14 @@ export const transactionAPI = {
    */
   uploadPaymentProof: async (
     transactionId: string,
-    file: File
+    file: File,
   ): Promise<Transaction> => {
     const formData = new FormData();
-    formData.append('paymentProof', file);
+    formData.append("paymentProof", file);
     const response = await axiosInstance.post(
       `/transactions/${transactionId}/payment-proof`,
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+      { headers: { "Content-Type": "multipart/form-data" } },
     );
     return response.data.data;
   },
@@ -115,7 +119,7 @@ export const transactionAPI = {
    */
   cancelTransaction: async (transactionId: string) => {
     const response = await axiosInstance.put(
-      `/transactions/${transactionId}/cancel`
+      `/transactions/${transactionId}/cancel`,
     );
     return response.data;
   },
@@ -137,11 +141,11 @@ export const voucherAPI = {
       maxUsage: number;
       startDate: string;
       endDate: string;
-    }
+    },
   ) => {
     const response = await axiosInstance.post(
       `/events/${eventId}/vouchers`,
-      voucherData
+      voucherData,
     );
     return response.data.data;
   },
@@ -165,7 +169,7 @@ export const locationAPI = {
    * Get all locations
    */
   getLocations: async () => {
-    const response = await axiosInstance.get('/locations');
+    const response = await axiosInstance.get("/locations");
     return response.data.data;
   },
 };
@@ -177,7 +181,11 @@ export const reviewAPI = {
   /**
    * Get reviews for an event
    */
-  getEventReviews: async (eventId: string, page: number = 1, limit: number = 10) => {
+  getEventReviews: async (
+    eventId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) => {
     const response = await axiosInstance.get(`/reviews/events/${eventId}`, {
       params: { page, limit },
     });
@@ -187,11 +195,17 @@ export const reviewAPI = {
   /**
    * Create review for an event
    */
-  createReview: async (eventId: string, data: {
-    rating: number;
-    comment: string;
-  }): Promise<Review> => {
-    const response = await axiosInstance.post(`/reviews/events/${eventId}`, data);
+  createReview: async (
+    eventId: string,
+    data: {
+      rating: number;
+      comment: string;
+    },
+  ): Promise<Review> => {
+    const response = await axiosInstance.post(
+      `/reviews/events/${eventId}`,
+      data,
+    );
     return response.data.data;
   },
 
@@ -200,7 +214,7 @@ export const reviewAPI = {
    */
   updateReview: async (
     reviewId: string,
-    data: { rating?: number; comment?: string }
+    data: { rating?: number; comment?: string },
   ): Promise<Review> => {
     const response = await axiosInstance.put(`/reviews/${reviewId}`, data);
     return response.data.data;
@@ -218,7 +232,7 @@ export const reviewAPI = {
    * Get eligible events for review (events user has attended)
    */
   getEligibleEventsForReview: async () => {
-    const response = await axiosInstance.get('/reviews/me/eligible');
+    const response = await axiosInstance.get("/reviews/me/eligible");
     return response.data.data;
   },
 };

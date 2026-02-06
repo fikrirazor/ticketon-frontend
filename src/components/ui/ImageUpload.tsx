@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Upload, X } from 'lucide-react';
+import React, { useState, useRef } from "react";
+import { Upload, X } from "lucide-react";
 
 interface ImageUploadProps {
   label: string;
@@ -8,7 +8,12 @@ interface ImageUploadProps {
   touched?: boolean;
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({ label, onChange, error, touched }) => {
+export const ImageUpload: React.FC<ImageUploadProps> = ({
+  label,
+  onChange,
+  error,
+  touched,
+}) => {
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +36,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ label, onChange, error
     setPreview(null);
     onChange(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -40,13 +45,19 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ label, onChange, error
       <label className="text-sm font-semibold text-gray-700">{label}</label>
       <div
         className={`relative border-2 border-dashed rounded-xl p-4 transition-all flex flex-col items-center justify-center min-h-[150px] cursor-pointer hover:bg-gray-50 ${
-          touched && error ? 'border-red-500 bg-red-50/10' : 'border-gray-200 hover:border-primary'
+          touched && error
+            ? "border-red-500 bg-red-50/10"
+            : "border-gray-200 hover:border-primary"
         }`}
         onClick={() => fileInputRef.current?.click()}
       >
         {preview ? (
           <div className="relative w-full h-full min-h-[150px]">
-            <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-full h-full object-cover rounded-lg"
+            />
             <button
               type="button"
               onClick={(e) => {
@@ -61,7 +72,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ label, onChange, error
         ) : (
           <>
             <Upload className="w-8 h-8 text-gray-400 mb-2" />
-            <span className="text-sm text-gray-500">Click to upload or drag and drop</span>
+            <span className="text-sm text-gray-500">
+              Click to upload or drag and drop
+            </span>
             <span className="text-xs text-gray-400">PNG, JPG up to 5MB</span>
           </>
         )}
@@ -73,7 +86,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ label, onChange, error
           onChange={handleFileChange}
         />
       </div>
-      {touched && error && <span className="text-xs text-red-500">{error}</span>}
+      {touched && error && (
+        <span className="text-xs text-red-500">{error}</span>
+      )}
     </div>
   );
 };

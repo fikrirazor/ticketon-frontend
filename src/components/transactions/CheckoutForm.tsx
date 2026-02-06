@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button } from '../ui/button';
-import { useTransactionStore } from '../../store/transaction.store';
-import { toast } from 'react-hot-toast';
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import { useTransactionStore } from "../../store/transaction.store";
+import { toast } from "react-hot-toast";
 
 interface CheckoutFormProps {
   eventId: string;
@@ -24,12 +24,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   eventId,
   availablePoints,
   onSubmit,
-  isLoading = false
+  isLoading = false,
 }) => {
   const { validateVoucher } = useTransactionStore();
   const [quantity, setQuantity] = useState(1);
   const [usePoints, setUsePoints] = useState(false);
-  const [voucherCode, setVoucherCode] = useState('');
+  const [voucherCode, setVoucherCode] = useState("");
   const [validatedVoucher, setValidatedVoucher] = useState<{
     id: string;
     code: string;
@@ -38,28 +38,38 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const [isValidating, setIsValidating] = useState(false);
 
   const handleIncrement = () => setQuantity((prev: number) => prev + 1);
-  const handleDecrement = () => setQuantity((prev: number) => (prev > 1 ? prev - 1 : 1));
+  const handleDecrement = () =>
+    setQuantity((prev: number) => (prev > 1 ? prev - 1 : 1));
 
   const handleApplyVoucher = async () => {
     if (!voucherCode) {
-      toast.error('Please enter a voucher code');
+      toast.error("Please enter a voucher code");
       return;
     }
     setIsValidating(true);
     try {
-      console.log('Validating voucher:', { voucherCode, eventId });
-      const data = await validateVoucher(voucherCode, eventId);
-      console.log('Voucher validation response:', data);
+      console.log("Validating voucher:", { voucherCode, eventId });
+      const data = (await validateVoucher(voucherCode, eventId)) as {
+        voucher: { id: string; code: string; discountPercent?: number };
+      };
+      console.log("Voucher validation response:", data);
       setValidatedVoucher(data.voucher);
-      toast.success('Voucher applied!');
-    } catch (err: any) {
-      console.error('Voucher validation error:', {
-        status: err.response?.status,
-        data: err.response?.data,
-        message: err.message
+      toast.success("Voucher applied!");
+    } catch (err: unknown) {
+      const errResponse = err as {
+        response?: { status?: number; data?: { message?: string } };
+        message?: string;
+      };
+      console.error("Voucher validation error:", {
+        status: errResponse.response?.status,
+        data: errResponse.response?.data,
+        message: errResponse.message,
       });
       setValidatedVoucher(null);
-      const errorMsg = err.response?.data?.message || err.message || 'Invalid voucher';
+      const errorMsg =
+        errResponse.response?.data?.message ||
+        errResponse.message ||
+        "Invalid voucher";
       toast.error(errorMsg);
     } finally {
       setIsValidating(false);
@@ -68,36 +78,39 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!eventId) {
-      toast.error('Event ID is missing');
+      toast.error("Event ID is missing");
       return;
     }
 
     if (quantity < 1) {
-      toast.error('Please select at least 1 ticket');
+      toast.error("Please select at least 1 ticket");
       return;
     }
 
-    console.log('Form submitted:', {
+    console.log("Form submitted:", {
       quantity,
       usePoints,
       voucherCode,
-      validatedVoucher
+      validatedVoucher,
     });
 
     onSubmit({
       quantity,
       usePoints,
       pointsToUse: usePoints ? availablePoints : 0,
-      voucherCode: validatedVoucher ? validatedVoucher.code : '',
+      voucherCode: validatedVoucher ? validatedVoucher.code : "",
       voucherId: validatedVoucher ? validatedVoucher.id : undefined,
-      discountPercent: validatedVoucher ? validatedVoucher.discountPercent : 0
+      discountPercent: validatedVoucher ? validatedVoucher.discountPercent : 0,
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-8 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm"
+    >
       {/* Quantity Selector */}
       <div className="space-y-3">
         <label className="block text-sm font-semibold text-slate-700 uppercase tracking-wider">
@@ -129,7 +142,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <h4 className="font-bold text-slate-800">Use Your Points</h4>
-            <p className="text-sm text-slate-500">Available: {availablePoints.toLocaleString()} Points</p>
+            <p className="text-sm text-slate-500">
+              Available: {availablePoints.toLocaleString()} Points
+            </p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -163,13 +178,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
             disabled={isValidating || !voucherCode}
             className="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors disabled:opacity-50"
           >
-            {isValidating ? '...' : 'Apply'}
+            {isValidating ? "..." : "Apply"}
           </button>
         </div>
         {validatedVoucher && (
-           <p className="text-xs text-green-600 font-bold">
-             ✓ Applied: {validatedVoucher.discountPercent}% OFF
-           </p>
+          <p className="text-xs text-green-600 font-bold">
+            ✓ Applied: {validatedVoucher.discountPercent}% OFF
+          </p>
         )}
       </div>
 
