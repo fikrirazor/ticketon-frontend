@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { User, Mail, ArrowRight, UserCircle, Sparkles, Tag } from 'lucide-react';
 import { useAuthStore } from '../store/auth.store';
@@ -8,7 +8,6 @@ import { SuccessModal } from '../components/ui/success-modal';
 import toast from 'react-hot-toast';
 
 export const Register: React.FC = () => {
-    const navigate = useNavigate();
     const register = useAuthStore((state) => state.register);
     const logout = useAuthStore((state) => state.logout);
     const isLoading = useAuthStore((state) => state.isLoading);

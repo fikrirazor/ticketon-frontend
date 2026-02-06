@@ -5,8 +5,6 @@ import {
     Calendar,
     DollarSign,
     Users,
-    Edit,
-    Trash2,
     TrendingUp,
     AlertCircle
 } from 'lucide-react';
