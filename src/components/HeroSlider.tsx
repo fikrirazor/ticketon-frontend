@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
 import image1 from '../assets/image1.webp';
+import sawah from '../assets/sawah.mp4';
+import Aurora from './Aurora';
 const LocationDropdown = ({ selected, onSelect }: { selected: string, onSelect: (val: string) => void }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -87,15 +89,41 @@ export const HeroSlider = () => {
     };
 
 
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.playbackRate = 0.8; // Slow down video to 50% speed
+        }
+    }, []);
+
     return (
         <div className="relative w-full h-[550px] md:h-screen flex items-center justify-center">
             {/* Scenic Background Image (Tiket.com style) - Overflow hidden moved here */}
-            <div className="absolute inset-0 overflow-hidden">
-                <img 
+            <div className="absolute inset-0 overflow-hidden ">
+                 <img 
                     src={image1} 
                     alt="Scenic Background" 
-                    className="w-full h-full object-cover scale-105 animate-pulse-slow"
-                />
+                    className="w-full h-full bg-transparent object-cover scale-105 animate-pulse-slow "
+                /> 
+{/*                 <video
+                    ref={videoRef}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover scale-105"
+                >
+                    <source src={sawah} type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video> */}
+                <div className="absolute inset-0 z-[1] pointer-events-none opacity-80 mix-blend-screen">
+                    <Aurora
+                        colorStops={["#858585","#5a5858"]}
+                        amplitude={3}
+                        blend={1}
+                    />
+                </div>
                 <div className="absolute inset-0 bg-black/30" />
             </div>
 
