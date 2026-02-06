@@ -1,5 +1,6 @@
 import { MapPin, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SpotlightCard from './SpotlightCard';
 
 const locations = [
   { name: 'Jakarta', image: 'https://images.unsplash.com/photo-1500315331616-db4f707c24d1?q=80&w=600&auto=format&fit=crop' },
@@ -20,27 +21,40 @@ export const LocationSection = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {locations.map((loc) => (
-          <Link 
-            key={loc.name} 
-            to={`/discover?location=${loc.name}`}
-            className="group relative h-40 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-          >
-            <img 
-              src={loc.image} 
-              alt={loc.name} 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute inset-0 flex flex-col items-center justify-end pb-6 px-4 text-center">
-              <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl mb-2 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                <MapPin className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-lg font-black text-white uppercase tracking-wider">{loc.name}</span>
-            </div>
-          </Link>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[200px] gap-4">
+        {locations.map((loc) => {
+          // Bento Grid Logic
+          let spanClass = "md:col-span-1";
+          if (loc.name === 'Jakarta') spanClass = "md:col-span-2 md:row-span-2";
+          else if (loc.name === 'Bali') spanClass = "md:col-span-1 md:row-span-2";
+          else if (loc.name === 'Yogyakarta' || loc.name === 'Medan') spanClass = "md:col-span-2";
+          
+          return (
+            <SpotlightCard 
+              key={loc.name} 
+              className={`rounded-[1rem] overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 p-0 ${spanClass}`}
+              spotlightColor="rgba(0, 229, 255, 0.2)"
+            >
+              <Link 
+                to={`/discover?location=${loc.name}`}
+                className="relative block w-full h-full"
+              >
+                <img 
+                  src={loc.image} 
+                  alt={loc.name} 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 flex flex-col items-center justify-end pb-6 px-4 text-center">
+                  <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl mb-2 opacity-0 hover:opacity-100 transition-all transform translate-y-2 hover:translate-y-0">
+                    <MapPin className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-lg font-black text-white uppercase tracking-wider">{loc.name}</span>
+                </div>
+              </Link>
+            </SpotlightCard>
+          );
+        })}
       </div>
     </section>
   );
