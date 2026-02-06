@@ -36,15 +36,15 @@ export const DiscoverEvents = () => {
         <Layout>
              <PageReveal className="space-y-16 pb-20">
                 {/* Header Section */}
-                <section className="relative pt-32 pb-20 overflow-hidden bg-slate-900 text-white rounded-b-[4rem] shadow-2xl">
-                    <div className="absolute inset-0 opacity-20">
+                <section className="relative pt-32 pb-20  bg-slate-900 text-white rounded-b-[4rem] shadow-2xl">
+                    <div className="absolute inset-0 opacity-20 overflow-hidden">
                         <img 
                             src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop" 
                             className="w-full h-full object-cover"
                             alt="Discover events"
                         />
                     </div>
-                    <div className="absolute inset-0 bg-linear-to-b from-slate-900 via-slate-900/80 to-slate-900" />
+                    <div className="absolute inset-0 bg-linear-to-b from-slate-900 via-slate-900/80 to-slate-900 " />
                     
                     <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-12">
                         <div className="text-center space-y-6">
@@ -58,7 +58,7 @@ export const DiscoverEvents = () => {
 
                         <div className="max-w-4xl mx-auto space-y-8 bg-white/5 backdrop-blur-2xl p-8 rounded-[3rem] border border-white/10 shadow-3xl">
                              <SearchBar />
-                             <div className="pt-4 border-t border-white/10">
+                             <div className="pt-4 border-t border-white/10 ">
                                 <FilterPanel />
                              </div>
                         </div>
