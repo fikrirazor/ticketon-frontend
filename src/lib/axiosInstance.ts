@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
       // Auto-logout: ONLY on 401 (Not Authenticated)
       localStorage.removeItem('token');
       localStorage.removeItem('auth-storage');
-      
+
       // Prevent redirect loop if already on login page
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
@@ -47,6 +47,17 @@ export default axiosInstance;
  */
 export const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
+    // Check if there are validation errors
+    if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+      // Format validation errors
+      const validationMessages = error.response.data.errors.map((err: any) => {
+        if (typeof err === 'string') return err;
+        if (err.message) return `${err.field ? err.field + ': ' : ''}${err.message}`;
+        return JSON.stringify(err);
+      }).join('; ');
+      return validationMessages || 'Validation failed';
+    }
+
     return error.response?.data?.message || error.message || 'Something went wrong on the server';
   }
   return error instanceof Error ? error.message : 'An unexpected error occurred';

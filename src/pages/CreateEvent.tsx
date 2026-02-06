@@ -22,11 +22,11 @@ export const CreateEvent: React.FC = () => {
     try {
       const payload: Partial<EventFormValues> & Record<string, any> = { ...values };
       delete payload.vouchers;
-      
+
       const newEvent = await createEvent(payload);
-      
+
       // Create vouchers if enabled and present
-      if (values.isPromotion && values.vouchers && values.vouchers.length > 0) {
+      if (values.isPromoted && values.vouchers && values.vouchers.length > 0) {
         for (const voucher of values.vouchers) {
           await createVoucher(newEvent.id, {
             code: voucher.code,
@@ -37,9 +37,9 @@ export const CreateEvent: React.FC = () => {
           });
         }
       }
-      
+
       toast.success('Event created successfully!');
-      setTimeout(() => navigate('/admin'), 1500);
+      setTimeout(() => navigate('/organizer/events'), 1500);
     } catch (err) {
       toast.error(getErrorMessage(err));
     } finally {
@@ -55,7 +55,7 @@ export const CreateEvent: React.FC = () => {
   return (
     <Layout>
       <Toaster position="top-right" />
-      
+
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto mb-8 flex items-center justify-between">
           <div>
@@ -97,7 +97,7 @@ export const CreateEvent: React.FC = () => {
                     alt="Cover"
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Invalid+Image+URL';
+                      (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Invalid+Image+URL';
                     }}
                   />
                 ) : (
@@ -160,7 +160,7 @@ export const CreateEvent: React.FC = () => {
                         </div>
                         <span className="font-bold text-gray-900">{previewData.seatTotal || '0'} Seats</span>
                       </div>
-                      {previewData.isPromotion && (
+                      {previewData.isPromoted && (
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-gray-600">
                             <Tag className="w-5 h-5" />
