@@ -6,6 +6,7 @@ import { FilterPanel } from '../components/FilterPanel';
 import { Telescope, Compass } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { PageReveal } from '../components/ui/PageReveal';
 
 export const DiscoverEvents = () => {
     const { events, isLoading, setLocation, setCategory, fetchEvents } = useEventStore();
@@ -32,7 +33,7 @@ export const DiscoverEvents = () => {
 
     return (
         <Layout>
-             <div className="space-y-16 pb-20">
+             <PageReveal className="space-y-16 pb-20">
                 {/* Header Section */}
                 <section className="relative pt-32 pb-20 overflow-hidden bg-slate-900 text-white rounded-b-[4rem] shadow-2xl">
                     <div className="absolute inset-0 opacity-20">
@@ -88,7 +89,7 @@ export const DiscoverEvents = () => {
                         </div>
                     )}
                 </div>
-            </div>
+            </PageReveal>
         </Layout>
     );
 };
