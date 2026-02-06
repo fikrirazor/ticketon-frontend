@@ -129,14 +129,7 @@ export const OrganizerDashboard: React.FC = () => {
                                                 <span className="flex items-center gap-1"><Users size={12} /> {event.seatLeft} Sisa</span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <button className="p-2 text-slate-400 hover:text-primary transition-colors">
-                                                <Edit size={18} />
-                                            </button>
-                                            <button className="p-2 text-slate-400 hover:text-red-500 transition-colors">
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </div>
+
                                     </div>
                                 )) : (
                                     <div className="text-center py-12">
