@@ -23,6 +23,8 @@ import OrganizerEventsPage from './pages/OrganizerEventsPage';
 import UserTransactionsPage from './pages/UserTransactionsPage';
 import { OrganizerDashboard } from './pages/OrganizerDashboard';
 
+import { EditEvent } from './pages/EditEvent';
+
 function App() {
   const getMe = useAuthStore((state) => state.getMe);
   const [isAuthReady, setIsAuthReady] = React.useState(false);
@@ -115,6 +117,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['ORGANIZER']}>
                   <CreateEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit-event/:id"
+              element={
+                <ProtectedRoute allowedRoles={['ORGANIZER']}>
+                  <EditEvent />
                 </ProtectedRoute>
               }
             />

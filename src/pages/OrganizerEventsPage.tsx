@@ -1,19 +1,39 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useOrganizerStore } from '../store/organizer.store';
 import { OrganizerLayout } from '../components/OrganizerLayout';
-import { Calendar, Users, Edit, Trash2, Search, Plus, MapPin } from 'lucide-react';
+import { Calendar, Users, Edit, Trash2, Search, Plus, MapPin, AlertTriangle, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
+import toast, { Toaster } from 'react-hot-toast';
 
 const OrganizerEventsPage: React.FC = () => {
-  const { events, fetchEvents, isLoading } = useOrganizerStore();
+  const { events, fetchEvents, deleteEvent, isLoading } = useOrganizerStore();
+  const [eventToDelete, setEventToDelete] = useState<any | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
 
+  const handleDelete = async () => {
+    if (!eventToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteEvent(eventToDelete.id);
+      toast.success('Event berhasil dihapus');
+      setEventToDelete(null);
+    } catch (error: any) {
+      toast.error(error.message || 'Gagal menghapus event');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <OrganizerLayout>
+      <Toaster position="top-right" />
+
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -41,7 +61,7 @@ const OrganizerEventsPage: React.FC = () => {
 
         {/* Content */}
         <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 min-h-[600px]">
-          {isLoading ? (
+          {isLoading && events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Memuat Data...</p>
@@ -86,11 +106,16 @@ const OrganizerEventsPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Button className="flex-1 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-xl font-black text-xs py-5">
-                      <Edit size={14} className="mr-2" />
-                      EDIT
-                    </Button>
-                    <Button className="w-12 h-12 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 border border-slate-200 rounded-xl flex items-center justify-center p-0 transition-colors">
+                    <Link to={`/edit-event/${event.id}`} className="flex-1">
+                      <Button className="w-full bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-xl font-black text-xs py-5">
+                        <Edit size={14} className="mr-2" />
+                        EDIT
+                      </Button>
+                    </Link>
+                    <Button
+                      onClick={() => setEventToDelete(event)}
+                      className="w-12 h-12 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 border border-slate-200 rounded-xl flex items-center justify-center p-0 transition-colors"
+                    >
                       <Trash2 size={18} />
                     </Button>
                   </div>
@@ -113,6 +138,59 @@ const OrganizerEventsPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {eventToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => !isDeleting && setEventToDelete(null)}
+          />
+
+          <div className="relative bg-white rounded-[2.5rem] shadow-2xl shadow-slate-900/20 w-full max-w-md p-8 overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+            {/* Decoration */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-[5rem] -mr-8 -mt-8 -z-0 opacity-50" />
+
+            <div className="relative z-10">
+              <div className="w-20 h-20 bg-red-100 rounded-3xl flex items-center justify-center mb-6 ring-8 ring-red-50">
+                <AlertTriangle className="w-10 h-10 text-red-500" />
+              </div>
+
+              <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight leading-tight">
+                Hapus Event?
+              </h3>
+
+              <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+                Anda akan menghapus <span className="text-slate-900 font-bold">"{eventToDelete.title}"</span>. Tindakan ini tidak dapat dibatalkan.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white border-0 font-black rounded-2xl py-6 h-auto shadow-lg shadow-red-200 transition-all active:scale-95"
+                >
+                  {isDeleting ? 'MENGHAPUS...' : 'YA, HAPUS SEKARANG'}
+                </Button>
+                <Button
+                  onClick={() => setEventToDelete(null)}
+                  disabled={isDeleting}
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 border-0 font-black rounded-2xl py-6 h-auto transition-all active:scale-95"
+                >
+                  BATAL
+                </Button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => !isDeleting && setEventToDelete(null)}
+              className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+      )}
     </OrganizerLayout>
   );
 };

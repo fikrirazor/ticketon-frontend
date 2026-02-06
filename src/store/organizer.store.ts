@@ -17,6 +17,7 @@ interface OrganizerStore {
     fetchStats: () => Promise<void>;
     fetchEvents: () => Promise<void>;
     fetchTransactions: () => Promise<void>;
+    deleteEvent: (id: string) => Promise<void>;
 }
 
 export const useOrganizerStore = create<OrganizerStore>((set) => ({
@@ -57,6 +58,22 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
             set({ transactions: response.data.data });
         } catch (error: any) {
             set({ error: error.response?.data?.message || 'Failed to fetch transactions' });
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+
+    deleteEvent: async (id: string) => {
+        set({ isLoading: true, error: null });
+        try {
+            await axiosInstance.delete(`/events/${id}`);
+            set((state) => ({
+                events: state.events.filter((event) => event.id !== id),
+                error: null
+            }));
+        } catch (error: any) {
+            set({ error: error.response?.data?.message || 'Failed to delete event' });
+            throw error;
         } finally {
             set({ isLoading: false });
         }

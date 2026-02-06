@@ -31,7 +31,7 @@ export interface EventFormValues {
   seatTotal: number;
   category: string;
   imageUrl: string;
-  isPromotion: boolean;
+  isPromoted: boolean;
   vouchers: VoucherValue[];
 }
 
@@ -46,7 +46,7 @@ const EventSchema = Yup.object().shape({
   seatTotal: Yup.number().min(1, 'At least 1 seat is required').required('Total seats is required'),
   category: Yup.string().oneOf(CATEGORIES).required('Category is required'),
   imageUrl: Yup.string().url('Must be a valid URL').optional(),
-  isPromotion: Yup.boolean(),
+  isPromoted: Yup.boolean(),
   vouchers: Yup.array().of(
     Yup.object().shape({
       code: Yup.string().required('Code is required'),
@@ -75,7 +75,7 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
     seatTotal: initialValues?.seatTotal || 0,
     category: initialValues?.category || 'MUSIC',
     imageUrl: '',
-    isPromotion: false,
+    isPromoted: false,
     vouchers: [],
     ...initialValues,
   };
@@ -99,9 +99,8 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="e.g. Summer Music Festival 2024"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
-                    touched.title && errors.title ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${touched.title && errors.title ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {touched.title && errors.title && <span className="text-xs text-red-500">{errors.title as string}</span>}
               </div>
@@ -113,9 +112,8 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                   value={values.category}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-white transition-all ${
-                    touched.category && errors.category ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none bg-white transition-all ${touched.category && errors.category ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 >
                   <option value="">Select a category</option>
                   {CATEGORIES.map((cat) => (
@@ -133,9 +131,8 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="e.g. Jakarta, Indonesia"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
-                    touched.location && errors.location ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${touched.location && errors.location ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {touched.location && errors.location && <span className="text-xs text-red-500">{errors.location as string}</span>}
               </div>
@@ -149,9 +146,8 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                   onBlur={handleBlur}
                   placeholder="e.g. Jl. Asia Afrika No.1, Jakarta Pusat"
                   rows={2}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none ${
-                    touched.address && errors.address ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none ${touched.address && errors.address ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {touched.address && errors.address && <span className="text-xs text-red-500">{errors.address as string}</span>}
               </div>
@@ -167,9 +163,8 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="https://example.com/image.jpg"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
-                    touched.imageUrl && errors.imageUrl ? 'border-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${touched.imageUrl && errors.imageUrl ? 'border-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {touched.imageUrl && errors.imageUrl && <span className="text-xs text-red-500">{errors.imageUrl as string}</span>}
                 <p className="text-[10px] text-gray-400 mt-1">Provide a direct link to your event cover image.</p>
@@ -185,44 +180,42 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
                     onChange={handleChange}
                     onBlur={handleBlur}
                     placeholder="0"
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
-                      touched.price && errors.price ? 'border-red-500' : 'border-gray-200'
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${touched.price && errors.price ? 'border-red-500' : 'border-gray-200'
+                      }`}
                   />
                   {touched.price && errors.price && <span className="text-xs text-red-500">{errors.price as string}</span>}
                 </div>
                 <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Total Seats</label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
-                <Users className="w-5 h-5" />
-              </div>
-              <input
-                type="number"
-                name="seatTotal"
-                value={values.seatTotal}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="100"
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
-                  touched.seatTotal && errors.seatTotal ? 'border-red-500' : 'border-gray-200'
-                }`}
-              />
-            </div>
-            {touched.seatTotal && errors.seatTotal && <span className="text-xs text-red-500">{errors.seatTotal as string}</span>}
-          </div>
+                  <label className="text-sm font-semibold text-gray-700">Total Seats</label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <input
+                      type="number"
+                      name="seatTotal"
+                      value={values.seatTotal}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="100"
+                      className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${touched.seatTotal && errors.seatTotal ? 'border-red-500' : 'border-gray-200'
+                        }`}
+                    />
+                  </div>
+                  {touched.seatTotal && errors.seatTotal && <span className="text-xs text-red-500">{errors.seatTotal as string}</span>}
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  name="isPromotion"
-                  id="isPromotion"
-                  checked={values.isPromotion}
+                  name="isPromoted"
+                  id="isPromoted"
+                  checked={values.isPromoted}
                   onChange={handleChange}
                   className="w-4 h-4 text-primary rounded focus:ring-primary/20"
                 />
-                <label htmlFor="isPromotion" className="text-sm font-medium text-gray-700">
+                <label htmlFor="isPromoted" className="text-sm font-medium text-gray-700">
                   Enable Event Promotion (Vouchers)
                 </label>
               </div>
@@ -230,62 +223,60 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Start Date</label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
-                <Calendar className="w-5 h-5" />
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Start Date</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <input
+                  type="datetime-local"
+                  name="startDate"
+                  value={values.startDate}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${touched.startDate && errors.startDate ? 'border-red-500' : 'border-gray-200'
+                    }`}
+                  required
+                />
               </div>
-              <input
-                type="datetime-local"
-                name="startDate"
-                value={values.startDate}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
-                  touched.startDate && errors.startDate ? 'border-red-500' : 'border-gray-200'
-                }`}
-                required
-              />
+              {touched.startDate && errors.startDate && <span className="text-xs text-red-500">{errors.startDate as string}</span>}
             </div>
-            {touched.startDate && errors.startDate && <span className="text-xs text-red-500">{errors.startDate as string}</span>}
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">End Date</label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
-                <Calendar className="w-5 h-5" />
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">End Date</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <input
+                  type="datetime-local"
+                  name="endDate"
+                  value={values.endDate}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${touched.endDate && errors.endDate ? 'border-red-500' : 'border-gray-200'
+                    }`}
+                  required
+                />
               </div>
-              <input
-                type="datetime-local"
-                name="endDate"
-                value={values.endDate}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
-                  touched.endDate && errors.endDate ? 'border-red-500' : 'border-gray-200'
-                }`}
-                required
-              />
+              {touched.endDate && errors.endDate && <span className="text-xs text-red-500">{errors.endDate as string}</span>}
             </div>
-            {touched.endDate && errors.endDate && <span className="text-xs text-red-500">{errors.endDate as string}</span>}
           </div>
-        </div>
 
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-center mb-1">
-                <label className="text-sm font-semibold text-gray-700">Description</label>
-                <button
-                    type="button"
-                    onClick={() => {
-                        const randomDesc = DUMMY_DESCRIPTIONS[Math.floor(Math.random() * DUMMY_DESCRIPTIONS.length)];
-                        setFieldValue('description', randomDesc);
-                    }}
-                    className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold hover:bg-primary/20 transition-colors"
-                >
-                    Generate Dummy Description
-                </button>
+              <label className="text-sm font-semibold text-gray-700">Description</label>
+              <button
+                type="button"
+                onClick={() => {
+                  const randomDesc = DUMMY_DESCRIPTIONS[Math.floor(Math.random() * DUMMY_DESCRIPTIONS.length)];
+                  setFieldValue('description', randomDesc);
+                }}
+                className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold hover:bg-primary/20 transition-colors"
+              >
+                Generate Dummy Description
+              </button>
             </div>
             <textarea
               name="description"
@@ -294,14 +285,13 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
               onBlur={handleBlur}
               rows={4}
               placeholder="Provide a detailed description of your event..."
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none ${
-                touched.description && errors.description ? 'border-red-500' : 'border-gray-200'
-              }`}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none ${touched.description && errors.description ? 'border-red-500' : 'border-gray-200'
+                }`}
             />
             {touched.description && errors.description && <span className="text-xs text-red-500">{errors.description as string}</span>}
           </div>
 
-          {values.isPromotion && <VoucherForm />}
+          {values.isPromoted && <VoucherForm />}
 
           {/* Validation Summary */}
           {Object.keys(errors).length > 0 && touched.title && (
@@ -329,7 +319,7 @@ export const EventForm: React.FC<EventFormProps> = ({ initialValues, onSubmit, o
               disabled={isLoading}
               className="bg-primary hover:bg-primary/90 text-white min-w-[150px]"
             >
-              {isLoading ? 'Creating...' : 'Create Event'}
+              {isLoading ? (initialValues?.title ? 'Updating...' : 'Creating...') : (initialValues?.title ? 'Update Event' : 'Create Event')}
             </Button>
           </div>
         </Form>

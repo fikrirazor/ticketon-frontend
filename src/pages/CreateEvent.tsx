@@ -26,7 +26,7 @@ export const CreateEvent: React.FC = () => {
       const newEvent = await createEvent(payload);
 
       // Create vouchers if enabled and present
-      if (values.isPromotion && values.vouchers && values.vouchers.length > 0) {
+      if (values.isPromoted && values.vouchers && values.vouchers.length > 0) {
         for (const voucher of values.vouchers) {
           await createVoucher(newEvent.id, {
             code: voucher.code,
@@ -160,7 +160,7 @@ export const CreateEvent: React.FC = () => {
                         </div>
                         <span className="font-bold text-gray-900">{previewData.seatTotal || '0'} Seats</span>
                       </div>
-                      {previewData.isPromotion && (
+                      {previewData.isPromoted && (
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-gray-600">
                             <Tag className="w-5 h-5" />
