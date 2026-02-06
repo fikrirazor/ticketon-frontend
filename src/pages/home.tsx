@@ -79,6 +79,15 @@ export const Home = () => {
                         <Newsletter />
                     </RevealOnScroll>
                 </div>
+
+                {/* Big Brand Text */}
+                <RevealOnScroll delay={400}>
+                    <div className="w-full h-[50vh] overflow-hidden flex justify-center items-center select-none opacity-90">
+                        <h1 className="text-[18vw] leading-[0.8] font-black tracking-tighter text-primary scale-150 transform translate-y-10">
+                            ticketon
+                        </h1>
+                    </div>
+                </RevealOnScroll>
             </div>
         </Layout>
     );

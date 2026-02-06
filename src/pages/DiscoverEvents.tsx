@@ -7,6 +7,7 @@ import { Telescope, Compass } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { PageReveal } from '../components/ui/PageReveal';
+import { RevealOnScroll } from '../components/ui/RevealOnScroll';
 
 export const DiscoverEvents = () => {
     const { events, isLoading, setLocation, setCategory, fetchEvents } = useEventStore();
@@ -89,6 +90,15 @@ export const DiscoverEvents = () => {
                         </div>
                     )}
                 </div>
+
+                {/* Big Brand Text */}
+                <RevealOnScroll delay={400}>
+                    <div className="w-full h-[50vh] overflow-hidden flex justify-center items-center select-none opacity-90">
+                        <h1 className="text-[18vw] leading-[0.8] font-black tracking-tighter text-primary scale-150 transform translate-y-10">
+                            ticketon
+                        </h1>
+                    </div>
+                </RevealOnScroll>
             </PageReveal>
         </Layout>
     );
