@@ -4,19 +4,40 @@ import SpotlightCard from "./SpotlightCard";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dqrkheieb/image/upload";
 
-const LOCATION_IMAGE = (publicId: string) =>
-  `${CLOUDINARY_BASE}/f_auto,q_auto,w_900,h_600,c_fill,g_auto/${publicId}`;
+const LOCATION_IMAGE = (publicId: string, width = 600, height = 400) =>
+  `${CLOUDINARY_BASE}/f_auto,q_auto,w_${width},h_${height},c_fill,g_auto/${publicId}`;
 
 const locations = [
-  { name: "Jakarta", image: LOCATION_IMAGE("v1770466420/jakarta_pnaium") },
-  { name: "Bandung", image: LOCATION_IMAGE("v1770466420/bandung_xdmdlu") },
-  { name: "Bali", image: LOCATION_IMAGE("v1770466420/bali_q73ysn") },
-  { name: "Surabaya", image: LOCATION_IMAGE("v1770466420/surabaya_instmt") },
+  {
+    name: "Jakarta",
+    image: (w: number, h: number) =>
+      LOCATION_IMAGE("v1770466420/jakarta_pnaium", w, h),
+  },
+  {
+    name: "Bandung",
+    image: (w: number, h: number) =>
+      LOCATION_IMAGE("v1770466420/bandung_xdmdlu", w, h),
+  },
+  {
+    name: "Bali",
+    image: (w: number, h: number) =>
+      LOCATION_IMAGE("v1770466420/bali_q73ysn", w, h),
+  },
+  {
+    name: "Surabaya",
+    image: (w: number, h: number) =>
+      LOCATION_IMAGE("v1770466420/surabaya_instmt", w, h),
+  },
   {
     name: "Yogyakarta",
-    image: LOCATION_IMAGE("v1770466420/yogyakarta_uafdwf"),
+    image: (w: number, h: number) =>
+      LOCATION_IMAGE("v1770466420/yogyakarta_uafdwf", w, h),
   },
-  { name: "Medan", image: LOCATION_IMAGE("v1770466420/medan_inlkqp") },
+  {
+    name: "Medan",
+    image: (w: number, h: number) =>
+      LOCATION_IMAGE("v1770466420/medan_inlkqp", w, h),
+  },
 ];
 export const LocationSection = () => {
   return (
@@ -54,12 +75,20 @@ export const LocationSection = () => {
                 className="relative block w-full h-full"
               >
                 <img
-                  src={loc.image}
+                  src={
+                    loc.name === "Jakarta"
+                      ? loc.image(1200, 800)
+                      : loc.name === "Bali"
+                        ? loc.image(600, 800)
+                        : loc.name === "Yogyakarta" || loc.name === "Medan"
+                          ? loc.image(1200, 400)
+                          : loc.image(600, 400)
+                  }
                   alt={loc.name}
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute inset-0 flex flex-col items-center justify-end pb-6 px-4 text-center">
                   <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl mb-2 opacity-0 hover:opacity-100 transition-all transform translate-y-2 hover:translate-y-0">
                     <MapPin className="w-4 h-4 text-white" />

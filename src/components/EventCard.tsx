@@ -20,9 +20,9 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         </div>
 
         {/* Image Section */}
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-4/3 overflow-hidden">
           <img
-            src={getFullImageUrl(event.imageUrl)}
+            src={getFullImageUrl(event.imageUrl, 600, 450)}
             alt={event.title}
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -31,7 +31,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         </div>
 
         {/* Content Section */}
-        <div className="p-6 flex flex-col flex-grow bg-white">
+        <div className="p-6 flex flex-col grow bg-white">
           <h3 className="text-lg font-black text-slate-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
             {event.title}
           </h3>
