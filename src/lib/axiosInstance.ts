@@ -75,18 +75,47 @@ export const getErrorMessage = (error: unknown): string => {
     : "An unexpected error occurred";
 };
 
-export const getFullImageUrl = (path: string | undefined) => {
+export const getFullImageUrl = (
+  path: string | undefined,
+  width?: number,
+  height?: number,
+) => {
   if (!path) {
     // Return placeholder image if no path
-    return "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500&h=300&fit=crop";
+    return "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&q=75&w=500&h=300&fit=crop";
   }
-  if (path.startsWith("http")) return path;
-  // Convert Windows backslashes to forward slashes
-  const normalizedPath = path.replace(/\\/g, "/");
-  // Clean up path and base URL to avoid double slashes
-  const baseUrl = API_URL.replace("/api", "").replace(/\/$/, "");
-  const cleanPath = normalizedPath.startsWith("/")
-    ? normalizedPath.substring(1)
-    : normalizedPath;
-  return `${baseUrl}/${cleanPath}`;
+
+  let finalUrl = path;
+  if (!path.startsWith("http")) {
+    // Convert Windows backslashes to forward slashes
+    const normalizedPath = path.replace(/\\/g, "/");
+    // Clean up path and base URL to avoid double slashes
+    const baseUrl = API_URL.replace("/api", "").replace(/\/$/, "");
+    const cleanPath = normalizedPath.startsWith("/")
+      ? normalizedPath.substring(1)
+      : normalizedPath;
+    finalUrl = `${baseUrl}/${cleanPath}`;
+  }
+
+  // Optimize Cloudinary URLs if they are from our account
+  if (finalUrl.includes("res.cloudinary.com/dqrkheieb/image/upload")) {
+    const transformation = `f_auto,q_auto${width ? `,w_${width}` : ""}${height ? `,h_${height}` : ""},c_fill,g_auto`;
+    // Replace existing transformations or insert after /upload/
+    if (finalUrl.includes("/upload/v")) {
+      finalUrl = finalUrl.replace("/upload/", `/upload/${transformation}/`);
+    } else {
+      const parts = finalUrl.split("/upload/");
+      if (parts.length === 2) {
+        // Check if there's already a transformation block (doesn't start with v for version)
+        if (parts[1].includes("/") && !parts[1].startsWith("v")) {
+          const secondSlashIndex = parts[1].indexOf("/");
+          finalUrl = `${parts[0]}/upload/${transformation}/${parts[1].substring(secondSlashIndex + 1)}`;
+        } else {
+          finalUrl = `${parts[0]}/upload/${transformation}/${parts[1]}`;
+        }
+      }
+    }
+  }
+
+  return finalUrl;
 };

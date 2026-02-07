@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
 
 const image1 =
-  "https://res.cloudinary.com/dqrkheieb/image/upload/v1770467771/image1_cqai17.webp";
+  "https://res.cloudinary.com/dqrkheieb/image/upload/f_auto,q_auto,w_1440,c_fill,g_auto/v1770467771/image1_cqai17.webp";
 import Aurora from "./Aurora";
 const LocationDropdown = ({
   selected,
