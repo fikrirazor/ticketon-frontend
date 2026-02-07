@@ -204,14 +204,14 @@ export const OrganizerDashboard: React.FC = () => {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center justify-between">
                           <p className="text-sm font-black text-slate-900 truncate pr-2">
-                            {tx.user?.name || 'Unknown User'}
+                            {tx.user?.name || "Unknown User"}
                           </p>
                           <p className="text-xs font-black text-primary">
                             {formatCurrency(tx.finalPrice)}
                           </p>
                         </div>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate mb-2">
-                          {tx.event?.title || 'Unknown Event'}
+                          {tx.event?.title || "Unknown Event"}
                         </p>
                         <div className="flex items-center justify-between">
                           <span

@@ -12,23 +12,46 @@ import {
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-// Import category images
-import musicImg from "../assets/category/music.webp";
-import nightlifeImg from "../assets/category/nightlife.webp";
-import workshopImg from "../assets/category/workshop.webp";
-import cookingsImg from "../assets/category/cookings.webp";
-import artsImg from "../assets/category/arts.webp";
-import sportsImg from "../assets/category/sports.webp";
-import techImg from "../assets/category/tech.webp";
+const CLOUDINARY_BASE = "https://res.cloudinary.com/dqrkheieb/image/upload";
+const CATEGORY_IMAGE = (publicId: string) =>
+  `${CLOUDINARY_BASE}/f_auto,q_auto,w_600/${publicId}`;
 
 const STATIC_CATEGORIES = [
-  { name: "MUSIC", icon: Music, image: musicImg },
-  { name: "NIGHTLIFE", icon: Moon, image: nightlifeImg },
-  { name: "WORKSHOP", icon: Lightbulb, image: workshopImg },
-  { name: "FOOD", icon: Utensils, image: cookingsImg },
-  { name: "ARTS", icon: Palette, image: artsImg },
-  { name: "SPORTS", icon: Trophy, image: sportsImg },
-  { name: "TECH", icon: Cpu, image: techImg },
+  {
+    name: "MUSIC",
+    icon: Music,
+    image: CATEGORY_IMAGE("v1770466353/music_zpsq0v"),
+  },
+  {
+    name: "NIGHTLIFE",
+    icon: Moon,
+    image: CATEGORY_IMAGE("v1770466353/nightlife_bfttki"),
+  },
+  {
+    name: "WORKSHOP",
+    icon: Lightbulb,
+    image: CATEGORY_IMAGE("v1770466353/workshop_gasacg"),
+  },
+  {
+    name: "FOOD",
+    icon: Utensils,
+    image: CATEGORY_IMAGE("v1770466353/arts_ieau8m"),
+  },
+  {
+    name: "ARTS",
+    icon: Palette,
+    image: CATEGORY_IMAGE("v1770466353/arts_ieau8m"),
+  },
+  {
+    name: "SPORTS",
+    icon: Trophy,
+    image: CATEGORY_IMAGE("v1770466353/sports_p9co8m"),
+  },
+  {
+    name: "TECH",
+    icon: Cpu,
+    image: CATEGORY_IMAGE("v1770466352/tech_jc3sfb"),
+  },
 ];
 
 export const CategorySection = () => {
