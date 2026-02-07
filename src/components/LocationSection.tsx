@@ -2,23 +2,22 @@ import { MapPin, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import SpotlightCard from "./SpotlightCard";
 
-// Import location images
-import jakartaImg from "../assets/location/jakarta.webp";
-import bandungImg from "../assets/location/bandung.webp";
-import baliImg from "../assets/location/bali.webp";
-import surabayaImg from "../assets/location/surabaya.webp";
-import yogyakartaImg from "../assets/location/yogyakarta.webp";
-import medanImg from "../assets/location/medan.webp";
+const CLOUDINARY_BASE = "https://res.cloudinary.com/dqrkheieb/image/upload";
+
+const LOCATION_IMAGE = (publicId: string) =>
+  `${CLOUDINARY_BASE}/f_auto,q_auto,w_900,h_600,c_fill,g_auto/${publicId}`;
 
 const locations = [
-  { name: "Jakarta", image: jakartaImg },
-  { name: "Bandung", image: bandungImg },
-  { name: "Bali", image: baliImg },
-  { name: "Surabaya", image: surabayaImg },
-  { name: "Yogyakarta", image: yogyakartaImg },
-  { name: "Medan", image: medanImg },
+  { name: "Jakarta", image: LOCATION_IMAGE("v1770466420/jakarta_pnaium") },
+  { name: "Bandung", image: LOCATION_IMAGE("v1770466420/bandung_xdmdlu") },
+  { name: "Bali", image: LOCATION_IMAGE("v1770466420/bali_q73ysn") },
+  { name: "Surabaya", image: LOCATION_IMAGE("v1770466420/surabaya_instmt") },
+  {
+    name: "Yogyakarta",
+    image: LOCATION_IMAGE("v1770466420/yogyakarta_uafdwf"),
+  },
+  { name: "Medan", image: LOCATION_IMAGE("v1770466420/medan_inlkqp") },
 ];
-
 export const LocationSection = () => {
   return (
     <section className="py-4">
