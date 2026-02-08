@@ -23,12 +23,39 @@ export const CreateEvent: React.FC = () => {
   const handleSubmit = async (values: EventFormValues) => {
     setIsLoading(true);
     try {
-      const payload: Partial<EventFormValues> & Record<string, unknown> = {
-        ...values,
-      };
-      delete payload.vouchers;
+      let submissionData: FormData | Record<string, unknown>;
 
-      const newEvent = await createEvent(payload);
+      if (values.imageType === "file" && values.imageFile) {
+        const formData = new FormData();
+        Object.entries(values).forEach(([key, value]) => {
+          if (
+            key !== "vouchers" &&
+            key !== "imageFile" &&
+            key !== "imageUrl" &&
+            key !== "imageType"
+          ) {
+            // WORKAROUND: Prisma/Backend fails if it receives "false" (string) for a Boolean field via FormData.
+            // We only append it if it's true, or just skip it if it's false to let Prisma use the default value.
+            if (key === "isPromoted") {
+              if (value === true) formData.append(key, "true");
+              // skip if false
+            } else if (value !== undefined && value !== null) {
+              formData.append(key, String(value));
+            }
+          }
+        });
+        formData.append("image", values.imageFile);
+        submissionData = formData;
+      } else {
+        // Create a copy and remove internal UI fields
+        const cleanPayload: Partial<EventFormValues> = { ...values };
+        delete cleanPayload.vouchers;
+        delete cleanPayload.imageFile;
+        delete cleanPayload.imageType;
+        submissionData = cleanPayload as Record<string, unknown>;
+      }
+
+      const newEvent = await createEvent(submissionData);
 
       // Create vouchers if enabled and present
       if (values.isPromoted && values.vouchers && values.vouchers.length > 0) {
@@ -55,6 +82,14 @@ export const CreateEvent: React.FC = () => {
   const handlePreview = (values: EventFormValues) => {
     setPreviewData(values);
     setShowPreview(true);
+  };
+
+  const getPreviewImage = () => {
+    if (!previewData) return "";
+    if (previewData.imageType === "file" && previewData.imageFile) {
+      return URL.createObjectURL(previewData.imageFile);
+    }
+    return previewData.imageUrl;
   };
 
   return (
@@ -100,9 +135,9 @@ export const CreateEvent: React.FC = () => {
             <div className="p-0">
               {/* Cover Image Preview */}
               <div className="h-64 md:h-80 bg-gray-200 relative overflow-hidden">
-                {previewData.imageUrl ? (
+                {getPreviewImage() ? (
                   <img
-                    src={previewData.imageUrl}
+                    src={getPreviewImage()}
                     alt="Cover"
                     className="w-full h-full object-cover"
                     onError={(e) => {

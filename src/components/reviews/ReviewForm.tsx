@@ -1,8 +1,19 @@
 import React, { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, AlertTriangle } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
 import { useReviewStore } from "../../store/review.store";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 interface ReviewFormProps {
   eventId: string;
@@ -17,34 +28,34 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const { addReview } = useReviewStore();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleActualSubmit = async () => {
     if (rating === 0) return;
 
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      await addReview({
+        eventId,
+        rating,
+        comment,
+      });
 
-    addReview({
-      eventId,
-      rating,
-      comment,
-    });
-
-    setIsSubmitting(false);
-    setRating(0);
-    setComment("");
-    if (onSuccess) onSuccess();
+      setRating(0);
+      setComment("");
+      if (onSuccess) onSuccess();
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
+      setIsSubmitting(false);
+      setShowConfirm(false);
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6"
-    >
+    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-6">
       <div className="space-y-2">
         <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">
           Rate your experience
@@ -98,14 +109,49 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({
         />
       </div>
 
-      <Button
-        type="submit"
-        className="w-full rounded-2xl h-12 text-lg font-black uppercase tracking-widest shadow-lg shadow-primary/20"
-        disabled={rating === 0 || isSubmitting}
-        loading={isSubmitting}
-      >
-        Submit Review
-      </Button>
-    </form>
+      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <AlertDialogTrigger asChild>
+          <Button
+            type="button"
+            className="w-full rounded-2xl h-12 text-lg font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+            disabled={rating === 0 || isSubmitting}
+          >
+            Submit Review
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="rounded-3xl border-0 shadow-2xl p-8 max-w-md">
+          <AlertDialogHeader className="space-y-4">
+            <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-primary mx-auto sm:mx-0">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+            <AlertDialogTitle className="text-2xl font-black text-slate-900 uppercase tracking-tight leading-tight">
+              Yakin Ingin Beri Review?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500 font-medium text-base leading-relaxed">
+              Review yang sudah dikirim{" "}
+              <span className="text-red-500 font-bold underline decoration-2 underline-offset-4">
+                tidak dapat diubah lagi
+              </span>
+              . Pastikan penilaian dan komentar kamu sudah sesuai kenyamananmu.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-8 gap-3 sm:gap-0">
+            <AlertDialogCancel className="h-14 rounded-xl border-slate-100 bg-slate-50 text-slate-400 hover:text-slate-600 font-bold uppercase tracking-widest text-[10px]">
+              BATAL
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleActualSubmit();
+              }}
+              disabled={isSubmitting}
+              className="h-14 rounded-xl bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 border-0"
+            >
+              {isSubmitting ? "MENGIRIM..." : "YA, KIRIM REVIEW"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 };

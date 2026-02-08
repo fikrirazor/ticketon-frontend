@@ -5,10 +5,11 @@ import { Button } from "../components/ui/button";
 import TransactionStatus from "../components/transactions/TransactionStatus";
 import PriceSummary from "../components/transactions/PriceSummary";
 import { ReviewForm } from "../components/reviews/ReviewForm";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, Star } from "lucide-react";
 import { useTransactionStore } from "../store/transaction.store";
 import { useEventStore } from "../store/event.store";
 import { useAuthStore } from "../store/auth.store";
+import { useReviewStore } from "../store/review.store";
 import { getErrorMessage } from "../lib/axiosInstance";
 import type { Transaction, Event } from "../types";
 
@@ -22,6 +23,7 @@ const TransactionDetailPage: React.FC = () => {
   } = useTransactionStore();
   const { getEventById, isLoading: isEvLoading } = useEventStore();
   const { user } = useAuthStore();
+  const { reviews, fetchReviewsByEventId } = useReviewStore();
   const [transaction, setTransaction] = React.useState<Transaction | null>(
     null,
   );
@@ -42,6 +44,8 @@ const TransactionDetailPage: React.FC = () => {
           } else {
             console.warn("Event not found for eventId:", tx.eventId);
           }
+          // Fetch reviews to check if already reviewed
+          await fetchReviewsByEventId(tx.eventId);
         }
       } catch (err) {
         console.error("Error loading transaction:", err);
@@ -71,7 +75,15 @@ const TransactionDetailPage: React.FC = () => {
     transaction?.status,
     getEventById,
     user,
+    fetchReviewsByEventId,
   ]);
+
+  const userReview = React.useMemo(() => {
+    if (!user || !transaction) return null;
+    return reviews.find(
+      (r) => r.eventId === transaction.eventId && r.userId === user.id,
+    );
+  }, [reviews, transaction, user]);
 
   const isLoading = isTxLoading || isEvLoading;
 
@@ -170,10 +182,37 @@ const TransactionDetailPage: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-6 h-6 text-green-500" />
                   <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">
-                    Event Attended
+                    {userReview ? "Review Anda" : "Beri Review"}
                   </h3>
                 </div>
-                <ReviewForm eventId={transaction.eventId} />
+
+                {userReview ? (
+                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2 bg-yellow-50 px-3 py-1.5 rounded-xl border border-yellow-100">
+                        <span className="text-sm font-black text-yellow-700">
+                          {userReview.rating}
+                        </span>
+                        <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
+                      </div>
+                      <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                        {new Date(userReview.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {userReview.comment && (
+                      <p className="text-slate-600 leading-relaxed font-medium">
+                        "{userReview.comment}"
+                      </p>
+                    )}
+                    <div className="pt-2">
+                      <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md uppercase tracking-widest">
+                        Review Terkirim
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <ReviewForm eventId={transaction.eventId} />
+                )}
               </div>
             )}
           </div>

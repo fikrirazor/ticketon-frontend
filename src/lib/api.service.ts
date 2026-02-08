@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import type { Event, Transaction, Review } from "../types";
+import type { Event, Transaction, Review, Organizer } from "../types";
 
 /**
  * EVENTS API SERVICES
@@ -115,6 +115,20 @@ export const transactionAPI = {
   },
 
   /**
+   * Submit payment proof URL for transaction
+   */
+  submitPaymentProofUrl: async (
+    transactionId: string,
+    paymentProofUrl: string,
+  ): Promise<Transaction> => {
+    const response = await axiosInstance.post(
+      `/transactions/${transactionId}/payment-proof`,
+      { paymentProofUrl },
+    );
+    return response.data.data;
+  },
+
+  /**
    * Cancel transaction
    */
   cancelTransaction: async (transactionId: string) => {
@@ -170,6 +184,29 @@ export const locationAPI = {
    */
   getLocations: async () => {
     const response = await axiosInstance.get("/locations");
+    return response.data.data;
+  },
+};
+
+/**
+ * ORGANIZER API SERVICES
+ */
+export const organizerAPI = {
+  /**
+   * Get public organizer profile
+   */
+  getOrganizerProfile: async (organizerId: string): Promise<Organizer> => {
+    const response = await axiosInstance.get(`/users/organizer/${organizerId}`);
+    return response.data.data;
+  },
+
+  /**
+   * Get events by a specific organizer
+   */
+  getOrganizerEvents: async (organizerId: string) => {
+    const response = await axiosInstance.get("/events", {
+      params: { organizerId, limit: 100 },
+    });
     return response.data.data;
   },
 };

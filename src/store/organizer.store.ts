@@ -19,6 +19,8 @@ interface OrganizerStore {
   fetchEvents: () => Promise<void>;
   fetchTransactions: () => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
+  approveTransaction: (id: string) => Promise<void>;
+  rejectTransaction: (id: string) => Promise<void>;
 }
 
 export const useOrganizerStore = create<OrganizerStore>((set) => ({
@@ -66,7 +68,7 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/organizer/transactions");
-      set({ transactions: response.data.data });
+      set({ transactions: response.data.data || [] });
     } catch (error: unknown) {
       const errResponse = error as {
         response?: { data?: { message?: string } };
@@ -94,6 +96,65 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
       };
       set({
         error: errResponse.response?.data?.message || "Failed to delete event",
+      });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  approveTransaction: async (id: string) => {
+    if (
+      !window.confirm(
+        "Apakah Anda yakin ingin menyetujui (APPROVE) transaksi ini?",
+      )
+    )
+      return;
+
+    set({ isLoading: true, error: null });
+    try {
+      await axiosInstance.patch(`/transactions/${id}/approve`);
+      set((state) => ({
+        transactions: state.transactions.map((t) =>
+          t.id === id ? { ...t, status: "DONE" } : t,
+        ),
+      }));
+    } catch (error) {
+      const errResponse = error as {
+        response?: { data?: { message?: string } };
+      };
+      set({
+        error:
+          errResponse.response?.data?.message ||
+          "Failed to approve transaction",
+      });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  rejectTransaction: async (id: string) => {
+    if (
+      !window.confirm("Apakah Anda yakin ingin menolak (REJECT) transaksi ini?")
+    )
+      return;
+
+    set({ isLoading: true, error: null });
+    try {
+      await axiosInstance.patch(`/transactions/${id}/reject`);
+      set((state) => ({
+        transactions: state.transactions.map((t) =>
+          t.id === id ? { ...t, status: "REJECTED" } : t,
+        ),
+      }));
+    } catch (error) {
+      const errResponse = error as {
+        response?: { data?: { message?: string } };
+      };
+      set({
+        error:
+          errResponse.response?.data?.message || "Failed to reject transaction",
       });
       throw error;
     } finally {
