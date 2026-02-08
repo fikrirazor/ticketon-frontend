@@ -104,8 +104,13 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
   },
 
   approveTransaction: async (id: string) => {
-    if (!window.confirm("Apakah Anda yakin ingin menyetujui (APPROVE) transaksi ini?")) return;
-    
+    if (
+      !window.confirm(
+        "Apakah Anda yakin ingin menyetujui (APPROVE) transaksi ini?",
+      )
+    )
+      return;
+
     set({ isLoading: true, error: null });
     try {
       await axiosInstance.patch(`/transactions/${id}/approve`);
@@ -115,8 +120,14 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
         ),
       }));
     } catch (error) {
-      const errResponse = error as { response?: { data?: { message?: string } } };
-      set({ error: errResponse.response?.data?.message || "Failed to approve transaction" });
+      const errResponse = error as {
+        response?: { data?: { message?: string } };
+      };
+      set({
+        error:
+          errResponse.response?.data?.message ||
+          "Failed to approve transaction",
+      });
       throw error;
     } finally {
       set({ isLoading: false });
@@ -124,7 +135,10 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
   },
 
   rejectTransaction: async (id: string) => {
-    if (!window.confirm("Apakah Anda yakin ingin menolak (REJECT) transaksi ini?")) return;
+    if (
+      !window.confirm("Apakah Anda yakin ingin menolak (REJECT) transaksi ini?")
+    )
+      return;
 
     set({ isLoading: true, error: null });
     try {
@@ -135,8 +149,13 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
         ),
       }));
     } catch (error) {
-      const errResponse = error as { response?: { data?: { message?: string } } };
-      set({ error: errResponse.response?.data?.message || "Failed to reject transaction" });
+      const errResponse = error as {
+        response?: { data?: { message?: string } };
+      };
+      set({
+        error:
+          errResponse.response?.data?.message || "Failed to reject transaction",
+      });
       throw error;
     } finally {
       set({ isLoading: false });

@@ -82,7 +82,9 @@ export const useTransactionStore = create<TransactionState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const result = await transactionAPI.getUserTransactions(page, limit);
-      const transactions = Array.isArray(result) ? result : (result.transactions || []);
+      const transactions = Array.isArray(result)
+        ? result
+        : result.transactions || [];
       set({ transactions, error: null });
       return transactions;
     } catch (err: unknown) {

@@ -29,7 +29,7 @@ export const OrganizerProfile: React.FC = () => {
         let orgData: Organizer;
         try {
           orgData = await organizerAPI.getOrganizerProfile(organizerId);
-        } catch (e) {
+        } catch {
           console.warn(
             "Organizer API not found, using Mock Simulation for Demo",
           );
@@ -49,7 +49,7 @@ export const OrganizerProfile: React.FC = () => {
         try {
           const orgEvents = await organizerAPI.getOrganizerEvents(organizerId);
           setEvents(orgEvents || []);
-        } catch (e) {
+        } catch {
           // Fallback: mock events if needed, but let's try to fetch all and filter
         }
 
@@ -58,7 +58,7 @@ export const OrganizerProfile: React.FC = () => {
           try {
             const eventReviews = await reviewAPI.getEventReviews(events[0].id);
             setReviews(eventReviews || []);
-          } catch (e) {
+          } catch {
             /* ignore */
           }
         } else {
@@ -94,7 +94,7 @@ export const OrganizerProfile: React.FC = () => {
     };
 
     fetchData();
-  }, [organizerId, events.length]);
+  }, [organizerId, events]);
 
   if (isLoading) {
     return (
@@ -192,7 +192,7 @@ export const OrganizerProfile: React.FC = () => {
                       to={`/event/${event.id}`}
                       className="group space-y-4"
                     >
-                      <div className="aspect-[4/3] rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm relative">
+                      <div className="aspect-4/3 rounded-4xl overflow-hidden border border-slate-100 shadow-sm relative">
                         <img
                           src={
                             event.imageUrl ||
@@ -249,7 +249,7 @@ export const OrganizerProfile: React.FC = () => {
                 {reviews.map((review) => (
                   <div
                     key={review.id}
-                    className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 space-y-4 hover:shadow-lg hover:shadow-slate-200/50 transition-all"
+                    className="p-8 rounded-4xl bg-slate-50 border border-slate-100 space-y-4 hover:shadow-lg hover:shadow-slate-200/50 transition-all"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
