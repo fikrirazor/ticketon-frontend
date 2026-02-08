@@ -38,7 +38,9 @@ export interface EventFormValues {
   price: number;
   seatTotal: number;
   category: string;
+  imageType: "url" | "file";
   imageUrl: string;
+  imageFile: File | null;
   isPromoted: boolean;
   vouchers: VoucherValue[];
 }
@@ -57,7 +59,18 @@ const EventSchema = Yup.object().shape({
     .min(1, "At least 1 seat is required")
     .required("Total seats is required"),
   category: Yup.string().oneOf(CATEGORIES).required("Category is required"),
-  imageUrl: Yup.string().url("Must be a valid URL").optional(),
+  imageType: Yup.string().oneOf(["url", "file"]).required(),
+  imageUrl: Yup.string().when("imageType", {
+    is: "url",
+    then: (schema) =>
+      schema.url("Must be a valid URL").required("Image URL is required"),
+    otherwise: (schema) => schema.optional(),
+  }),
+  imageFile: Yup.mixed().when("imageType", {
+    is: "file",
+    then: (schema) => schema.required("Image file is required"),
+    otherwise: (schema) => schema.optional(),
+  }),
   isPromoted: Yup.boolean(),
   vouchers: Yup.array().of(
     Yup.object().shape({
@@ -94,7 +107,9 @@ export const EventForm: React.FC<EventFormProps> = ({
     price: initialValues?.price || 0,
     seatTotal: initialValues?.seatTotal || 0,
     category: initialValues?.category || "MUSIC",
+    imageType: "url",
     imageUrl: "",
+    imageFile: null,
     isPromoted: false,
     vouchers: [],
     ...initialValues,
@@ -220,29 +235,114 @@ export const EventForm: React.FC<EventFormProps> = ({
 
             {/* Right Column */}
             <div className="space-y-6">
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-3">
                 <label className="text-sm font-semibold text-gray-700">
-                  Event Image URL (Optional)
+                  Event Banner
                 </label>
-                <input
-                  name="imageUrl"
-                  value={values.imageUrl}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  placeholder="https://example.com/image.jpg"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
-                    touched.imageUrl && errors.imageUrl
-                      ? "border-red-500"
-                      : "border-gray-200"
-                  }`}
-                />
-                {touched.imageUrl && errors.imageUrl && (
-                  <span className="text-xs text-red-500">
-                    {errors.imageUrl as string}
-                  </span>
+
+                <div className="flex bg-gray-100 p-1 rounded-xl w-full">
+                  <button
+                    type="button"
+                    onClick={() => setFieldValue("imageType", "url")}
+                    className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                      values.imageType === "url"
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Image URL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFieldValue("imageType", "file")}
+                    className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+                      values.imageType === "file"
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    Upload File
+                  </button>
+                </div>
+
+                {values.imageType === "url" ? (
+                  <div className="space-y-1">
+                    <input
+                      name="imageUrl"
+                      value={values.imageUrl}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="https://example.com/image.jpg"
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all ${
+                        touched.imageUrl && errors.imageUrl
+                          ? "border-red-500"
+                          : "border-gray-200"
+                      }`}
+                    />
+                    {touched.imageUrl && errors.imageUrl && (
+                      <span className="text-xs text-red-500">
+                        {errors.imageUrl as string}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all overflow-hidden group">
+                      {values.imageFile ? (
+                        <div className="relative w-full h-full">
+                          <img
+                            src={URL.createObjectURL(values.imageFile)}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <span className="text-white text-xs font-bold">
+                              GANTI GAMBAR
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          <svg
+                            className="w-8 h-8 mb-2 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                          <p className="text-xs text-gray-500 font-medium font-bold">
+                            KLIK UNTUK UPLOAD
+                          </p>
+                        </div>
+                      )}
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) setFieldValue("imageFile", file);
+                        }}
+                      />
+                    </label>
+                    {touched.imageFile && errors.imageFile && (
+                      <span className="text-xs text-red-500">
+                        {errors.imageFile as string}
+                      </span>
+                    )}
+                  </div>
                 )}
-                <p className="text-[10px] text-gray-400 mt-1">
-                  Provide a direct link to your event cover image.
+
+                <p className="text-[10px] text-gray-400">
+                  {values.imageType === "url"
+                    ? "Berikan link langsung ke gambar cover event Anda."
+                    : "Upload file gambar (JPG, PNG, atau WEBP) maksimal 5MB."}
                 </p>
               </div>
 
