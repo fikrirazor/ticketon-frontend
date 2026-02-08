@@ -10,8 +10,12 @@ import type { Transaction } from "../types";
 const PaymentProofPage: React.FC = () => {
   const { transactionId } = useParams<{ transactionId: string }>();
   const navigate = useNavigate();
-  const { getTransactionById, uploadPaymentProof, isLoading } =
-    useTransactionStore();
+  const {
+    getTransactionById,
+    uploadPaymentProof,
+    submitPaymentProofUrl,
+    isLoading,
+  } = useTransactionStore();
   const [transaction, setTransaction] = useState<Transaction | null>(null);
 
   React.useEffect(() => {
@@ -27,11 +31,15 @@ const PaymentProofPage: React.FC = () => {
     loadTransaction();
   }, [transactionId, getTransactionById]);
 
-  const handleUpload = async (file: File) => {
+  const handleUpload = async (data: File | string) => {
     if (!transactionId) return;
     try {
-      await uploadPaymentProof(transactionId, file);
-      toast.success("Payment proof uploaded successfully!");
+      if (typeof data === "string") {
+        await submitPaymentProofUrl(transactionId, data);
+      } else {
+        await uploadPaymentProof(transactionId, data);
+      }
+      toast.success("Payment proof submitted successfully!");
       navigate(`/transaction/${transactionId}`);
     } catch (err) {
       toast.error(getErrorMessage(err));

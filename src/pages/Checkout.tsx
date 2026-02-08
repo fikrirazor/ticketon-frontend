@@ -38,7 +38,8 @@ const CheckoutPage: React.FC = () => {
       } catch (error) {
         console.error("Error loading event:", error);
       }
-      setAvailablePoints(50000);
+      // Use actual user points from store
+      setAvailablePoints(user?.totalPoints || 0);
     };
     loadEvent();
   }, [id, getEventById, user]);

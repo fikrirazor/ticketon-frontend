@@ -24,6 +24,10 @@ interface TransactionState {
     transactionId: string,
     file: File,
   ) => Promise<Transaction>;
+  submitPaymentProofUrl: (
+    transactionId: string,
+    url: string,
+  ) => Promise<Transaction>;
   cancelTransaction: (transactionId: string) => Promise<void>;
   pollTransactionStatus: (id: string) => Promise<void>;
   validateVoucher: (code: string, eventId: string) => Promise<unknown>;
@@ -114,6 +118,35 @@ export const useTransactionStore = create<TransactionState>((set) => ({
       const errResponse = err as { response?: { data?: { message?: string } } };
       const errorMsg =
         errResponse.response?.data?.message || "Failed to upload payment proof";
+      set({ error: errorMsg });
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  submitPaymentProofUrl: async (transactionId, url) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updated = await transactionAPI.submitPaymentProofUrl(
+        transactionId,
+        url,
+      );
+      set((state) => ({
+        currentTransaction:
+          state.currentTransaction?.id === transactionId
+            ? updated
+            : state.currentTransaction,
+        transactions: state.transactions.map((t) =>
+          t.id === transactionId ? updated : t,
+        ),
+        error: null,
+      }));
+      return updated;
+    } catch (err: unknown) {
+      const errResponse = err as { response?: { data?: { message?: string } } };
+      const errorMsg =
+        errResponse.response?.data?.message || "Failed to submit payment URL";
       set({ error: errorMsg });
       throw err;
     } finally {

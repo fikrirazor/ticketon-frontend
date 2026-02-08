@@ -115,6 +115,20 @@ export const transactionAPI = {
   },
 
   /**
+   * Submit payment proof URL for transaction
+   */
+  submitPaymentProofUrl: async (
+    transactionId: string,
+    paymentProofUrl: string,
+  ): Promise<Transaction> => {
+    const response = await axiosInstance.post(
+      `/transactions/${transactionId}/payment-proof`,
+      { paymentProofUrl },
+    );
+    return response.data.data;
+  },
+
+  /**
    * Cancel transaction
    */
   cancelTransaction: async (transactionId: string) => {
