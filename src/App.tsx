@@ -58,7 +58,10 @@ function App() {
             <Route path="/event/:id" element={<EventDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/organizer/:name" element={<OrganizerProfile />} />
+            <Route
+              path="/organizer/:organizerId"
+              element={<OrganizerProfile />}
+            />
 
             {/* Profile Routes */}
             <Route

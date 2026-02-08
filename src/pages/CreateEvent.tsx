@@ -34,7 +34,12 @@ export const CreateEvent: React.FC = () => {
             key !== "imageUrl" &&
             key !== "imageType"
           ) {
-            if (value !== undefined && value !== null) {
+            // WORKAROUND: Prisma/Backend fails if it receives "false" (string) for a Boolean field via FormData.
+            // We only append it if it's true, or just skip it if it's false to let Prisma use the default value.
+            if (key === "isPromoted") {
+              if (value === true) formData.append(key, "true");
+              // skip if false
+            } else if (value !== undefined && value !== null) {
               formData.append(key, String(value));
             }
           }

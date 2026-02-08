@@ -213,22 +213,61 @@ export const OrganizerDashboard: React.FC = () => {
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate mb-2">
                           {tx.event?.title || "Unknown Event"}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <span
-                            className={`text-[8px] font-black px-2 py-1 rounded-full border uppercase tracking-widest ${getStatusColor(tx.status)}`}
-                          >
-                            {tx.status}
-                          </span>
-                          <span className="text-[8px] font-bold text-slate-400">
-                            {new Date(tx.createdAt).toLocaleDateString(
-                              "id-ID",
-                              { day: "2-digit", month: "2-digit" },
-                            )}{" "}
-                            {new Date(tx.createdAt).toLocaleTimeString(
-                              "id-ID",
-                              { hour: "2-digit", minute: "2-digit" },
-                            )}
-                          </span>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center justify-between">
+                            <span
+                              className={`text-[8px] font-black px-2 py-1 rounded-full border uppercase tracking-widest ${getStatusColor(tx.status)}`}
+                            >
+                              {tx.status}
+                            </span>
+                            <span className="text-[8px] font-bold text-slate-400">
+                              {new Date(tx.createdAt).toLocaleDateString(
+                                "id-ID",
+                                { day: "2-digit", month: "2-digit" },
+                              )}{" "}
+                              {new Date(tx.createdAt).toLocaleTimeString(
+                                "id-ID",
+                                { hour: "2-digit", minute: "2-digit" },
+                              )}
+                            </span>
+                          </div>
+
+                          {String(tx.status).trim().toUpperCase() ===
+                            "WAITING_ADMIN" && (
+                            <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-slate-50">
+                              {/* Payment Proof Preview Link if available */}
+                              {tx.paymentProofUrl && (
+                                <a
+                                  href={tx.paymentProofUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-1 text-center text-[7px] font-black text-primary bg-primary/5 px-2 py-2 rounded-xl hover:bg-primary/10 transition-colors uppercase tracking-widest flex items-center justify-center gap-1 border border-primary/10"
+                                >
+                                  LIHAT BUKTI
+                                </a>
+                              )}
+                              <button
+                                onClick={() =>
+                                  useOrganizerStore
+                                    .getState()
+                                    .approveTransaction(tx.id)
+                                }
+                                className="flex-1 text-[7px] font-black text-white bg-emerald-500 px-2 py-2 rounded-xl hover:bg-emerald-600 transition-colors uppercase tracking-widest shadow-sm"
+                              >
+                                APPROVE
+                              </button>
+                              <button
+                                onClick={() =>
+                                  useOrganizerStore
+                                    .getState()
+                                    .rejectTransaction(tx.id)
+                                }
+                                className="flex-1 text-[7px] font-black text-white bg-red-500 px-2 py-2 rounded-xl hover:bg-red-600 transition-colors uppercase tracking-widest shadow-sm"
+                              >
+                                REJECT
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

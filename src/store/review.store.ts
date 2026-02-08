@@ -57,9 +57,8 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   fetchReviewsByEventId: async (eventId, page = 1, limit = 10) => {
     set({ isLoading: true, error: null });
     try {
-      const result = await reviewAPI.getEventReviews(eventId, page, limit);
-      const reviews = result.reviews || [];
-      set({ reviews, error: null });
+      const reviews = await reviewAPI.getEventReviews(eventId, page, limit);
+      set({ reviews: Array.isArray(reviews) ? reviews : [], error: null });
     } catch (err: unknown) {
       console.error("Failed to fetch event reviews:", err);
       const errResponse = err as { response?: { data?: { message?: string } } };
