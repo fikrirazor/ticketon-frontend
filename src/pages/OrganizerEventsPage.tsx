@@ -146,6 +146,15 @@ const OrganizerEventsPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-3">
+                    <Link
+                      to={`/organizer/events/${event.id}/attendees`}
+                      className="flex-1"
+                    >
+                      <Button className="w-full bg-primary/10 hover:bg-primary/20 text-primary border-0 rounded-xl font-black text-xs py-5">
+                        <Users size={14} className="mr-2" />
+                        PESERTA
+                      </Button>
+                    </Link>
                     <Link to={`/edit-event/${event.id}`} className="flex-1">
                       <Button className="w-full bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-xl font-black text-xs py-5">
                         <Edit size={14} className="mr-2" />

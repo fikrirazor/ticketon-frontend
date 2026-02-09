@@ -48,8 +48,16 @@ export const eventAPI = {
   /**
    * Update event (Organizer must own the event)
    */
-  updateEvent: async (eventId: string, eventData: Partial<Event>) => {
-    const response = await axiosInstance.put(`/events/${eventId}`, eventData);
+  updateEvent: async (
+    eventId: string,
+    eventData: FormData | Partial<Event>,
+  ) => {
+    const isFormData = eventData instanceof FormData;
+    const response = await axiosInstance.put(`/events/${eventId}`, eventData, {
+      headers: {
+        "Content-Type": isFormData ? "multipart/form-data" : "application/json",
+      },
+    });
     return response.data.data;
   },
 

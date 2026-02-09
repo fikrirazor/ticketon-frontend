@@ -24,6 +24,12 @@ const Login = lazy(() =>
 const Register = lazy(() =>
   import("./pages/Register").then((m) => ({ default: m.Register })),
 );
+const ForgotPassword = lazy(() =>
+  import("./pages/ForgotPassword").then((m) => ({ default: m.ForgotPassword })),
+);
+const ResetPassword = lazy(() =>
+  import("./pages/ResetPassword").then((m) => ({ default: m.ResetPassword })),
+);
 const CreateEvent = lazy(() =>
   import("./pages/CreateEvent").then((m) => ({ default: m.CreateEvent })),
 );
@@ -39,6 +45,11 @@ const OrganizerProfile = lazy(() =>
 );
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const OrganizerEventsPage = lazy(() => import("./pages/OrganizerEventsPage"));
+const EventAttendeesPage = lazy(() =>
+  import("./pages/EventAttendeesPage").then((m) => ({
+    default: m.EventAttendeesPage,
+  })),
+);
 const UserTransactionsPage = lazy(() => import("./pages/UserTransactionsPage"));
 const OrganizerDashboard = lazy(() =>
   import("./pages/OrganizerDashboard").then((m) => ({
@@ -92,6 +103,8 @@ function App() {
               <Route path="/event/:id" element={<EventDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route
                 path="/organizer/:organizerId"
                 element={<OrganizerProfile />}
@@ -111,6 +124,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={["ORGANIZER"]}>
                     <OrganizerEventsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/organizer/events/:id/attendees"
+                element={
+                  <ProtectedRoute allowedRoles={["ORGANIZER"]}>
+                    <EventAttendeesPage />
                   </ProtectedRoute>
                 }
               />
