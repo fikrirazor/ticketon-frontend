@@ -1,38 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Layout } from "../components/Layout";
-import { useTransactionStore } from "../store/transaction.store";
-import { useAuthStore } from "../store/auth.store";
+import { useUserTransactions } from "../hooks/useTransactions";
 import type { Transaction } from "../types";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 const UserTransactionsPage: React.FC = () => {
-  const { getUserTransactions, isLoading } = useTransactionStore();
-  const { user } = useAuthStore();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadTransactions = async () => {
-      try {
-        setError(null);
-        const userTransactions = await getUserTransactions();
-        setTransactions(userTransactions);
-      } catch (err: unknown) {
-        console.error("Failed to load user transactions:", err);
-        const errResponse = err as { message?: string };
-        setError(
-          errResponse.message ||
-            "Failed to load transactions. Please try again.",
-        );
-      }
-    };
-
-    if (user) {
-      loadTransactions();
-    }
-  }, [user, getUserTransactions]);
+  const { data: transactions = [], isLoading, error } = useUserTransactions();
 
   if (isLoading) {
     return (
@@ -52,7 +27,9 @@ const UserTransactionsPage: React.FC = () => {
           <h2 className="text-2xl font-black text-slate-900 uppercase">
             Error Loading Transactions
           </h2>
-          <p className="text-gray-500 mt-2">{error}</p>
+          <p className="text-gray-500 mt-2">
+            {error instanceof Error ? error.message : "Something went wrong"}
+          </p>
           <Button onClick={() => window.location.reload()} className="mt-8">
             Retry
           </Button>
@@ -118,7 +95,7 @@ const UserTransactionsPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {transactions.map((transaction) => (
+                  {transactions.map((transaction: Transaction) => (
                     <tr key={transaction.id} className="hover:bg-gray-50/50">
                       <td className="px-6 py-4 font-medium text-gray-900">
                         {transaction.event?.title || "Event Title"}
