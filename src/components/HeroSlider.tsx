@@ -7,7 +7,6 @@ import { cn } from "../lib/utils";
 
 const image1 =
   "https://res.cloudinary.com/dqrkheieb/image/upload/f_auto,q_auto,w_1200,c_fill,g_auto/v1770467771/image1_cqai17.webp";
-import Aurora from "./Aurora";
 const LocationDropdown = ({
   selected,
   onSelect,
@@ -146,9 +145,7 @@ export const HeroSlider = () => {
                     <source src={sawah} type="video/mp4" />
                     Your browser does not support the video tag.
                 </video> */}
-        <div className="absolute inset-0 z-1 pointer-events-none opacity-80 mix-blend-screen">
-          <Aurora colorStops={["#858585", "#5a5858"]} amplitude={3} blend={1} />
-        </div>
+        <div className="absolute inset-0 z-1 pointer-events-none opacity-80 mix-blend-screen"></div>
       </div>
 
       {/* Content Container */}

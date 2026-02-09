@@ -77,12 +77,12 @@ export const LocationSection = () => {
                 <img
                   src={
                     loc.name === "Jakarta"
-                      ? loc.image(800, 600)
+                      ? loc.image(600, 450)
                       : loc.name === "Bali"
-                        ? loc.image(400, 600)
+                        ? loc.image(300, 450)
                         : loc.name === "Yogyakarta" || loc.name === "Medan"
-                          ? loc.image(800, 300)
-                          : loc.image(600, 400)
+                          ? loc.image(600, 225)
+                          : loc.image(400, 300)
                   }
                   alt={loc.name}
                   loading="lazy"
