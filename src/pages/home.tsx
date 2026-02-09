@@ -1,22 +1,17 @@
-import { useEffect } from "react";
 import { Layout } from "../components/Layout";
 import { EventCard } from "../components/EventCard";
 import { HeroSlider } from "../components/HeroSlider";
 import { CategorySection } from "../components/CategorySection";
 import { LocationSection } from "../components/LocationSection";
 import { Newsletter } from "../components/Newsletter";
-import { useEventStore } from "../store/event.store";
+import { useEvents } from "../hooks/useEvents";
 import { Telescope, Sparkles } from "lucide-react";
 import { RevealOnScroll } from "../components/ui/RevealOnScroll";
+import type { Event } from "../types";
 
 export const Home = () => {
-  const { events, isLoading, fetchEvents } = useEventStore();
-
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
-
-  const recentEvents = events.slice(0, 8);
+  const { data, isLoading } = useEvents({ limit: 8 });
+  const events = data?.events || [];
 
   return (
     <Layout>
@@ -66,11 +61,9 @@ export const Home = () => {
                 </div>
               ) : events.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  {(recentEvents.length > 0 ? recentEvents : events).map(
-                    (event) => (
-                      <EventCard key={event.id} event={event} />
-                    ),
-                  )}
+                  {events.map((event: Event) => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-24 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">

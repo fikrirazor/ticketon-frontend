@@ -1,6 +1,7 @@
 import { Layout } from "../components/Layout";
 import { EventCard } from "../components/EventCard";
 import { useEventStore } from "../store/event.store";
+import { useEvents } from "../hooks/useEvents";
 import { SearchBar } from "../components/SearchBar";
 import { FilterPanel } from "../components/FilterPanel";
 import { Telescope, Compass } from "lucide-react";
@@ -8,30 +9,39 @@ import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { PageReveal } from "../components/ui/PageReveal";
 import { RevealOnScroll } from "../components/ui/RevealOnScroll";
+import type { Event } from "../types";
 
 export const DiscoverEvents = () => {
-  const { events, isLoading, setLocation, setCategory, fetchEvents } =
-    useEventStore();
+  const { filter, setLocation, setCategory } = useEventStore();
   const [searchParams] = useSearchParams();
+
+  const { data, isLoading } = useEvents({
+    search: filter.search || undefined,
+    category:
+      filter.category && filter.category !== "All"
+        ? filter.category
+        : undefined,
+    location:
+      filter.location && filter.location !== "All"
+        ? filter.location
+        : undefined,
+    page: filter.page,
+    limit: filter.limit,
+  });
+
+  const events = data?.events || [];
 
   useEffect(() => {
     const locationParam = searchParams.get("location");
     const categoryParam = searchParams.get("category");
 
-    let hasParam = false;
     if (locationParam) {
       setLocation(locationParam);
-      hasParam = true;
     }
     if (categoryParam) {
       setCategory(categoryParam);
-      hasParam = true;
     }
-
-    if (!hasParam) {
-      fetchEvents();
-    }
-  }, [searchParams, setLocation, setCategory, fetchEvents]);
+  }, [searchParams, setLocation, setCategory]);
 
   return (
     <Layout>
@@ -79,7 +89,7 @@ export const DiscoverEvents = () => {
             </div>
           ) : events.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {events.map((event) => (
+              {events.map((event: Event) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>

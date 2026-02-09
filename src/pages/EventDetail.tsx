@@ -1,8 +1,6 @@
 import React from "react";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import { Layout } from "../components/Layout";
-import { useReviewStore } from "../store/review.store";
-import { useEventStore } from "../store/event.store";
 import { useAuthStore } from "../store/auth.store";
 import { getFullImageUrl } from "../lib/axiosInstance";
 import { ReviewList } from "../components/reviews/ReviewList";
@@ -25,17 +23,19 @@ import {
 import { Button } from "../components/ui/button";
 import type { Event } from "../types";
 
+import { useEvent } from "../hooks/useEvents";
+import { useEventReviews } from "../hooks/useReviews";
+
 export const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { getEventById, isLoading: isEventsLoading } = useEventStore();
-  const { reviews, fetchReviewsByEventId, getAverageRatingForEvent } =
-    useReviewStore();
+  const { data: event, isLoading: isEventLoading } = useEvent(id || "");
+  const { data: reviewsData, isLoading: isReviewsLoading } = useEventReviews(
+    id || "",
+  );
+  const reviews = reviewsData?.reviews || [];
   const { isAuthenticated, user } = useAuthStore();
-
-  const [event, setEvent] = React.useState<Event | null>(null);
-  const [loading, setLoading] = React.useState(true);
 
   const handleReserveClick = () => {
     if (!isAuthenticated) {
@@ -50,22 +50,7 @@ export const EventDetail = () => {
     navigate(`/checkout/${event?.id}`);
   };
 
-  React.useEffect(() => {
-    const loadData = async () => {
-      if (id) {
-        try {
-          const data = await getEventById(id);
-          setEvent(data || null);
-          await fetchReviewsByEventId(id);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    loadData();
-  }, [id, getEventById, fetchReviewsByEventId]);
-
-  if (loading || isEventsLoading) {
+  if (isEventLoading || isReviewsLoading) {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -102,7 +87,15 @@ export const EventDetail = () => {
     );
   }
 
-  const averageRating = getAverageRatingForEvent(event.id);
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce(
+            (acc: number, r: { rating: number }) => acc + r.rating,
+            0,
+          ) / reviews.length
+        ).toFixed(1)
+      : "0.0";
 
   return (
     <Layout>
