@@ -14,7 +14,7 @@ import { useState } from "react";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dqrkheieb/image/upload";
 const CATEGORY_IMAGE = (publicId: string) =>
-  `${CLOUDINARY_BASE}/f_auto,q_auto,w_400,c_fill,g_auto/${publicId}`;
+  `${CLOUDINARY_BASE}/f_auto,q_auto,w_300,c_fill,g_auto/${publicId}`;
 
 const STATIC_CATEGORIES = [
   {
