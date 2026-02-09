@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import {
-  Lock,
-  ArrowRight,
-  Sparkles,
-  CheckCircle2,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { Lock, ArrowRight, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useAuthStore } from "../store/auth.store";
 import { getErrorMessage } from "../lib/axiosInstance";
 import { toast } from "react-hot-toast";
@@ -54,7 +47,7 @@ export const ResetPassword: React.FC = () => {
     try {
       await resetPassword({
         token,
-        newPassword: formData.password,
+        password: formData.password,
         confirmPassword: formData.confirmPassword,
       });
       setIsSuccess(true);

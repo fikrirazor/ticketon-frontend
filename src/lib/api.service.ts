@@ -238,6 +238,23 @@ export const reviewAPI = {
   },
 
   /**
+   * Get reviews for an organizer's events
+   */
+  getOrganizerReviews: async (
+    organizerId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) => {
+    const response = await axiosInstance.get(
+      `/reviews/organizers/${organizerId}`,
+      {
+        params: { page, limit },
+      },
+    );
+    return response.data.data;
+  },
+
+  /**
    * Create review for an event
    */
   createReview: async (

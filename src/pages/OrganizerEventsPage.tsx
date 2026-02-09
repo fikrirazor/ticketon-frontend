@@ -83,7 +83,7 @@ const OrganizerEventsPage: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 min-h-[600px]">
+        <div className="bg-white rounded-4xl shadow-sm border border-slate-100 p-8 min-h-[600px]">
           {isLoading && events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -96,7 +96,7 @@ const OrganizerEventsPage: React.FC = () => {
               {events.map((event) => (
                 <div
                   key={event.id}
-                  className="group bg-slate-50/50 hover:bg-white border border-transparent hover:border-slate-100 rounded-[2rem] p-6 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50"
+                  className="group bg-slate-50/50 hover:bg-white border border-transparent hover:border-slate-100 rounded-4xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50"
                 >
                   <div className="aspect-video rounded-2xl overflow-hidden bg-slate-200 mb-6 relative">
                     <img
@@ -194,15 +194,15 @@ const OrganizerEventsPage: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {eventToDelete && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center px-4">
           <div
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
             onClick={() => !isDeleting && setEventToDelete(null)}
           />
 
-          <div className="relative bg-white rounded-[2.5rem] shadow-2xl shadow-slate-900/20 w-full max-w-md p-8 overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+          <div className="relative bg-white rounded-4xl shadow-2xl shadow-slate-900/20 w-full max-w-md p-8 overflow-hidden animate-in zoom-in-95 fade-in duration-300">
             {/* Decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-[5rem] -mr-8 -mt-8 -z-0 opacity-50" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-[5rem] -mr-8 -mt-8 z-0 opacity-50" />
 
             <div className="relative z-10">
               <div className="w-20 h-20 bg-red-100 rounded-3xl flex items-center justify-center mb-6 ring-8 ring-red-50">

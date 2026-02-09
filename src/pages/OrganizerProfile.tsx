@@ -46,45 +46,28 @@ export const OrganizerProfile: React.FC = () => {
         setOrganizer(orgData);
 
         // Fetch Events
+        let orgEvents: Event[] = [];
         try {
-          const orgEvents = await organizerAPI.getOrganizerEvents(organizerId);
+          orgEvents = await organizerAPI.getOrganizerEvents(organizerId);
           setEvents(orgEvents || []);
         } catch {
           // Fallback: mock events if needed, but let's try to fetch all and filter
         }
 
-        // Fetch Aggregate Reviews (Simulated: fetch first event reviews)
-        if (events.length > 0) {
-          try {
-            const eventReviews = await reviewAPI.getEventReviews(events[0].id);
-            setReviews(eventReviews || []);
-          } catch {
-            /* ignore */
-          }
-        } else {
-          // Mock reviews for demo
-          setReviews([
-            {
-              id: "1",
-              eventId: "e1",
-              userId: "u1",
-              userName: "Andi Saputra",
-              rating: 5,
-              comment:
-                "Event yang luar biasa! Penyelenggara sangat profesional.",
-              createdAt: new Date().toISOString(),
-            },
-            {
-              id: "2",
-              eventId: "e2",
-              userId: "u2",
-              userName: "Siti Aminah",
-              rating: 4,
-              comment:
-                "Bagus sekali, tapi antrian pintu masuk agak lama. Overall mantap!",
-              createdAt: new Date().toISOString(),
-            },
-          ]);
+        // Fetch Aggregate Reviews
+        try {
+          const orgReviews = await reviewAPI.getOrganizerReviews(organizerId);
+          // Map backend nested user to flat Review interface
+          const mappedReviews = (orgReviews || []).map(
+            (r: { user?: { name: string; avatarUrl?: string } }) => ({
+              ...r,
+              userName: r.user?.name || "Anonymous",
+              userAvatar: r.user?.avatarUrl || null,
+            }),
+          );
+          setReviews(mappedReviews);
+        } catch {
+          /* ignore */
         }
       } catch (error) {
         console.error("Error fetching organizer profile:", error);
@@ -94,7 +77,7 @@ export const OrganizerProfile: React.FC = () => {
     };
 
     fetchData();
-  }, [organizerId, events]);
+  }, [organizerId]);
 
   if (isLoading) {
     return (
@@ -130,8 +113,16 @@ export const OrganizerProfile: React.FC = () => {
         {/* Header/Hero Section */}
         <div className="bg-slate-900 py-20 px-4 text-white">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10">
-            <div className="w-32 h-32 md:w-40 md:h-40 bg-primary rounded-[2.5rem] flex items-center justify-center text-4xl font-black shadow-2xl shadow-primary/20">
-              {organizer.name.charAt(0)}
+            <div className="w-32 h-32 md:w-40 md:h-40 bg-primary/10 rounded-4xl flex items-center justify-center text-4xl font-black shadow-2xl shadow-primary/20 overflow-hidden border-2 border-primary/20">
+              {organizer.avatarUrl ? (
+                <img
+                  src={organizer.avatarUrl}
+                  alt={organizer.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-primary">{organizer.name.charAt(0)}</span>
+              )}
             </div>
             <div className="flex-1 text-center md:text-left space-y-4">
               <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -227,7 +218,7 @@ export const OrganizerProfile: React.FC = () => {
                     </Link>
                   ))
                 ) : (
-                  <div className="col-span-full py-12 text-center bg-slate-50 rounded-[2.5rem] border border-dashed border-slate-300">
+                  <div className="col-span-full py-12 text-center bg-slate-50 rounded-4xl border border-dashed border-slate-300">
                     <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">
                       No events scheduled yet
                     </p>
@@ -253,8 +244,16 @@ export const OrganizerProfile: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-primary">
-                          {review.userName.charAt(0)}
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-primary overflow-hidden">
+                          {review.userAvatar ? (
+                            <img
+                              src={review.userAvatar}
+                              alt={review.userName}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            review.userName.charAt(0)
+                          )}
                         </div>
                         <div>
                           <p className="font-black text-slate-900 uppercase tracking-tight">
@@ -290,7 +289,7 @@ export const OrganizerProfile: React.FC = () => {
 
           {/* Sidebar / Badges */}
           <div className="space-y-8">
-            <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white space-y-8 sticky top-32">
+            <div className="bg-slate-900 rounded-4xl p-10 text-white space-y-8 sticky top-32">
               <div className="space-y-4">
                 <h3 className="text-xl font-black uppercase tracking-tight">
                   Achievements
