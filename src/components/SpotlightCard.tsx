@@ -1,10 +1,5 @@
 import React, { useRef, useState } from "react";
 
-interface Position {
-  x: number;
-  y: number;
-}
-
 interface SpotlightCardProps extends React.PropsWithChildren {
   className?: string;
   spotlightColor?: `rgba(${number}, ${number}, ${number}, ${number})`;
@@ -17,32 +12,34 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState<number>(0);
 
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (!divRef.current || isFocused) return;
 
     const rect = divRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    divRef.current.style.setProperty("--mouse-x", `${x}px`);
+    divRef.current.style.setProperty("--mouse-y", `${y}px`);
   };
 
   const handleFocus = () => {
     setIsFocused(true);
-    setOpacity(0.6);
+    if (divRef.current) divRef.current.style.setProperty("--opacity", "0.6");
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    setOpacity(0);
+    if (divRef.current) divRef.current.style.setProperty("--opacity", "0");
   };
 
   const handleMouseEnter = () => {
-    setOpacity(0.6);
+    if (divRef.current) divRef.current.style.setProperty("--opacity", "0.6");
   };
 
   const handleMouseLeave = () => {
-    setOpacity(0);
+    if (divRef.current) divRef.current.style.setProperty("--opacity", "0");
   };
 
   return (
@@ -53,13 +50,20 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      style={
+        {
+          "--mouse-x": "0px",
+          "--mouse-y": "0px",
+          "--opacity": "0",
+        } as React.CSSProperties
+      }
       className={`relative rounded-3xl border border-neutral-800 bg-neutral-900 overflow-hidden ${className}`}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-in-out z-10"
         style={{
-          opacity,
-          background: `radial-gradient(circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 80%)`,
+          opacity: "var(--opacity)",
+          background: `radial-gradient(circle at var(--mouse-x) var(--mouse-y), ${spotlightColor}, transparent 80%)`,
         }}
       />
       {children}
