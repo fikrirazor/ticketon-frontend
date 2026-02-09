@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import { Layout } from "../components/Layout";
 import { useAuthStore } from "../store/auth.store";
@@ -21,7 +20,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
-import type { Event } from "../types";
 
 import { useEvent } from "../hooks/useEvents";
 import { useEventReviews } from "../hooks/useReviews";

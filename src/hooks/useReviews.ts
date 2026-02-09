@@ -4,7 +4,7 @@ import { reviewAPI } from "../lib/api.service";
 export const useEventReviews = (
   eventId: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ) => {
   return useQuery({
     queryKey: ["reviews", eventId, { page, limit }],

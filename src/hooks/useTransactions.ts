@@ -34,12 +34,17 @@ export const useCreateTransaction = () => {
 export const useUploadPaymentProof = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ transactionId, file }: { transactionId: string; file: File }) =>
-      transactionAPI.uploadPaymentProof(transactionId, file),
+    mutationFn: ({
+      transactionId,
+      file,
+    }: {
+      transactionId: string;
+      file: File;
+    }) => transactionAPI.uploadPaymentProof(transactionId, file),
     onSuccess: (updatedTransaction) => {
       queryClient.setQueryData(
         ["transaction", updatedTransaction.id],
-        updatedTransaction
+        updatedTransaction,
       );
       queryClient.invalidateQueries({ queryKey: ["transactions", "me"] });
     },

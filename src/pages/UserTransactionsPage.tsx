@@ -1,13 +1,12 @@
 import React from "react";
 import { Layout } from "../components/Layout";
 import { useUserTransactions } from "../hooks/useTransactions";
-import { useAuthStore } from "../store/auth.store";
+import type { Transaction } from "../types";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 const UserTransactionsPage: React.FC = () => {
-  const { user } = useAuthStore();
   const { data: transactions = [], isLoading, error } = useUserTransactions();
 
   if (isLoading) {
@@ -96,7 +95,7 @@ const UserTransactionsPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {transactions.map((transaction) => (
+                  {transactions.map((transaction: Transaction) => (
                     <tr key={transaction.id} className="hover:bg-gray-50/50">
                       <td className="px-6 py-4 font-medium text-gray-900">
                         {transaction.event?.title || "Event Title"}
