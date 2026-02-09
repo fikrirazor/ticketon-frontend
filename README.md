@@ -11,12 +11,12 @@ We have implemented a complete transaction flow that includes:
 - **Transaction Status**: Visual timeline tracking 6 statuses (Waiting for Payment, Verification, Done, Rejected, Expired, Canceled).
 - **Core Components**: `CountdownTimer`, `PriceSummary`, `CheckoutForm`, `PaymentProofUpload`, and `TransactionStatus`.
 
-## 🛠️ Tech Stack
-
 - **Frontend**: React 18, TypeScript, Vite
+- **Data Fetching**: TanStack Query (React Query)
 - **Styling**: Tailwind CSS v4, Lucide React (Icons)
 - **State Management**: Zustand
 - **Routing**: React Router Dom v6
+- **PWA**: vite-plugin-pwa
 
 ## 🔑 Mock Credentials (For Testing)
 
@@ -27,6 +27,18 @@ Since the backend is currently in development, you can use these mock credential
 | **Organizer (Admin)**  | `admin@pwk.com`   | `admin`      |
 | **Participant (User)** | _Any valid email_ | _Any string_ |
 
+## ⚙️ Environment Configuration
+
+Copy the example environment file and update the variables:
+
+```bash
+cp .env.example .env
+```
+
+| Variable       | Description                   | Default                     |
+| -------------- | ----------------------------- | --------------------------- |
+| `VITE_API_URL` | URL of the backend API server | `http://localhost:8000/api` |
+
 ## 📦 Getting Started
 
 1. **Install Dependencies**:
@@ -35,13 +47,19 @@ Since the backend is currently in development, you can use these mock credential
    npm install
    ```
 
-2. **Run Development Server**:
+2. **Setup Environment**:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Run Development Server**:
 
    ```bash
    npm run dev
    ```
 
-3. **Build for Production**:
+4. **Build for Production**:
    ```bash
    npm run build
    ```
