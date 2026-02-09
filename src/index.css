@@ -1,9 +1,80 @@
 @import "tailwindcss";
 
-/* Import Font: Urbanist untuk Sans (mirip Jeton) dan Stack Sans Notch */
-@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap");
-/* Note: Pastikan font Stack Sans Notch tersedia di penyedia font Anda atau lokal */
-@import url("https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@700&display=swap");
+/* Local Font: Inter */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/inter-300.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-500.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-600.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-700.ttf") format("truetype");
+}
+
+/* Local Font: Urbanist */
+@font-face {
+  font-family: "Urbanist";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/urbanist-400.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Urbanist";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/urbanist-500.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Urbanist";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/urbanist-600.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Urbanist";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/urbanist-700.ttf") format("truetype");
+}
+
+/* Local Font: Stack Sans Notch */
+@font-face {
+  font-family: "Stack Sans Notch";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/stacksansnotch-700.ttf") format("truetype");
+}
 
 @theme {
   /* Colors - Diambil dari palette Jeton yang vibran */
