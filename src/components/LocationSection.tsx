@@ -77,11 +77,11 @@ export const LocationSection = () => {
                 <img
                   src={
                     loc.name === "Jakarta"
-                      ? loc.image(1200, 800)
+                      ? loc.image(800, 600)
                       : loc.name === "Bali"
-                        ? loc.image(600, 800)
+                        ? loc.image(400, 600)
                         : loc.name === "Yogyakarta" || loc.name === "Medan"
-                          ? loc.image(1200, 400)
+                          ? loc.image(800, 300)
                           : loc.image(600, 400)
                   }
                   alt={loc.name}
