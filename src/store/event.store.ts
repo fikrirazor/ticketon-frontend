@@ -27,7 +27,10 @@ interface EventState {
   createEvent: (
     eventData: FormData | Record<string, unknown>,
   ) => Promise<Event>;
-  updateEvent: (id: string, eventData: Partial<Event>) => Promise<Event>;
+  updateEvent: (
+    id: string,
+    eventData: FormData | Partial<Event>,
+  ) => Promise<Event>;
   deleteEvent: (id: string) => Promise<void>;
   createVoucher: (
     eventId: string,

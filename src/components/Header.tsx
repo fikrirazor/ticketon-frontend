@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button"; // Shadcn Button
 import { AnimatedButtonText } from "./ui/animated-button-text";
 import { useAuthStore } from "../store/auth.store";
+import { getFullImageUrl } from "../lib/axiosInstance";
 import {
   Plus,
   User,
@@ -64,8 +65,14 @@ export const Header = () => {
                   : "hover:bg-white/10 border-transparent hover:border-white/20"
               }`}
             >
-              <div className="w-8 h-8 rounded-full bg-linear-to-br from-primary to-orange-600 text-white flex items-center justify-center text-sm font-bold shadow-md">
-                {user?.name ? (
+              <div className="w-8 h-8 rounded-full bg-linear-to-br from-primary to-orange-600 text-white flex items-center justify-center text-sm font-bold shadow-md overflow-hidden border border-white/20">
+                {user?.avatarUrl ? (
+                  <img
+                    src={getFullImageUrl(user.avatarUrl, 32, 32)}
+                    alt={user.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : user?.name ? (
                   user.name.charAt(0).toUpperCase()
                 ) : (
                   <User className="w-4 h-4" />

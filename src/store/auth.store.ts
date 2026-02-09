@@ -31,6 +31,8 @@ interface AuthState {
   logout: () => void;
   getMe: () => Promise<void>;
   updateProfile: (formData: FormData) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (data: Record<string, string>) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -202,6 +204,24 @@ export const useAuthStore = create<AuthState>()(
             errResponse.response?.data,
           );
           throw error;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      forgotPassword: async (email: string) => {
+        set({ isLoading: true });
+        try {
+          await axiosInstance.post("/auth/forgot-password", { email });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      resetPassword: async (data: Record<string, string>) => {
+        set({ isLoading: true });
+        try {
+          await axiosInstance.post("/auth/reset-password", data);
         } finally {
           set({ isLoading: false });
         }

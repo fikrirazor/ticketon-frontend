@@ -4,6 +4,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { Layout } from "../components/Layout";
 import { EventForm } from "../components/events/EventForm";
 import type { EventFormValues } from "../components/events/EventForm";
+import type { Event } from "../types";
 import { ArrowLeft, MapPin, Calendar, Users, X } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useEventStore } from "../store/event.store";
@@ -64,12 +65,36 @@ export const EditEvent: React.FC = () => {
     if (!id) return;
     setIsLoading(true);
     try {
-      const payload: Partial<EventFormValues> & Record<string, unknown> = {
-        ...values,
-      };
-      delete payload.vouchers;
+      let submissionData: FormData | Partial<Event>;
 
-      await updateEvent(id, payload);
+      if (values.imageType === "file" && values.imageFile) {
+        const formData = new FormData();
+        Object.entries(values).forEach(([key, value]) => {
+          if (
+            key !== "vouchers" &&
+            key !== "imageFile" &&
+            key !== "imageUrl" &&
+            key !== "imageType"
+          ) {
+            // WORKAROUND: Prisma/Backend fails if it receives "false" (string) for a Boolean field via FormData.
+            if (key === "isPromoted") {
+              if (value === true) formData.append(key, "true");
+            } else if (value !== undefined && value !== null) {
+              formData.append(key, String(value));
+            }
+          }
+        });
+        formData.append("image", values.imageFile);
+        submissionData = formData;
+      } else {
+        const cleanPayload: Partial<EventFormValues> = { ...values };
+        delete cleanPayload.vouchers;
+        delete cleanPayload.imageFile;
+        delete cleanPayload.imageType;
+        submissionData = cleanPayload as Partial<Event>;
+      }
+
+      await updateEvent(id, submissionData);
 
       // Note: Voucher handling for update might be more complex
       // depending on backend implementation. For now just following Create logic.

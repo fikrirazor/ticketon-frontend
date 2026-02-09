@@ -48,8 +48,16 @@ export const eventAPI = {
   /**
    * Update event (Organizer must own the event)
    */
-  updateEvent: async (eventId: string, eventData: Partial<Event>) => {
-    const response = await axiosInstance.put(`/events/${eventId}`, eventData);
+  updateEvent: async (
+    eventId: string,
+    eventData: FormData | Partial<Event>,
+  ) => {
+    const isFormData = eventData instanceof FormData;
+    const response = await axiosInstance.put(`/events/${eventId}`, eventData, {
+      headers: {
+        "Content-Type": isFormData ? "multipart/form-data" : "application/json",
+      },
+    });
     return response.data.data;
   },
 
@@ -226,6 +234,23 @@ export const reviewAPI = {
     const response = await axiosInstance.get(`/reviews/events/${eventId}`, {
       params: { page, limit },
     });
+    return response.data.data;
+  },
+
+  /**
+   * Get reviews for an organizer's events
+   */
+  getOrganizerReviews: async (
+    organizerId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) => {
+    const response = await axiosInstance.get(
+      `/reviews/organizers/${organizerId}`,
+      {
+        params: { page, limit },
+      },
+    );
     return response.data.data;
   },
 

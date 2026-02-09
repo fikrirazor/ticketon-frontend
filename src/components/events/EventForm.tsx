@@ -66,10 +66,11 @@ const EventSchema = Yup.object().shape({
       schema.url("Must be a valid URL").required("Image URL is required"),
     otherwise: (schema) => schema.optional(),
   }),
-  imageFile: Yup.mixed().when("imageType", {
-    is: "file",
+  imageFile: Yup.mixed().when(["imageType", "imageUrl"], {
+    is: (imageType: string, imageUrl: string) =>
+      imageType === "file" && !imageUrl,
     then: (schema) => schema.required("Image file is required"),
-    otherwise: (schema) => schema.optional(),
+    otherwise: (schema) => schema.nullable(),
   }),
   isPromoted: Yup.boolean(),
   vouchers: Yup.array().of(
@@ -527,9 +528,21 @@ export const EventForm: React.FC<EventFormProps> = ({
                 Please fix the following errors:
               </p>
               <ul className="list-disc list-inside text-xs text-red-600">
-                {Object.entries(errors).map(([key, val]) => (
-                  <li key={key}>{val as string}</li>
-                ))}
+                {Object.entries(errors).map(([key, val]) => {
+                  if (typeof val === "string") {
+                    return <li key={key}>{val}</li>;
+                  }
+                  if (Array.isArray(val)) {
+                    // For vouchers array errors, we show a general message
+                    return (
+                      <li key={key}>
+                        Vouchers have validation errors. Please check individual
+                        fields.
+                      </li>
+                    );
+                  }
+                  return null;
+                })}
               </ul>
             </div>
           )}
