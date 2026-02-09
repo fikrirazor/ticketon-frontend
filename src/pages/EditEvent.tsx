@@ -4,6 +4,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { Layout } from "../components/Layout";
 import { EventForm } from "../components/events/EventForm";
 import type { EventFormValues } from "../components/events/EventForm";
+import type { Event } from "../types";
 import { ArrowLeft, MapPin, Calendar, Users, X } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useEventStore } from "../store/event.store";
@@ -64,7 +65,7 @@ export const EditEvent: React.FC = () => {
     if (!id) return;
     setIsLoading(true);
     try {
-      let submissionData: FormData | Record<string, unknown>;
+      let submissionData: FormData | Partial<Event>;
 
       if (values.imageType === "file" && values.imageFile) {
         const formData = new FormData();
@@ -90,10 +91,10 @@ export const EditEvent: React.FC = () => {
         delete cleanPayload.vouchers;
         delete cleanPayload.imageFile;
         delete cleanPayload.imageType;
-        submissionData = cleanPayload as Record<string, unknown>;
+        submissionData = cleanPayload as Partial<Event>;
       }
 
-      await updateEvent(id, submissionData as any);
+      await updateEvent(id, submissionData);
 
       // Note: Voucher handling for update might be more complex
       // depending on backend implementation. For now just following Create logic.
