@@ -56,16 +56,8 @@ export const OrganizerProfile: React.FC = () => {
 
         // Fetch Aggregate Reviews
         try {
-          const orgReviews = await reviewAPI.getOrganizerReviews(organizerId);
-          // Map backend nested user to flat Review interface
-          const mappedReviews = (orgReviews || []).map(
-            (r: { user?: { name: string; avatarUrl?: string } }) => ({
-              ...r,
-              userName: r.user?.name || "Anonymous",
-              userAvatar: r.user?.avatarUrl || null,
-            }),
-          );
-          setReviews(mappedReviews);
+          const result = await reviewAPI.getOrganizerReviews(organizerId);
+          setReviews(result.reviews || []);
         } catch {
           /* ignore */
         }

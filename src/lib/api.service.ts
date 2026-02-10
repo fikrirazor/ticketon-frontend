@@ -234,7 +234,18 @@ export const reviewAPI = {
     const response = await axiosInstance.get(`/reviews/events/${eventId}`, {
       params: { page, limit },
     });
-    return response.data.data;
+    
+    // Process and flatten reviews
+    const reviews = (response.data.data || []).map((review: any) => ({
+      ...review,
+      userName: review.user?.name || "Anonymous",
+      userAvatar: review.user?.avatarUrl || null,
+    }));
+
+    return {
+      reviews,
+      pagination: response.data.pagination,
+    };
   },
 
   /**
@@ -251,7 +262,18 @@ export const reviewAPI = {
         params: { page, limit },
       },
     );
-    return response.data.data;
+    
+    // Process and flatten reviews
+    const reviews = (response.data.data || []).map((review: any) => ({
+      ...review,
+      userName: review.user?.name || "Anonymous",
+      userAvatar: review.user?.avatarUrl || null,
+    }));
+
+    return {
+      reviews,
+      pagination: response.data.pagination,
+    };
   },
 
   /**
