@@ -15,20 +15,33 @@ interface OrganizerStore {
   transactions: Transaction[];
   isLoading: boolean;
   error: string | null;
+  pagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+  };
   fetchStats: () => Promise<void>;
-  fetchEvents: () => Promise<void>;
+  fetchEvents: (page?: number) => Promise<void>;
+  setPage: (page: number) => void;
   fetchTransactions: () => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
   approveTransaction: (id: string) => Promise<void>;
   rejectTransaction: (id: string) => Promise<void>;
 }
 
-export const useOrganizerStore = create<OrganizerStore>((set) => ({
+export const useOrganizerStore = create<OrganizerStore>((set, get) => ({
   stats: null,
   events: [],
   transactions: [],
   isLoading: false,
   error: null,
+  pagination: {
+    total: 0,
+    totalPages: 0,
+    currentPage: 1,
+    limit: 6,
+  },
 
   fetchStats: async () => {
     set({ isLoading: true, error: null });
@@ -47,11 +60,39 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
     }
   },
 
-  fetchEvents: async () => {
+  fetchEvents: async (page) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.get("/organizer/events");
-      set({ events: response.data.data });
+      const { pagination } = get();
+      const currentPage = page || pagination.currentPage;
+      const response = await axiosInstance.get("/organizer/events", {
+        params: {
+          page: currentPage,
+          limit: pagination.limit,
+        },
+      });
+
+      // Handle both paginated and non-paginated responses
+      if (response.data.pagination) {
+        set({
+          events: response.data.data,
+          pagination: {
+            ...pagination,
+            ...response.data.pagination,
+            currentPage: currentPage,
+          },
+        });
+      } else {
+        set({
+          events: response.data.data,
+          pagination: {
+            ...pagination,
+            total: response.data.data.length,
+            totalPages: 1,
+            currentPage: 1,
+          },
+        });
+      }
     } catch (error: unknown) {
       const errResponse = error as {
         response?: { data?: { message?: string } };
@@ -62,6 +103,13 @@ export const useOrganizerStore = create<OrganizerStore>((set) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+
+  setPage: (page: number) => {
+    set((state) => ({
+      pagination: { ...state.pagination, currentPage: page },
+    }));
+    get().fetchEvents(page);
   },
 
   fetchTransactions: async () => {
