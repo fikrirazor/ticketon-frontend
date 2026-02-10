@@ -14,11 +14,13 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
+import { Pagination } from "../components/ui/Pagination";
 import toast, { Toaster } from "react-hot-toast";
 import type { Event } from "../types";
 
 const OrganizerEventsPage: React.FC = () => {
-  const { events, fetchEvents, deleteEvent, isLoading } = useOrganizerStore();
+  const { events, fetchEvents, deleteEvent, isLoading, pagination, setPage } =
+    useOrganizerStore();
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -92,85 +94,98 @@ const OrganizerEventsPage: React.FC = () => {
               </p>
             </div>
           ) : events.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.map((event) => (
-                <div
-                  key={event.id}
-                  className="group bg-slate-50/50 hover:bg-white border border-transparent hover:border-slate-100 rounded-4xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50"
-                >
-                  <div className="aspect-video rounded-2xl overflow-hidden bg-slate-200 mb-6 relative">
-                    <img
-                      src={
-                        event.imageUrl ||
-                        "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400"
-                      }
-                      alt={event.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg">
-                      <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">
-                        {typeof event.price === "number" && event.price > 0
-                          ? new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                              minimumFractionDigits: 0,
-                            }).format(event.price)
-                          : "GRATIS"}
-                      </p>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {events.map((event) => (
+                  <div
+                    key={event.id}
+                    className="group bg-slate-50/50 hover:bg-white border border-transparent hover:border-slate-100 rounded-4xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50"
+                  >
+                    <div className="aspect-video rounded-2xl overflow-hidden bg-slate-200 mb-6 relative">
+                      <img
+                        src={
+                          event.imageUrl ||
+                          "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400"
+                        }
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg">
+                        <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">
+                          {typeof event.price === "number" && event.price > 0
+                            ? new Intl.NumberFormat("id-ID", {
+                                style: "currency",
+                                currency: "IDR",
+                                minimumFractionDigits: 0,
+                              }).format(event.price)
+                            : "GRATIS"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  <h3 className="text-lg font-black text-slate-900 mb-2 truncate group-hover:text-primary transition-colors">
-                    {event.title}
-                  </h3>
+                    <h3 className="text-lg font-black text-slate-900 mb-2 truncate group-hover:text-primary transition-colors">
+                      {event.title}
+                    </h3>
 
-                  <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                      <Calendar size={14} className="text-slate-400" />
-                      {new Date(event.startDate).toLocaleDateString("id-ID", {
-                        day: "2-digit",
-                        month: "long",
-                        year: "numeric",
-                      })}
+                    <div className="space-y-2 mb-6">
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                        <Calendar size={14} className="text-slate-400" />
+                        {new Date(event.startDate).toLocaleDateString("id-ID", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                        <MapPin size={14} className="text-slate-400" />
+                        {typeof event.location === "object"
+                          ? event.location.city
+                          : event.location || "Location TBA"}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                        <Users size={14} className="text-slate-400" />
+                        {event.seatLeft} Tiket Tersisa
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                      <MapPin size={14} className="text-slate-400" />
-                      {typeof event.location === "object"
-                        ? event.location.city
-                        : event.location || "Location TBA"}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                      <Users size={14} className="text-slate-400" />
-                      {event.seatLeft} Tiket Tersisa
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-3">
-                    <Link
-                      to={`/organizer/events/${event.id}/attendees`}
-                      className="flex-1"
-                    >
-                      <Button className="w-full bg-primary/10 hover:bg-primary/20 text-primary border-0 rounded-xl font-black text-xs py-5">
-                        <Users size={14} className="mr-2" />
-                        PESERTA
+                    <div className="flex items-center gap-3">
+                      <Link
+                        to={`/organizer/events/${event.id}/attendees`}
+                        className="flex-1"
+                      >
+                        <Button className="w-full bg-primary/10 hover:bg-primary/20 text-primary border-0 rounded-xl font-black text-xs py-5">
+                          <Users size={14} className="mr-2" />
+                          PESERTA
+                        </Button>
+                      </Link>
+                      <Link to={`/edit-event/${event.id}`} className="flex-1">
+                        <Button className="w-full bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-xl font-black text-xs py-5">
+                          <Edit size={14} className="mr-2" />
+                          EDIT
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={() => setEventToDelete(event)}
+                        className="w-12 h-12 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 border border-slate-200 rounded-xl flex items-center justify-center p-0 transition-colors"
+                      >
+                        <Trash2 size={18} />
                       </Button>
-                    </Link>
-                    <Link to={`/edit-event/${event.id}`} className="flex-1">
-                      <Button className="w-full bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 rounded-xl font-black text-xs py-5">
-                        <Edit size={14} className="mr-2" />
-                        EDIT
-                      </Button>
-                    </Link>
-                    <Button
-                      onClick={() => setEventToDelete(event)}
-                      className="w-12 h-12 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 border border-slate-200 rounded-xl flex items-center justify-center p-0 transition-colors"
-                    >
-                      <Trash2 size={18} />
-                    </Button>
+                    </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {pagination.totalPages > 1 && (
+                <div className="mt-12 flex justify-center">
+                  <Pagination
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    onPageChange={setPage}
+                  />
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-32 text-center">
               <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">

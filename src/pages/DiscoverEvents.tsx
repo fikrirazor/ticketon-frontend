@@ -9,10 +9,11 @@ import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { PageReveal } from "../components/ui/PageReveal";
 import { RevealOnScroll } from "../components/ui/RevealOnScroll";
+import { Pagination } from "../components/ui/Pagination";
 import type { Event } from "../types";
 
 export const DiscoverEvents = () => {
-  const { filter, setLocation, setCategory } = useEventStore();
+  const { filter, setLocation, setCategory, setPage } = useEventStore();
   const [searchParams] = useSearchParams();
 
   const { data, isLoading } = useEvents({
@@ -88,11 +89,24 @@ export const DiscoverEvents = () => {
               ))}
             </div>
           ) : events.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              {events.map((event: Event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {events.map((event: Event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {data?.pagination && data.pagination.totalPages > 1 && (
+                <div className="mt-16 flex justify-center">
+                  <Pagination
+                    currentPage={data.pagination.currentPage || filter.page}
+                    totalPages={data.pagination.totalPages}
+                    onPageChange={setPage}
+                  />
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-32 text-center bg-slate-50 rounded-[4rem] border-2 border-dashed border-slate-200">
               <div className="bg-white p-8 rounded-full mb-8 shadow-2xl shadow-slate-200 border border-slate-100 text-slate-400">
