@@ -53,7 +53,7 @@ const PaymentProofUpload: React.FC<PaymentProofUploadProps> = ({
           <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">
             Time Remaining
           </span>
-          <CountdownTimer expiryDate={expiryDate} />
+          <CountdownTimer key={expiryDate} expiryDate={expiryDate} />
         </div>
 
         {/* Upload Type Toggle */}

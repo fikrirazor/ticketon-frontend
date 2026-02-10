@@ -66,11 +66,20 @@ const PaymentProofPage: React.FC = () => {
           </p>
         </header>
 
-        <PaymentProofUpload
-          expiryDate={transaction?.expiresAt || new Date().toISOString()}
-          onUpload={handleUpload}
-          isLoading={isLoading}
-        />
+        {isLoading || !transaction ? (
+          <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto flex flex-col items-center justify-center space-y-4">
+            <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">
+              Loading Transaction Details...
+            </p>
+          </div>
+        ) : (
+          <PaymentProofUpload
+            expiryDate={transaction.expiresAt}
+            onUpload={handleUpload}
+            isLoading={isLoading}
+          />
+        )}
 
         <div className="mt-12 text-center">
           <button
